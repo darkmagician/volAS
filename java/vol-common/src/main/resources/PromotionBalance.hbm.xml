@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.vol.common.tenant">
+    <class name="PromotionBalance" table="PromotionBalance">
+        <id name="id" column="id">
+            <generator class="native"/>
+        </id>
+        <property name="creationTime" column="creationTime" />
+        <property name="updateTime" column="updateTime" />
+        <property name="promotionId" column="promotionId" />
+        <property name="balance" column="balance" />
+        <property name="max" column="max" />
+    </class> 
+    <query name="promotionBalance.byPromotion">   
+        <![CDATA[  
+            from PromotionBalance as balance where balance.promotionId=:promotionId
+        ]]>   
+    </query>      
+    <query name="promotionBalance.debit">   
+        <![CDATA[  
+            update PromotionBalance set balance=balance-:delta, updateTime=:updateTime where id=:id and balance>=:delta
+        ]]>   
+    </query>       
+</hibernate-mapping>

@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>       
+  <session-factory>
+    <mapping resource="Tenant.hbm.xml"/>
+    <mapping resource="Operator.hbm.xml"/>
+    <mapping resource="Promotion.hbm.xml"/>
+    <mapping resource="PromotionBalance.hbm.xml"/>
+    <mapping resource="User.hbm.xml"/>
+    <mapping resource="Bonus.hbm.xml"/>
+    <mapping resource="Quota.hbm.xml"/>
+  </session-factory>
+</hibernate-configuration>

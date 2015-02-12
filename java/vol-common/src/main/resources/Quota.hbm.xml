@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.vol.common.user">
+    <class name="Quota" table="Quota">
+        <id name="id" column="id">
+            <generator class="native"/>
+        </id>
+
+        <property name="creationTime" column="creationTime" />
+        <property name="updateTime" column="updateTime" />
+        <property name="userId" column="userId" />
+        <property name="maximum" column="maximum" />
+        <property name="balance" column="balance" />
+        <property name="activationTime" column="activationTime" />
+        <property name="expirationTime" column="expirationTime" />
+        <property name="volumeType" column="volumeType" />
+    </class> 
+    <query name="quota.byUser">   
+        <![CDATA[  
+            from Quota as quota where quota.userId=:userId
+        ]]>   
+    </query> 
+    <query name="quota.topup">   
+        <![CDATA[  
+        
+             update Quota set balance=balance+:delta,maximum=maximum+:delta,updateTime=:updateTime where id=:id and expirationTime=:expirationTime
+        ]]>   
+    </query> 
+    <query name="quota.renew">   
+        <![CDATA[  
+             update Quota set balance=:initial, maximum=:initial, updateTime=:updateTime, expirationTime=:newExpirationTime where id=:id and expirationTime=:oldExpirationTime
+        ]]>   
+    </query>        
+</hibernate-mapping>

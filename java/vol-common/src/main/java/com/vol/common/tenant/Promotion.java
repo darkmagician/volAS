@@ -1,0 +1,295 @@
+/**
+ * 
+ */
+package com.vol.common.tenant;
+
+import com.vol.common.BaseEntity;
+
+/**
+ * The Class Promotion.
+ *
+ * @author scott
+ */
+public class Promotion extends BaseEntity {
+
+	/**
+	 * The name.
+	 */
+	private String name;
+	
+	/**
+	 * The id.
+	 */
+	private int id;
+	
+	/**
+	 * The description.
+	 */
+	private String description;
+	
+	
+	/**
+	 * The start time.
+	 */
+	private long startTime;
+	
+	/**
+	 * The end time.
+	 */
+	private long endTime;
+	
+	/**
+	 * The rule.
+	 */
+	private String rule;
+	
+	/**
+	 * The last update operator.
+	 */
+	private int lastUpdateOperator;
+	
+	/**
+	 * The tenant id.
+	 */
+	private int tenantId;
+	
+	/**
+	 * The max.
+	 */
+	private long max;
+	
+	/**
+	 * The size unit.
+	 */
+	private short sizeUnit;
+
+	/**
+	 * Gets the name.
+	 *
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Sets the name.
+	 *
+	 * @param name
+	 *            the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * Gets the id.
+	 *
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
+	}
+
+	/**
+	 * Sets the id.
+	 *
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	/**
+	 * Gets the description.
+	 *
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * Sets the description.
+	 *
+	 * @param description
+	 *            the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+
+	/**
+	 * Gets the start time.
+	 *
+	 * @return the startTime
+	 */
+	public long getStartTime() {
+		return startTime;
+	}
+
+	/**
+	 * Sets the start time.
+	 *
+	 * @param startTime
+	 *            the startTime to set
+	 */
+	public void setStartTime(long startTime) {
+		this.startTime = startTime;
+	}
+
+	/**
+	 * Gets the end time.
+	 *
+	 * @return the endTime
+	 */
+	public long getEndTime() {
+		return endTime;
+	}
+
+	/**
+	 * Sets the end time.
+	 *
+	 * @param endTime
+	 *            the endTime to set
+	 */
+	public void setEndTime(long endTime) {
+		this.endTime = endTime;
+	}
+
+	/**
+	 * Gets the rule.
+	 *
+	 * @return the rule
+	 */
+	public String getRule() {
+		return rule;
+	}
+
+	/**
+	 * Sets the rule.
+	 *
+	 * @param rule
+	 *            the rule to set
+	 */
+	public void setRule(String rule) {
+		this.rule = rule;
+	}
+
+	/**
+	 * Gets the last update operator.
+	 *
+	 * @return the lastUpdateOperator
+	 */
+	public int getLastUpdateOperator() {
+		return lastUpdateOperator;
+	}
+
+	/**
+	 * Sets the last update operator.
+	 *
+	 * @param lastUpdateOperator
+	 *            the lastUpdateOperator to set
+	 */
+	public void setLastUpdateOperator(int lastUpdateOperator) {
+		this.lastUpdateOperator = lastUpdateOperator;
+	}
+
+	/**
+	 * Gets the tenant id.
+	 *
+	 * @return the tenantId
+	 */
+	public int getTenantId() {
+		return tenantId;
+	}
+
+	/**
+	 * Sets the tenant id.
+	 *
+	 * @param tenantId
+	 *            the tenantId to set
+	 */
+	public void setTenantId(int tenantId) {
+		this.tenantId = tenantId;
+	}
+
+	/**
+	 * Gets the max.
+	 *
+	 * @return the max
+	 */
+	public long getMax() {
+		return max;
+	}
+
+	/**
+	 * Sets the max.
+	 *
+	 * @param max
+	 *            the max to set
+	 */
+	public void setMax(long max) {
+		this.max = max;
+	}
+
+	/**
+	 * Gets the size unit.
+	 *
+	 * @return the sizeUnit
+	 */
+	public short getSizeUnit() {
+		return sizeUnit;
+	}
+
+	/**
+	 * Sets the size unit.
+	 *
+	 * @param sizeUnit
+	 *            the sizeUnit to set
+	 */
+	public void setSizeUnit(short sizeUnit) {
+		this.sizeUnit = sizeUnit;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Promotion [name=");
+		builder.append(name);
+		builder.append(", id=");
+		builder.append(id);
+		builder.append(", description=");
+		builder.append(description);
+		builder.append(", startTime=");
+		builder.append(startTime);
+		builder.append(", endTime=");
+		builder.append(endTime);
+		builder.append(", rule=");
+		builder.append(rule);
+		builder.append(", lastUpdateOperator=");
+		builder.append(lastUpdateOperator);
+		builder.append(", tenantId=");
+		builder.append(tenantId);
+		builder.append(", max=");
+		builder.append(max);
+		builder.append(", sizeUnit=");
+		builder.append(sizeUnit);
+		builder.append(", creationTime=");
+		builder.append(creationTime);
+		builder.append(", updateTime=");
+		builder.append(updateTime);
+		builder.append(", status=");
+		builder.append(status);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
+	
+}
