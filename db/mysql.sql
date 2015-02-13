@@ -1,84 +1,97 @@
-create table Bonus 
-(
-id bigint not null auto_increment,
-userId bigint,
-creationTime bigint,
-updateTime bigint,
-size bigint,
-targetUserId bigint,
-targetQuotaId bigint,
-activationTime bigint,
-promotionId integer,
-volumeType smallint,
-primary key (id)
-)
+ CREATE TABLE bonus
+  (
+     id             BIGINT NOT NULL auto_increment,
+     userid         BIGINT,
+     creationtime   BIGINT,
+     updatetime     BIGINT,
+     size           BIGINT,
+     targetuserid   BIGINT,
+     targetquotaid  BIGINT,
+     activationtime BIGINT,
+     promotionid    INTEGER,
+     volumetype     SMALLINT,
+     PRIMARY KEY (id)
+  );
 
-create table Operator 
-(
-id integer not null auto_increment,
-name varchar(255),
-creationTime bigint,
-updateTime bigint,
-password varchar(255),
-tenantId integer,
-status smallint,
-primary key (id)
-)
+CREATE TABLE operator
+  (
+     id           INTEGER NOT NULL auto_increment,
+     name         VARCHAR(32),
+     creationtime BIGINT,
+     updatetime   BIGINT,
+     password     VARCHAR(255),
+     tenantid     INTEGER,
+     status       SMALLINT,
+     PRIMARY KEY (id)
+  );
 
-create table Promotion 
-(
-id integer not null auto_increment,
-name varchar(255),
-creationTime bigint,
-updateTime bigint,
-description varchar(255),
-rule varchar(255),
-status smallint,
-lastUpdateOperator integer,
-primary key (id)
-)
+CREATE TABLE promotion
+  (
+     id                  INTEGER NOT NULL auto_increment,
+     name                VARCHAR(64),
+     creationtime        BIGINT,
+     updatetime          BIGINT,
+     description         VARCHAR(255),
+     rule                VARCHAR(255),
+     status              SMALLINT,
+     lastupdateoperator  INTEGER,
+     bonusexpirationtime BIGINT,
+     tenantid            INTEGER,
+     PRIMARY KEY (id)
+  );
 
-create table PromotionBalance 
-(
-id integer not null auto_increment,
-creationTime bigint,
-updateTime bigint,
-promotionId integer,
-balance bigint,
-max bigint,
-primary key (id)
-)
+CREATE TABLE promotionbalance
+  (
+     id           INTEGER NOT NULL auto_increment,
+     creationtime BIGINT,
+     updatetime   BIGINT,
+     promotionid  INTEGER,
+     balance      BIGINT,
+     max          BIGINT,
+     PRIMARY KEY (id)
+  );
 
-create table Quota 
-(
-id bigint not null auto_increment,
-creationTime bigint,
-updateTime bigint,
-userId bigint,
-max bigint,
-balance bigint,
-activationTime bigint,
-expirationTime bigint,
-volumeType smallint,
-primary key (id)
-)
+CREATE TABLE quota
+  (
+     id             BIGINT NOT NULL auto_increment,
+     creationtime   BIGINT,
+     updatetime     BIGINT,
+     userid         BIGINT,
+     maximum        BIGINT,
+     balance        BIGINT,
+     activationtime BIGINT,
+     expirationtime BIGINT,
+     volumetype     SMALLINT,
+     PRIMARY KEY (id)
+  );
 
-create table Tenant 
-(
-id integer not null auto_increment,
-name varchar(255),
-creationTime bigint,
-updateTime bigint,
-description varchar(255),
-cycleType integer,
-primary key (id)
-)
+CREATE TABLE tenant
+  (
+     id           INTEGER NOT NULL auto_increment,
+     name         VARCHAR(64),
+     creationtime BIGINT,
+     updatetime   BIGINT,
+     description  VARCHAR(255),
+     cycletype    INTEGER,
+     PRIMARY KEY (id)
+  );
 
-create table User 
-(
-id bigint not null auto_increment,
-name varchar(255),
-creationTime bigint,
-updateTime bigint,
-primary key (id)
-)
+CREATE TABLE user
+  (
+     id           BIGINT NOT NULL auto_increment,
+     name         VARCHAR(32),
+     creationtime BIGINT,
+     updatetime   BIGINT,
+     tenantid     INTEGER,
+     PRIMARY KEY (id)
+  );
+
+CREATE INDEX bonus_user_idx ON bonus (userid);
+
+CREATE INDEX promotion_tenant_idx ON promotion (tenantid);
+
+CREATE INDEX balance_promotion_idx ON promotionbalance (promotionid);
+
+CREATE INDEX quota_user_idx ON quota (userid);
+
+CREATE INDEX user_name_idx ON user (name, tenantid);  

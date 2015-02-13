@@ -34,7 +34,7 @@ public class UserDAOTest extends BaseTest{
 	
 	
 	@Test
-	@NotTransactional
+	@NotTransactional 
 	public void testCreateUser(){
 		DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
 		TransactionStatus txStatus = txManager.getTransaction(definition);

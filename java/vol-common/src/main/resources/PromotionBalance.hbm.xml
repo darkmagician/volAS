@@ -9,7 +9,7 @@
         </id>
         <property name="creationTime" column="creationTime" />
         <property name="updateTime" column="updateTime" />
-        <property name="promotionId" column="promotionId" />
+        <property name="promotionId" column="promotionId" index="balance_promotion_idx"/>
         <property name="balance" column="balance" />
         <property name="max" column="max" />
     </class> 

@@ -5,6 +5,7 @@ package com.vol.common.tenant;
 
 import com.vol.common.BaseEntity;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class Promotion.
  *
@@ -58,10 +59,9 @@ public class Promotion extends BaseEntity {
 	 */
 	private long max;
 	
-	/**
-	 * The size unit.
-	 */
-	private short sizeUnit;
+	
+	/** The bonus expiration time. */
+	private long bonusExpirationTime;
 
 	/**
 	 * Gets the name.
@@ -235,27 +235,11 @@ public class Promotion extends BaseEntity {
 		this.max = max;
 	}
 
-	/**
-	 * Gets the size unit.
-	 *
-	 * @return the sizeUnit
-	 */
-	public short getSizeUnit() {
-		return sizeUnit;
-	}
 
 	/**
-	 * Sets the size unit.
+	 * To string.
 	 *
-	 * @param sizeUnit
-	 *            the sizeUnit to set
-	 */
-	public void setSizeUnit(short sizeUnit) {
-		this.sizeUnit = sizeUnit;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	 * @return the string
 	 */
 	@Override
 	public String toString() {
@@ -278,8 +262,8 @@ public class Promotion extends BaseEntity {
 		builder.append(tenantId);
 		builder.append(", max=");
 		builder.append(max);
-		builder.append(", sizeUnit=");
-		builder.append(sizeUnit);
+		builder.append(", bonusExpirationTime=");
+		builder.append(bonusExpirationTime);
 		builder.append(", creationTime=");
 		builder.append(creationTime);
 		builder.append(", updateTime=");
@@ -288,6 +272,24 @@ public class Promotion extends BaseEntity {
 		builder.append(status);
 		builder.append("]");
 		return builder.toString();
+	}
+
+	/**
+	 * Gets the bonus expiration time.
+	 *
+	 * @return the bonus expiration time
+	 */
+	public long getBonusExpirationTime() {
+		return bonusExpirationTime;
+	}
+
+	/**
+	 * Sets the bonus expiration time.
+	 *
+	 * @param bonusExpirationTime the new bonus expiration time
+	 */
+	public void setBonusExpirationTime(long bonusExpirationTime) {
+		this.bonusExpirationTime = bonusExpirationTime;
 	}
 	
 	

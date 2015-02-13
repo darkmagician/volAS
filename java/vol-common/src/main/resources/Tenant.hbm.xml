@@ -7,7 +7,7 @@
         <id name="id" column="id">
             <generator class="native"/>
         </id>
-        <property name="name" column="name" />
+        <property name="name" column="name" length="64"/>
         <property name="creationTime" column="creationTime" />
         <property name="updateTime" column="updateTime" />
         <property name="description" column="description" />

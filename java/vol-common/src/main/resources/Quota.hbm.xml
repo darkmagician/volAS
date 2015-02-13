@@ -10,7 +10,7 @@
 
         <property name="creationTime" column="creationTime" />
         <property name="updateTime" column="updateTime" />
-        <property name="userId" column="userId" />
+        <property name="userId" column="userId" index="quota_user_idx"/>
         <property name="maximum" column="maximum" />
         <property name="balance" column="balance" />
         <property name="activationTime" column="activationTime" />
