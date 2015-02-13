@@ -1,4 +1,6 @@
 target
+test-output
+bin
 .settings
 .project
 .classpath
