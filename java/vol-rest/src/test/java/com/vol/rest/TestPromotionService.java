@@ -15,9 +15,10 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.vol.common.BaseEntity;
 import com.vol.common.DAO;
-import com.vol.common.service.BunosResult;
 import com.vol.common.tenant.Promotion;
 import com.vol.common.tenant.PromotionBalance;
+import com.vol.rest.result.BunosResult;
+import com.vol.rest.service.PromotionServiceImpl;
 
 /**
  * @author scott
@@ -45,7 +46,7 @@ public class TestPromotionService extends BaseTest {
 		BunosResult result = promotionService.giveMeBonus(promotion.getTenantId(), promotion.getId(),userName, Collections.EMPTY_MAP);
 		log.info("result {}",result);
 		
-		Assert.assertEquals(4000000, result.getBonusSize());
+		Assert.assertEquals(4000000, result.getBonus().getSize());
 	}
 	
 	
@@ -59,11 +60,11 @@ public class TestPromotionService extends BaseTest {
 		BunosResult result = promotionService.giveMeBonus(promotion.getTenantId(), promotion.getId(),userName, Collections.EMPTY_MAP);
 		log.info("result {}",result);
 		
-		Assert.assertEquals(20000000, result.getBonusSize());
+		Assert.assertEquals(20000000, result.getBonus().getSize());
 		result = promotionService.giveMeBonus(promotion.getTenantId(), promotion.getId(),userName, Collections.EMPTY_MAP);
 		log.info("result {}",result);
-		Assert.assertEquals(0, result.getBonusSize());
-		Assert.assertEquals(BunosResult.UNLUCKY, result.getResultCode());
+	//	Assert.assertEquals(0, result.getBonus().getSize());
+		Assert.assertEquals(BunosResult.UNLUCKY, result.getCode());
 	}
 	
 	@Test
@@ -76,16 +77,16 @@ public class TestPromotionService extends BaseTest {
 		BunosResult result = promotionService.giveMeBonus(promotion.getTenantId(), promotion.getId(),userName, Collections.EMPTY_MAP);
 		log.info("result {}",result);
 		
-		Assert.assertEquals(22000000, result.getBonusSize());
+		Assert.assertEquals(22000000, result.getBonus().getSize());
 		result = promotionService.giveMeBonus(promotion.getTenantId(), promotion.getId(),userName, Collections.EMPTY_MAP);
 		log.info("result {}",result);
 		
-		Assert.assertEquals(22000000, result.getBonusSize());
+		Assert.assertEquals(22000000, result.getBonus().getSize());
 		
 		result = promotionService.giveMeBonus(promotion.getTenantId(), promotion.getId(),userName, Collections.EMPTY_MAP);
 		log.info("result {}",result);
-		Assert.assertEquals(0, result.getBonusSize());
-		Assert.assertEquals(BunosResult.UNLUCKY, result.getResultCode());
+		//Assert.assertEquals(0, result.getBonus().getSize());
+		Assert.assertEquals(BunosResult.UNLUCKY, result.getCode());
 	}
 
 	/**

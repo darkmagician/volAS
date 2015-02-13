@@ -29,7 +29,11 @@
 	<artifactId>h2</artifactId>
 	<version>1.4.185</version>
 </dependency>
-
+   <dependency>
+     <groupId>com.vol</groupId>
+     <artifactId>vol-mgmt</artifactId>
+     <version>${project.version}</version>
+    </dependency>
 
    <dependency>
      <groupId>com.vol</groupId>
@@ -41,6 +45,11 @@
      <artifactId>vol-dao</artifactId>
      <version>${project.version}</version>
     </dependency>
+  <dependency>
+     <groupId>com.vol</groupId>
+     <artifactId>vol-rest</artifactId>
+     <version>${project.version}</version>
+    </dependency>    
 <dependency>
 	<groupId>org.slf4j</groupId>
 	<artifactId>slf4j-api</artifactId>
@@ -106,7 +115,12 @@
           <groupId>org.mvel</groupId>
           <artifactId>mvel2</artifactId>
           <version>2.2.4.Final</version>
-        </dependency>      
+        </dependency>
+<dependency>
+	<groupId>javax.ws.rs</groupId>
+	<artifactId>javax.ws.rs-api</artifactId>
+	<version>2.0.1</version>
+</dependency>              
      </dependencies> 
 </dependencyManagement>
   <dependencies>

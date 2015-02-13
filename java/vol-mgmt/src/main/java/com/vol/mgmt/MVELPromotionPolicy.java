@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.vol.rest;
+package com.vol.mgmt;
 
 import java.util.Map;
 

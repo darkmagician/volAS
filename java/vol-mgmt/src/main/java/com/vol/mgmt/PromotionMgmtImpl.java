@@ -3,7 +3,7 @@
  */
 package com.vol.mgmt;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -88,7 +88,7 @@ public class PromotionMgmtImpl extends AbstractService{
 	}
 	
 	
-	public Promotion getPromotion(final int id){
+	public Promotion getPromotion(final Integer id){
 		Promotion promotion = this.readonlyTransaction.execute(new TransactionCallback<Promotion>(){
 
 			@Override
@@ -155,9 +155,8 @@ public class PromotionMgmtImpl extends AbstractService{
 		return promotionBalance;		
 	}
 	
-	public List<PromotionBalance> getPromotionBalanceByPromotion(final int promotionId){
-		final Map<String, Object> parameters=new HashMap<String, Object>();
-		parameters.put("promotionId", promotionId);
+	public List<PromotionBalance> getPromotionBalanceByPromotion(final Integer promotionId){
+		final Map<String, Object> parameters=Collections.singletonMap("promotionId", (Object)promotionId);
 		return this.readonlyTransaction.execute(new TransactionCallback<List<PromotionBalance>>(){
 
 			@Override

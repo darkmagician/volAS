@@ -19,5 +19,6 @@
         <module>vol-mgmt</module> 
         <module>vol-rest</module>
         <module>vol-dao</module>
+        <module>vol-appserver</module>        
     </modules>  
 </project>

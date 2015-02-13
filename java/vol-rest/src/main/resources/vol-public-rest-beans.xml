@@ -7,19 +7,16 @@
       http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
       http://www.springframework.org/schema/context
       http://www.springframework.org/schema/context/spring-context-3.2.xsd">
- 
    <bean id="promotionService"
      class="com.vol.rest.service.PromotionServiceImpl" init-method="init"/>
  
 
 
 
-	<bean id="GetBonusRest" class="com.vol.rest.service.GetBonusRest"/> 
+	<bean id="GetBonusRest" class="com.vol.rest.service.GetBonusRest"/>  
 	<bean id="BonusRest" class="com.vol.rest.service.BonusRest"/>     
- 	<bean id="OperatorRest" class="com.vol.rest.service.OperatorRest"/>     
- 	<bean id="PromotionBalanceRest"" class="com.vol.rest.service.PromotionBalanceRest"/>     
-	<bean id="PromotionRest" class="com.vol.rest.service.PromotionRest"/>     
+	<bean id="PromotionPublicRest" class="com.vol.rest.service.PromotionPublicRest"/>     
  	<bean id="QuotaRest" class="com.vol.rest.service.QuotaRest"/>     
- 	<bean id="TenantRest" class="com.vol.rest.service.TenantRest"/>   
- 	<bean id="UserRest" class="com.vol.rest.service.UserRest"/>  	   	
+ 	<bean id="UserRest" class="com.vol.rest.service.UserRest"/>  
+ 
 </beans>

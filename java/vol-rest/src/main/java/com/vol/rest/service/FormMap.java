@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.vol.rest;
+package com.vol.rest.service;
 
 import java.util.Collection;
 import java.util.Map;

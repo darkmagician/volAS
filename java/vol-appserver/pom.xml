@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>  
+      <artifactId>dependency</artifactId>  
+      <groupId>com.vol</groupId>  
+      <version>1.0-SNAPSHOT</version>  
+      <relativePath>../dependency</relativePath>      
+  </parent>     
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.vol</groupId>
+    <artifactId>vol-appserver</artifactId>
+    <packaging>war</packaging>
+    <name>vol-appserver</name>
+    <description>vol-appserver</description>
+    <properties>
+       
+    </properties>
+    <dependencies>
+    <dependency>
+        <groupId>com.vol</groupId>
+        <artifactId>vol-common</artifactId>
+        
+    </dependency> 
+    <dependency>
+        <groupId>com.vol</groupId>
+        <artifactId>vol-dao</artifactId>
+        
+    </dependency>
+    <dependency>
+        <groupId>com.vol</groupId>
+        <artifactId>vol-mgmt</artifactId>
+        
+    </dependency>  
+    <dependency>
+        <groupId>com.vol</groupId>
+        <artifactId>vol-rest</artifactId>
+        
+    </dependency>            
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-rs-client</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-core-asl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-jaxrs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+		<dependency>
+			<groupId>org.mvel</groupId>
+			<artifactId>mvel2</artifactId>
+		</dependency>        
+    </dependencies>
+    <build>
+		 <finalName>vol-appserver</finalName>
+    </build>
+ 
+</project>

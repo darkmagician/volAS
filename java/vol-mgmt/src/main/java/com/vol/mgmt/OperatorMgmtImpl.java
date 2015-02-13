@@ -64,7 +64,7 @@ public class OperatorMgmtImpl extends AbstractService{
 		});
 	}
 	
-	public Operator getOperator(final int id){
+	public Operator getOperator(final Integer id){
 		Operator operator = this.readonlyTransaction.execute(new TransactionCallback<Operator>(){
 
 			@Override

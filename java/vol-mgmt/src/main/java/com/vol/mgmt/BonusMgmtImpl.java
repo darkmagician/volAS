@@ -3,6 +3,7 @@
  */
 package com.vol.mgmt;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,7 @@ public class BonusMgmtImpl extends AbstractService {
 	@Resource(name = "cycleHandler")
 	protected CycleHandler cycleHandler;
 	
-	public Bonus getBonus(final long id) {
+	public Bonus getBonus(final Long id) {
 		Bonus bonus = this.readonlyTransaction
 				.execute(new TransactionCallback<Bonus>() {
 
@@ -73,6 +74,19 @@ public class BonusMgmtImpl extends AbstractService {
 						}
 						parameters.clear();
 						parameters.put("userId", user.getId());
+						return bonusDao.query("bonus.byUser", parameters);
+					}
+				});
+	}
+	
+	public List<Bonus> listBonusByUser(
+			final Long userId) {
+		return this.readonlyTransaction
+				.execute(new TransactionCallback<List<Bonus>>() {
+
+					@Override
+					public List<Bonus> doInTransaction(TransactionStatus status) {
+						Map<String, Object> parameters = Collections.singletonMap("userId", (Object)userId);
 						return bonusDao.query("bonus.byUser", parameters);
 					}
 				});

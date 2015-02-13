@@ -3,6 +3,7 @@
  */
 package com.vol.mgmt;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,17 @@ public class QuotaMgmtImpl extends AbstractService {
 			}});	
 		return quota;
 	}
-	
+	public List<Quota> getQuotasByUser( final Long userid){
+		return this.readonlyTransaction
+				.execute(new TransactionCallback<List<Quota>>() {
+
+					@Override
+					public List<Quota> doInTransaction(TransactionStatus status) {
+						Map<String, Object> parameters = Collections.singletonMap("userId", (Object)userid);
+						return quotaDao.query("quota.byUser", parameters);
+					}
+				});
+	}
 	public List<Quota> getQuotasByUserName(final Integer tenantid, final String userName){
 		return this.readonlyTransaction.execute(new TransactionCallback<List<Quota>>(){
 

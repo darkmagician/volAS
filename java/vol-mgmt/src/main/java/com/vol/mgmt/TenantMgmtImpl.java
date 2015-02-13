@@ -64,7 +64,7 @@ public class TenantMgmtImpl extends AbstractService{
 		});
 	}
 	
-	public Tenant getTenant(final int id){
+	public Tenant getTenant(final Integer id){
 		Tenant tenant = this.readonlyTransaction.execute(new TransactionCallback<Tenant>(){
 
 			@Override

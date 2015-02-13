@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.vol.rest;
+package com.vol.rest.service;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,13 +17,13 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
 import com.vol.common.DAO;
-import com.vol.common.service.BunosResult;
 import com.vol.common.service.PromotionPolicy;
 import com.vol.common.tenant.Promotion;
 import com.vol.common.tenant.PromotionBalance;
 import com.vol.common.user.Bonus;
 import com.vol.common.user.User;
 import com.vol.dao.AbstractService;
+import com.vol.rest.result.BunosResult;
 
 /**
  * @author scott
@@ -85,7 +85,7 @@ public class PromotionServiceImpl extends AbstractService {
 					processingMap.remove(userName);
 			}
 		}else{
-			result.setResultCode(BunosResult.BUSY);
+			result.setCode(BunosResult.BUSY);
 			return result;
 		}
 			
@@ -136,16 +136,16 @@ public class PromotionServiceImpl extends AbstractService {
 		
 		Promotion promotion = (Promotion) context.get(PROMOTION);
 		if(promotion==null){
-			result.setResultCode(BunosResult.INVALID_PROMOTION);
+			result.setCode(BunosResult.INVALID_PROMOTION);
 			return result;
 		}
 		PromotionBalance promotionBalance = (PromotionBalance) context.get(PROMOTION_BALANCE);
 		if(promotionBalance==null){
-			result.setResultCode(BunosResult.INVALID_PROMOTION);
+			result.setCode(BunosResult.INVALID_PROMOTION);
 			return result;
 		}
 		if(promotionBalance.getBalance()<=0){
-			result.setResultCode(BunosResult.PROMOTION_USEDUP);
+			result.setCode(BunosResult.PROMOTION_USEDUP);
 			return result;			
 		}
 		User user = (User) context.get(USER);
@@ -163,12 +163,11 @@ public class PromotionServiceImpl extends AbstractService {
 		
 			Bonus bonus = grantBonus(promotion,promotionBalance,user, bonusSize);
 			if(bonus != null){
-				result.setBonusId(bonus.getId());
-				result.setBonusSize(bonus.getSize());
-				result.setResultCode(BunosResult.SUCCESS);
+				result.setBonus(bonus);
+				result.setCode(BunosResult.SUCCESS);
 			}
 		}else{
-			result.setResultCode(BunosResult.UNLUCKY);
+			result.setCode(BunosResult.UNLUCKY);
 		}
 		return result;
 	}
@@ -234,23 +233,6 @@ public class PromotionServiceImpl extends AbstractService {
 		return user;
 	}
 	
-	
-	public Promotion getPromotion(Integer tenantId, final Integer promotionId){
-		if(promotionId == null || tenantId == null){
-			return null;
-		}
-		Promotion promotion = this.readonlyTransaction.execute(new TransactionCallback<Promotion>(){
 
-			@Override
-			public Promotion doInTransaction(TransactionStatus status) {
-				return promotionDAO.get(promotionId);
-			}
-
-			});	
-		if(tenantId != promotion.getTenantId()){
-			return null;
-		}
-		return promotion;
-	}
 
 }
