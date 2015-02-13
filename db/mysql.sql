@@ -59,6 +59,7 @@ CREATE TABLE quota
      userid         BIGINT,
      maximum        BIGINT,
      balance        BIGINT,
+     reserved       BIGINT,     
      activationtime BIGINT,
      expirationtime BIGINT,
      volumetype     SMALLINT,
