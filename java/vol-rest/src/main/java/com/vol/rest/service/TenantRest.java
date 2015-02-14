@@ -7,16 +7,10 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.vol.common.tenant.Tenant;
 import com.vol.mgmt.TenantMgmtImpl;
@@ -28,8 +22,7 @@ import com.vol.rest.result.PutOperationResult;
  *
  */
 @Path("/tenant")
-public class TenantRest {
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+public class TenantRest extends BaseRest<Tenant>{
 
 	@Resource(name="tenantMgmt")
 	private TenantMgmtImpl tenantMgmt;
@@ -48,10 +41,7 @@ public class TenantRest {
     	return tenantMgmt.list("tenant.all", Collections.<String, Object> emptyMap());
     }  
     
-    @PUT
-    @Path("/")
-    @Consumes({"application/json","application/x-www-form-urlencoded"})
-    @Produces("application/json")
+
     public PutOperationResult create(Tenant tenant){
     	PutOperationResult result = new PutOperationResult();
     	try{
@@ -64,11 +54,7 @@ public class TenantRest {
     	}
 		return result;
     }
-    
-    @POST
-    @Path("/")
-    @Consumes({"application/json","application/x-www-form-urlencoded"})
-    @Produces("application/json")
+
     public OperationResult update(Tenant tenant){
     	OperationResult result = new OperationResult();
     	try{
@@ -80,5 +66,13 @@ public class TenantRest {
     	}
 		return result;
     }
+
+	/* (non-Javadoc)
+	 * @see com.vol.rest.service.BaseRest#createObject()
+	 */
+	@Override
+	public Tenant createObject() {
+		return new Tenant();
+	}
 	
 }

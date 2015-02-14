@@ -14,4 +14,10 @@
         <property name="tenantId" column="tenantId" />
         <property name="status" column="status" />
     </class> 
+   
+    <query name="operator.all">   
+        <![CDATA[  
+            from Operator
+        ]]>   
+    </query>    
 </hibernate-mapping>

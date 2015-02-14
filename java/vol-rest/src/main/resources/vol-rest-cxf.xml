@@ -11,7 +11,8 @@
              <ref bean="UserRest" />
              <ref bean="TenantRest" />
              <ref bean="PromotionBalanceRest" />    
-             <ref bean="OperatorRest" />         
+             <ref bean="OperatorRest" />    
+             <ref bean="PromotionPublicRest" />     
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>

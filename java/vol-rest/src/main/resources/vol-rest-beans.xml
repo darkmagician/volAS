@@ -17,8 +17,9 @@
 	<bean id="GetBonusRest" class="com.vol.rest.service.GetBonusRest"/> 
 	<bean id="BonusRest" class="com.vol.rest.service.BonusRest"/>     
  	<bean id="OperatorRest" class="com.vol.rest.service.OperatorRest"/>     
- 	<bean id="PromotionBalanceRest"" class="com.vol.rest.service.PromotionBalanceRest"/>     
+ 	<bean id="PromotionBalanceRest" class="com.vol.rest.service.PromotionBalanceRest"/>     
 	<bean id="PromotionRest" class="com.vol.rest.service.PromotionRest"/>     
+	<bean id="PromotionPublicRest" class="com.vol.rest.service.PromotionPublicRest"/>    
  	<bean id="QuotaRest" class="com.vol.rest.service.QuotaRest"/>     
  	<bean id="TenantRest" class="com.vol.rest.service.TenantRest"/>   
  	<bean id="UserRest" class="com.vol.rest.service.UserRest"/>  	   	

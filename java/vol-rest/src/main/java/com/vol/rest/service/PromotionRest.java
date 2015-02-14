@@ -3,6 +3,7 @@
  */
 package com.vol.rest.service;
 
+import javax.annotation.Resource;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -10,6 +11,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import com.vol.common.tenant.Promotion;
+import com.vol.mgmt.PromotionMgmtImpl;
 import com.vol.rest.result.OperationResult;
 import com.vol.rest.result.PutOperationResult;
 
@@ -18,9 +20,10 @@ import com.vol.rest.result.PutOperationResult;
  *
  */
 
-public class PromotionRest extends PromotionPublicRest{
+public class PromotionRest extends BaseRest<Promotion>{
 
-
+	@Resource(name="promotionMgmt")
+	protected PromotionMgmtImpl promotionMgmt;
     
     
     @PUT
@@ -55,4 +58,12 @@ public class PromotionRest extends PromotionPublicRest{
     	}
 		return result;
     }
+
+	/* (non-Javadoc)
+	 * @see com.vol.rest.service.BaseRest#createObject()
+	 */
+	@Override
+	public Promotion createObject() {
+		return new Promotion();
+	}
 }

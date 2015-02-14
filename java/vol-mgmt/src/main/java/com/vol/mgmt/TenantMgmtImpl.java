@@ -55,14 +55,24 @@ public class TenantMgmtImpl extends AbstractService{
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				Tenant old = tenantDAO.get(tenant.getId());
 				validateUpdateTime(tenant, old);
-				updateEntity(tenant);
-				tenantDAO.update(tenant);
+				updateEntity(old);
+				copyAttribute(tenant,old);
+				tenantDAO.update(old);
 				
 			}
 
-
 		});
 	}
+	
+	
+	private void copyAttribute(Tenant tenant, Tenant old) {
+		old.setName(tenant.getName());
+		old.setDescription(tenant.getDescription());
+		old.setCycleType(tenant.getCycleType());
+		old.setStatus(tenant.getStatus());
+		
+	}
+	
 	
 	public Tenant getTenant(final Integer id){
 		Tenant tenant = this.readonlyTransaction.execute(new TransactionCallback<Tenant>(){

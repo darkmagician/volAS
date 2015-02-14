@@ -12,9 +12,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.vol.common.tenant.Promotion;
 import com.vol.mgmt.PromotionMgmtImpl;
 
@@ -23,8 +20,7 @@ import com.vol.mgmt.PromotionMgmtImpl;
  *
  */
 @Path("/promotion")
-public class PromotionPublicRest {
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+public class PromotionPublicRest{
 
 	@Resource(name="promotionMgmt")
 	protected PromotionMgmtImpl promotionMgmt;
@@ -48,6 +44,6 @@ public class PromotionPublicRest {
 	@Path("/{tenantId}")
     @Produces("application/json")
 	public List<Promotion> list(@PathParam("tenantId")Integer tenantId){
-    	return promotionMgmt.list("tenant.all", Collections.singletonMap("tenantId", (Object)tenantId));
-    }  
+    	return promotionMgmt.list("promotion.activeByTenant", Collections.singletonMap("tenantId", (Object)tenantId));
+    }
 }

@@ -3,9 +3,10 @@
  */
 package com.vol.dao;
 
+import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -19,13 +20,14 @@ import com.vol.common.mgmt.VolMgmtException;
 public class AbstractService {
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 	
-	@Autowired
+	@Resource(name="transactionManager")
 	protected PlatformTransactionManager txManager;
 	
 	protected final TransactionTemplate readonlyTransaction = new TransactionTemplate();
 	protected final TransactionTemplate transaction = new TransactionTemplate();
 	
 	public void init(){ 
+		log.info("{} is starting.",getClass());
 		readonlyTransaction.setReadOnly(true);
 		readonlyTransaction.setTransactionManager(txManager);
 		transaction.setTransactionManager(txManager);

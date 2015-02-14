@@ -13,4 +13,10 @@
         <property name="description" column="description" />
         <property name="cycleType" column="cycleType" />
     </class> 
+    
+    <query name="tenant.all">   
+        <![CDATA[  
+            from Tenant
+        ]]>   
+    </query>     
 </hibernate-mapping>

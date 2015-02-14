@@ -55,13 +55,22 @@ public class OperatorMgmtImpl extends AbstractService{
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				Operator old = operatorDAO.get(operator.getId());
 				validateUpdateTime(operator, old);
+				copyAttribute(operator,old);
 				updateEntity(operator);
 				operatorDAO.update(operator);
 				
 			}
 
 
+
 		});
+	}
+	
+
+	private void copyAttribute(Operator operator, Operator old) {
+		old.setName(operator.getName());
+		old.setStatus(operator.getStatus());
+		
 	}
 	
 	public Operator getOperator(final Integer id){

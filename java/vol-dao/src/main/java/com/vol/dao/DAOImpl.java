@@ -7,10 +7,11 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vol.common.BaseEntity;
 import com.vol.common.DAO;
@@ -29,7 +30,7 @@ public class DAOImpl<K extends Serializable, T extends BaseEntity> implements DA
 	/**
 	 * The session factory.
 	 */
-	@Autowired
+	@Resource(name="sessionFactory")
 	private SessionFactory sessionFactory;
 
 	/**
@@ -148,4 +149,5 @@ public class DAOImpl<K extends Serializable, T extends BaseEntity> implements DA
 		List<T> list = query(queryName, parameters);
 		return list==null || list.isEmpty()? null: list.iterator().next();
 	}
+
 }

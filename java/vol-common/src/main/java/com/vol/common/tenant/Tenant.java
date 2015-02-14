@@ -27,7 +27,9 @@ public class Tenant extends BaseEntity {
 	 * The description.
 	 */
 	private String description;
-	
+	/**
+	 * 
+	 */
 	private int cycleType;
 	
 	/**

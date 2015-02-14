@@ -7,16 +7,10 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.vol.common.tenant.Operator;
 import com.vol.mgmt.OperatorMgmtImpl;
@@ -28,8 +22,8 @@ import com.vol.rest.result.PutOperationResult;
  *
  */
 @Path("/operator")
-public class OperatorRest {
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+public class OperatorRest extends BaseRest<Operator>{
+	
 
 	@Resource(name="operatorMgmt")
 	private OperatorMgmtImpl operatorMgmt;
@@ -56,10 +50,6 @@ public class OperatorRest {
     	 return list;
     }  
     
-    @PUT
-    @Path("/")
-    @Consumes({"application/json","application/x-www-form-urlencoded"})
-    @Produces("application/json")
     public PutOperationResult create(Operator operator){
     	PutOperationResult result = new PutOperationResult();
     	try{
@@ -73,10 +63,6 @@ public class OperatorRest {
 		return result;
     }
     
-    @POST
-    @Path("/")
-    @Consumes({"application/json","application/x-www-form-urlencoded"})
-    @Produces("application/json")
     public OperationResult update(Operator operator){
     	OperationResult result = new OperationResult();
     	try{
@@ -88,4 +74,12 @@ public class OperatorRest {
     	}
 		return result;
     }
+
+	/* (non-Javadoc)
+	 * @see com.vol.rest.service.BaseRest#createObject()
+	 */
+	@Override
+	public Operator createObject() {
+		return new Operator();
+	}
 }
