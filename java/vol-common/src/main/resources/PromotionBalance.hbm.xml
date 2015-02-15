@@ -11,7 +11,8 @@
         <property name="updateTime" column="updateTime" />
         <property name="promotionId" column="promotionId" index="balance_promotion_idx"/>
         <property name="balance" column="balance" />
-        <property name="max" column="max" />
+        <property name="maximum" column="maximum" />
+        <property name="reserved" column="reserved" />
     </class> 
     <query name="promotionBalance.byPromotion">   
         <![CDATA[  

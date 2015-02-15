@@ -51,7 +51,10 @@ public class Bonus extends BaseEntity {
 	 * The volume type.
 	 */
 	private short volumeType;
-	
+	/**
+	 * The tenant id.
+	 */
+	private int tenantId;
 	/**
 	 * Gets the id.
 	 *
@@ -226,6 +229,8 @@ public class Bonus extends BaseEntity {
 		builder.append(promotionId);
 		builder.append(", volumeType=");
 		builder.append(volumeType);
+		builder.append(", tenantId=");
+		builder.append(tenantId);
 		builder.append(", creationTime=");
 		builder.append(creationTime);
 		builder.append(", updateTime=");
@@ -234,5 +239,19 @@ public class Bonus extends BaseEntity {
 		builder.append(status);
 		builder.append("]");
 		return builder.toString();
+	}
+
+	/**
+	 * @return the tenantId
+	 */
+	public int getTenantId() {
+		return tenantId;
+	}
+
+	/**
+	 * @param tenantId the tenantId to set
+	 */
+	public void setTenantId(int tenantId) {
+		this.tenantId = tenantId;
 	}
 }

@@ -18,7 +18,7 @@ import com.vol.common.DAO;
 import com.vol.common.tenant.Promotion;
 import com.vol.common.tenant.PromotionBalance;
 import com.vol.rest.result.BunosResult;
-import com.vol.rest.service.PromotionServiceImpl;
+import com.vol.rest.service.external.PromotionServiceImpl;
 
 /**
  * @author scott
@@ -95,7 +95,7 @@ public class TestPromotionService extends BaseTest {
 	 */
 	private Promotion init(String ruleDef) {
 		final Promotion promotion= new Promotion();
-		promotion.setMax(1000000000);
+		promotion.setMaximum(1000000000);
 		promotion.setDescription("Test");
 		promotion.setEndTime(System.currentTimeMillis()+100000);
 		promotion.setStartTime(System.currentTimeMillis()-100);
@@ -111,8 +111,8 @@ public class TestPromotionService extends BaseTest {
 		
 		
 		PromotionBalance balance = new PromotionBalance();
-		balance.setBalance(promotion.getMax());
-		balance.setMax(promotion.getMax());
+		balance.setBalance(promotion.getMaximum());
+		balance.setMaximum(promotion.getMaximum());
 		balance.setUpdateTime(now);
 		balance.setCreationTime(now);
 		balance.setStatus(BaseEntity.ACTIVE);

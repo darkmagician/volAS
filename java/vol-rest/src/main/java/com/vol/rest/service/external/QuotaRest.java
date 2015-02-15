@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.vol.rest.service;
+package com.vol.rest.service.external;
 
 import java.util.List;
 
@@ -18,6 +18,7 @@ import com.vol.mgmt.QuotaMgmtImpl;
  * @author scott
  *
  */
+@Path("/quota")
 public class QuotaRest {
 	@Resource(name="quotaMgmt")
 	protected QuotaMgmtImpl quotaMgmt;

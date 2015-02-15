@@ -10,7 +10,7 @@
         <property name="name" column="name" index="user_name_idx" length="32"/>
         <property name="creationTime" column="creationTime" />
         <property name="updateTime" column="updateTime" />
-        <property name="tenantId" column="tenantId" index="user_name_idx"/>
+        <property name="tenantId" column="tenantId" />
     </class> 
     
     <query name="user.byName">   

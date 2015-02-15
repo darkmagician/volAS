@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.vol.rest.service;
+package com.vol.rest.service.external;
 
 import javax.annotation.Resource;
 import javax.ws.rs.GET;
@@ -20,7 +20,7 @@ import com.vol.mgmt.UserMgmtImpl;
  * @author scott
  *
  */
-@Path("/tenant")
+@Path("/user")
 public class UserRest {
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 

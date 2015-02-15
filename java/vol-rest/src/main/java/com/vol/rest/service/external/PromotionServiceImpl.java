@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.vol.rest.service;
+package com.vol.rest.service.external;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -72,7 +72,7 @@ public class PromotionServiceImpl extends AbstractService {
 	@Resource(name="MVELPromotionPolicy")
 	protected PromotionPolicy promotionPolicy;
 	
-	private final ConcurrentMap<String,Object> processingMap= new ConcurrentHashMap<String,Object> ();
+	private final ConcurrentMap<Object,Object> processingMap= new ConcurrentHashMap<Object,Object> ();
 	private static final Object holder = new Object();
 	
 	public BunosResult giveMeBonus(Integer tenantId, final Integer promotionId,  final String userName, Map<String,String> input){

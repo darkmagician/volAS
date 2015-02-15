@@ -1,10 +1,11 @@
 /**
  * 
  */
-package com.vol.rest.service;
+package com.vol.rest.service.external;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.GET;
@@ -44,6 +45,10 @@ public class PromotionPublicRest{
 	@Path("/{tenantId}")
     @Produces("application/json")
 	public List<Promotion> list(@PathParam("tenantId")Integer tenantId){
-    	return promotionMgmt.list("promotion.activeByTenant", Collections.singletonMap("tenantId", (Object)tenantId));
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("current", System.currentTimeMillis());
+		map.put("tenantId", tenantId);
+		return promotionMgmt.list("promotion.byStarted", map);
+		
     }
 }

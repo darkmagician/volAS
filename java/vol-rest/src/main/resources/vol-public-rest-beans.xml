@@ -8,15 +8,13 @@
       http://www.springframework.org/schema/context
       http://www.springframework.org/schema/context/spring-context-3.2.xsd">
    <bean id="promotionService"
-     class="com.vol.rest.service.PromotionServiceImpl" init-method="init"/>
+     class="com.vol.rest.service.external.PromotionServiceImpl" init-method="init"/>
  
 
-
-
-	<bean id="GetBonusRest" class="com.vol.rest.service.GetBonusRest"/>  
-	<bean id="BonusRest" class="com.vol.rest.service.BonusRest"/>     
-	<bean id="PromotionPublicRest" class="com.vol.rest.service.PromotionPublicRest"/>     
- 	<bean id="QuotaRest" class="com.vol.rest.service.QuotaRest"/>     
- 	<bean id="UserRest" class="com.vol.rest.service.UserRest"/>  
+	<bean id="GetBonusRest" class="com.vol.rest.service.external.GetBonusRest"/>  
+	<bean id="BonusRest" class="com.vol.rest.service.external.BonusRest"/>     
+	<bean id="PromotionPublicRest" class="com.vol.rest.service.external.PromotionPublicRest"/>     
+ 	<bean id="QuotaRest" class="com.vol.rest.service.external.QuotaRest"/>     
+ 	<bean id="UserRest" class="com.vol.rest.service.external.UserRest"/>  
  
 </beans>

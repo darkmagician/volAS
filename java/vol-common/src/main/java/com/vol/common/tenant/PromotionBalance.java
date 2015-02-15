@@ -26,11 +26,14 @@ public class PromotionBalance extends BaseEntity{
 	 * The balance.
 	 */
 	private long balance;
-	
+	/**
+	 * The reserved.
+	 */
+	private long reserved;	
 	/**
 	 * The max.
 	 */
-	private long max;
+	private long maximum;
 	
 	/**
 	 * Gets the id.
@@ -88,24 +91,33 @@ public class PromotionBalance extends BaseEntity{
 	public void setBalance(long balance) {
 		this.balance = balance;
 	}
-	
+
 	/**
-	 * Gets the max.
-	 *
-	 * @return the max
+	 * @return the reserved
 	 */
-	public long getMax() {
-		return max;
+	public long getReserved() {
+		return reserved;
 	}
-	
+
 	/**
-	 * Sets the max.
-	 *
-	 * @param max
-	 *            the max to set
+	 * @param reserved the reserved to set
 	 */
-	public void setMax(long max) {
-		this.max = max;
+	public void setReserved(long reserved) {
+		this.reserved = reserved;
+	}
+
+	/**
+	 * @return the maximum
+	 */
+	public long getMaximum() {
+		return maximum;
+	}
+
+	/**
+	 * @param maximum the maximum to set
+	 */
+	public void setMaximum(long maximum) {
+		this.maximum = maximum;
 	}
 
 	/* (non-Javadoc)
@@ -120,8 +132,10 @@ public class PromotionBalance extends BaseEntity{
 		builder.append(promotionId);
 		builder.append(", balance=");
 		builder.append(balance);
-		builder.append(", max=");
-		builder.append(max);
+		builder.append(", reserved=");
+		builder.append(reserved);
+		builder.append(", maximum=");
+		builder.append(maximum);
 		builder.append(", creationTime=");
 		builder.append(creationTime);
 		builder.append(", updateTime=");
@@ -131,6 +145,8 @@ public class PromotionBalance extends BaseEntity{
 		builder.append("]");
 		return builder.toString();
 	}
+
 	
-	
+
+
 }

@@ -107,7 +107,7 @@ public class PromotionMgmtImpl extends AbstractService{
 			}});	
 	}
 	
-	public void activate(final int id) {
+	public void activate(final Integer id) {
 		this.transaction.execute(new TransactionCallbackWithoutResult(){
 
 			@Override
@@ -117,6 +117,7 @@ public class PromotionMgmtImpl extends AbstractService{
 					log.error("Promotion {} cannot be modified if it is not in draft.",oldPromotion);
 					throw new VolMgmtException("The record cannot be modified if it is not in draft.");
 				}	
+				oldPromotion.setStatus(BaseEntity.ACTIVE);
 				updateEntity(oldPromotion);
 				promotionDAO.update(oldPromotion);
 				PromotionBalance promotionBalance = createBalance(oldPromotion,
@@ -125,9 +126,6 @@ public class PromotionMgmtImpl extends AbstractService{
 				promotionBalanceDAO.create(promotionBalance);
 				
 			}
-
-
-
 		});
 	}
 	
@@ -139,9 +137,9 @@ public class PromotionMgmtImpl extends AbstractService{
 	private PromotionBalance createBalance(Promotion oldPromotion,
 			final int promotionId) {
 		PromotionBalance promotionBalance=new PromotionBalance();
-		promotionBalance.setMax(oldPromotion.getMax());
+		promotionBalance.setMaximum(oldPromotion.getMaximum());
 		promotionBalance.setPromotionId(promotionId);
-		promotionBalance.setBalance(oldPromotion.getMax());
+		promotionBalance.setBalance(oldPromotion.getMaximum());
 		return promotionBalance;
 	}
 	

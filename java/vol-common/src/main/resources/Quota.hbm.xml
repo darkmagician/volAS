@@ -16,6 +16,9 @@
         <property name="activationTime" column="activationTime" />
         <property name="expirationTime" column="expirationTime" />
         <property name="volumeType" column="volumeType" />
+        <property name="tenantId" column="tenantId" />
+        <property name="userName" column="userName" index="quota_username_idx"/>
+        <property name="reserved" column="reserved" />
     </class> 
     <query name="quota.byUser">   
         <![CDATA[  

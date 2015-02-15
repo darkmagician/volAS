@@ -16,6 +16,7 @@
         <property name="activationTime" column="activationTime" />
         <property name="promotionId" column="promotionId" />
         <property name="volumeType" column="volumeType" />
+        <property name="tenantId" column="tenantId" />
     </class> 
      <query name="bonus.byUser">   
         <![CDATA[  

@@ -57,7 +57,7 @@ public class Promotion extends BaseEntity {
 	/**
 	 * The max.
 	 */
-	private long max;
+	private long maximum;
 	
 	
 	/** The bonus expiration time. */
@@ -221,8 +221,8 @@ public class Promotion extends BaseEntity {
 	 *
 	 * @return the max
 	 */
-	public long getMax() {
-		return max;
+	public long getMaximum() {
+		return maximum;
 	}
 
 	/**
@@ -231,8 +231,8 @@ public class Promotion extends BaseEntity {
 	 * @param max
 	 *            the max to set
 	 */
-	public void setMax(long max) {
-		this.max = max;
+	public void setMaximum(long max) {
+		this.maximum = max;
 	}
 
 
@@ -260,8 +260,8 @@ public class Promotion extends BaseEntity {
 		builder.append(lastUpdateOperator);
 		builder.append(", tenantId=");
 		builder.append(tenantId);
-		builder.append(", max=");
-		builder.append(max);
+		builder.append(", maximum=");
+		builder.append(maximum);
 		builder.append(", bonusExpirationTime=");
 		builder.append(bonusExpirationTime);
 		builder.append(", creationTime=");
