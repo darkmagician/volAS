@@ -24,20 +24,20 @@ public class QuotaRest {
 	protected QuotaMgmtImpl quotaMgmt;
 	
     @GET
-    @Path("/{userId}")
+    @Path("/{tenantId}/{userId}")
     @Produces("application/json")
-	public List<Quota> list(@PathParam("userId")Long userId){
+	public List<Quota> list(@PathParam("tenantId")Integer tenantid, @PathParam("userId")Long userId){
     	return quotaMgmt.getQuotasByUser(userId);
     }
     
     
     @GET
-    @Path("/{userId}/{id}")
+    @Path("/{tenantId}/{userId}/{id}")
     @Produces("application/json")
-	public Quota getBonus(@PathParam("userId")Long userId, @PathParam("id")Long id){
+	public Quota getBonus(@PathParam("tenantId")Integer tenantid, @PathParam("userId")Long userId, @PathParam("id")Long id){
     	Quota quota = quotaMgmt.getQuota(id);
     	if(quota != null){
-    		if(quota.getUserId() != userId){
+    		if(quota.getUserId() != userId || quota.getTenantId() != tenantid){
     			return null;
     		}
     	}

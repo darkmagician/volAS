@@ -56,7 +56,7 @@ public class PromotionRest extends BaseRest<Promotion>{
     }  
     
     @PUT
-    @Path("/{tenantId}")
+    @Path("/")
     @Consumes("application/json")
     @Produces("application/json")
     public PutOperationResult create(Promotion promotion){
@@ -72,7 +72,7 @@ public class PromotionRest extends BaseRest<Promotion>{
 		return result;
     }
     @POST
-    @Path("/{tenantId}")
+    @Path("/")
     @Consumes("application/json")
     @Produces("application/json")
     public OperationResult update(Promotion promotion){

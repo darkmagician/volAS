@@ -7,8 +7,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -28,7 +26,7 @@ public class BonusRest {
     @GET
     @Path("/{tenantId}/{userId}")
     @Produces("application/json")
-	public List<Bonus> list(@PathParam("userId")Long userId){
+	public List<Bonus> list(@PathParam("tenantId")Integer tenantid, @PathParam("userId")Long userId){
     	return bonusMgmt.listBonusByUser(userId);
     }
     
@@ -36,10 +34,10 @@ public class BonusRest {
     @GET
     @Path("/{tenantId}/{userId}/{bonusId}")
     @Produces("application/json")
-	public Bonus getBonus(@PathParam("userId")Long userId, @PathParam("userId")Long id){
+	public Bonus getBonus(@PathParam("tenantId")Integer tenantid, @PathParam("userId")Long userId, @PathParam("userId")Long id){
     	Bonus bonus = bonusMgmt.getBonus(id);
     	if(bonus != null){
-    		if(bonus.getUserId() != userId){
+    		if(bonus.getUserId() != userId || bonus.getTenantId() != tenantid){
     			return null;
     		}
     	}
@@ -47,17 +45,4 @@ public class BonusRest {
     }
     
 
-    @POST
-    @Path("/{tenantId}/{bonusId}")
-    @Produces("application/json")
-    public boolean active(@PathParam("tenantId")Integer tenant,@PathParam("userId")Long userId, @PathParam("bonusId")Long bonusId){
-    	return bonusMgmt.active(tenant, bonusId, null);
-    }
-    
-    @PUT
-    @Path("/{tenantId}/{userId}/{bonusId}")
-    @Produces("application/json")   
-    public boolean transfer(@PathParam("tenantId")Integer tenant,@PathParam("userId")Long userId, @PathParam("bonusId")Long bonusId){
-    	return bonusMgmt.active(tenant, bonusId, null);
-    }
 }
