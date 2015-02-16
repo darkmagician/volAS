@@ -19,12 +19,11 @@ import com.vol.rest.result.BunosResult;
 import com.vol.rest.service.FormMap;
 
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class BonusRequestRest.
  */
 @Path("/")
-public class BonusRequestRest {
+public class BonusAction {
 	
 	/** The bonus mgmt. */
 	@Resource(name="bonusMgmt")
@@ -48,7 +47,7 @@ public class BonusRequestRest {
 	public BunosResult giveMeBonus(@PathParam("tenantId")Integer tenantId, MultivaluedMap<String, String> params) {
 	   FormMap input = new FormMap(params);
 	   Integer promotionId = StringParser.parseInteger(input.get("promotionId"));
-       String name = input.get("username");
+       String name = input.get("userName");
        return promotionService.giveMeBonus(tenantId,promotionId,name,input);
 	}
 
@@ -61,7 +60,7 @@ public class BonusRequestRest {
      * @return true, if successful
      */
     @POST
-    @Path("active/{tenantId}")
+    @Path("activebonus/{tenantId}")
     @Produces("application/json")
     public boolean active(@PathParam("tenantId")Integer tenant, @FormParam("bonusId")Long bonusId){
     	return bonusMgmt.active(tenant, bonusId, null);

@@ -91,6 +91,61 @@ public class BonusMgmtImpl extends AbstractService {
 					}
 				});
 	}
+	
+	public boolean transfer(final Integer tenantid, final Long id,
+			final String userName){
+		
+		return this.transaction.execute(new TransactionCallback<Boolean>() {
+
+			@Override
+			public Boolean doInTransaction(TransactionStatus status) {
+				Bonus bonus = bonusDao.get(id);
+				if (bonus == null) {
+					if (log.isDebugEnabled()) {
+						log.debug("bonus is not found for id={}", id);
+					}
+					
+					return false;
+				}
+				if(bonus.getTargetQuotaId() > 0){
+					if (log.isDebugEnabled()) {
+						log.debug("bonus is actived id={} to quota [{}]", id,bonus.getTargetQuotaId());
+					}
+					return false;
+				}
+				long now = System.currentTimeMillis();
+				if(bonus.getExpirationTime()<now){
+					if (log.isDebugEnabled()) {
+						log.debug("bonus is expired id={}", id);
+					}
+					return false;
+				}
+				Map<String, Object> parameters = new HashMap<String, Object>();
+				parameters.put("name", userName);
+				parameters.put("tenantId", tenantid);
+				User user = userDao.find("user.byName", parameters);
+				if (user == null) {
+					if (log.isDebugEnabled()) {
+						log.debug(
+								"bonus is not found because User[name={},tenantid={}] is not found",
+								userName, tenantid);
+					}
+					return false;
+				} 
+				parameters.clear();
+				parameters.put("id", bonus.getId());
+				parameters.put("current", now);
+				parameters.put("currentUserId", bonus.getTargetUserId());
+				parameters.put("targetUserId", user.getId());
+				int rc=bonusDao.batchUpdate("bonus.transfer", parameters );
+				if(rc != 1){
+					return false;
+				}
+				
+				return true;
+			}
+		});
+	}
 
 	public boolean active(final Integer tenantid, final Long id,
 			final String userName) {
@@ -103,13 +158,29 @@ public class BonusMgmtImpl extends AbstractService {
 					if (log.isDebugEnabled()) {
 						log.debug("bonus is not found for id={}", id);
 					}
+					
+					return false;
+				}
+				if(bonus.getTargetQuotaId() > 0){
+					if (log.isDebugEnabled()) {
+						log.debug("bonus is actived id={} to quota [{}]", id,bonus.getTargetQuotaId());
+					}
+					return false;
+				}
+				long now = System.currentTimeMillis();
+				if(bonus.getExpirationTime()<now){
+					if (log.isDebugEnabled()) {
+						log.debug("bonus is expired id={}", id);
+					}
+					return false;
 				}
 				Map<String, Object> parameters = new HashMap<String, Object>();
 				long userId = bonus.getUserId();
+				User user=null;
 				if (userName != null) {
 					parameters.put("name", userName);
 					parameters.put("tenantId", tenantid);
-					User user = userDao.find("user.byName", parameters);
+					user = userDao.find("user.byName", parameters);
 					if (user == null) {
 						if (log.isDebugEnabled()) {
 							log.debug(
@@ -127,20 +198,32 @@ public class BonusMgmtImpl extends AbstractService {
 				parameters.put("volumeType", bonus.getVolumeType());
 				Quota quota = quotaDao.find("quota.byUserVolType", parameters);
 
+				
+				
 				long size = bonus.getSize();
 				if (quota == null) {
+					if(user == null){
+						user = userDao.get(userId);
+					}
 					// init the quota
 					quota = new Quota();
 					quota.setUserId(userId);
+					quota.setUserName(user.getName());
+					quota.setTenantId(user.getTenantId());
 					quota.setMaximum(size);
 					quota.setBalance(size);
 					quota.setVolumeType(bonus.getVolumeType());
 					initEntity(quota);
 					quota.setExpirationTime(calculateExpirationTime(
-							quota.getActivationTime(), tenantid));
-					return null != quotaDao.create(quota);
+							now, tenantid));
+					Long quotaId = quotaDao.create(quota);
+					boolean success = quotaId != null;
+					if(success){
+						updateBonusToActivated(bonus, quotaId, now);
+					}
+					return success;
 				}
-				long now = System.currentTimeMillis();
+
 				if (quota.getExpirationTime() <= now) {
 					// expired
 					parameters.clear();
@@ -153,8 +236,9 @@ public class BonusMgmtImpl extends AbstractService {
 							"newExpirationTime",
 							calculateExpirationTime(now,tenantid));
 					int rc = quotaDao.batchUpdate("quota.renew", parameters);
-					if (rc == 1) {
-						return true;
+					boolean success = rc==1;
+					if(success){
+						updateBonusToActivated(bonus, quota.getId(),now);
 					}
 				}
 				// delta update
@@ -164,15 +248,37 @@ public class BonusMgmtImpl extends AbstractService {
 				parameters.put("updateTime", now);
 				parameters.put("expirationTime", quota.getExpirationTime());
 				int rc = quotaDao.batchUpdate("quota.topup", parameters);
-				return rc == 1;
+				boolean success = rc==1;
+				if(success){
+					updateBonusToActivated(bonus, quota.getId(),now);
+				}
+				return success;
 
 			}
+
+
 
 		}
 
 		);
 	}
-
+	/**
+	 * @param bonus
+	 * @param quotaId
+	 * @param now 
+	 */
+	private void updateBonusToActivated(Bonus bonus, Long quotaId, long now) {
+		Map<String, Object> parameters = new HashMap<String, Object> ();
+		parameters.put("id", bonus.getId());
+		parameters.put("targetQuotaId", quotaId);
+		parameters.put("current", now);
+		parameters.put("currentUserId", bonus.getTargetUserId());
+		int rc=bonusDao.batchUpdate("bonus.activate", parameters );
+		if(rc != 1){
+			throw new IllegalStateException("failed to update bonus");
+		}
+	}
+	
 	private long calculateExpirationTime(long activationTime, Integer tenantid) {
 		Tenant tenant = tenantDao.get(tenantid);
 		return cycleHandler.calculateCycleEndTime(activationTime, tenant);

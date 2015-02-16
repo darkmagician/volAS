@@ -20,7 +20,7 @@ import com.vol.mgmt.PromotionMgmtImpl;
  * @author scott
  *
  */
-@Path("/balance")
+@Path("/promotionbalance")
 public class PromotionBalanceRest {
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 	

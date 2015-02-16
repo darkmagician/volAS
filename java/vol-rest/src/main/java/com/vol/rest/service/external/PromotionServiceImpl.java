@@ -150,7 +150,7 @@ public class PromotionServiceImpl extends AbstractService {
 		}
 		User user = (User) context.get(USER);
 		if(user == null){
-			user = createNewUser(userName);
+			user = createNewUser(userName,tenantId);
 			context.put(USER, user);
 			context.put(ISNEWUSER, Boolean.TRUE);
 			context.put(GRANTED, Collections.EMPTY_LIST);
@@ -186,7 +186,9 @@ public class PromotionServiceImpl extends AbstractService {
 		bonus.setSize(bonusSize);
 		bonus.setPromotionId(promotion.getId());
 		bonus.setUserId(user.getId());
-		
+		bonus.setTargetUserId(user.getId());
+		bonus.setTenantId(promotion.getTenantId());
+		bonus.setExpirationTime(promotion.getBonusExpirationTime());
 		Long id = this.transaction.execute(new TransactionCallback<Long>(){
 
 			@Override
@@ -213,13 +215,10 @@ public class PromotionServiceImpl extends AbstractService {
 	}
 
 
-	/**
-	 * @param userName
-	 * @return
-	 */
-	private User createNewUser(String userName) {
+	private User createNewUser(String userName, Integer tenantId) {
 		final User user = new User();
 		user.setName(userName);
+		user.setTenantId(tenantId);
 		Long id = this.transaction.execute(new TransactionCallback<Long>(){
 
 			@Override

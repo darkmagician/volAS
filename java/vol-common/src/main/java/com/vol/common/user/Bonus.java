@@ -43,6 +43,11 @@ public class Bonus extends BaseEntity {
 	private long activationTime;
 	
 	/**
+	 * 
+	 */
+	private long expirationTime;
+	
+	/**
 	 * The promotion id.
 	 */
 	private int promotionId;
@@ -225,6 +230,8 @@ public class Bonus extends BaseEntity {
 		builder.append(targetQuotaId);
 		builder.append(", activationTime=");
 		builder.append(activationTime);
+		builder.append(", expirationTime=");
+		builder.append(expirationTime);
 		builder.append(", promotionId=");
 		builder.append(promotionId);
 		builder.append(", volumeType=");
@@ -253,5 +260,19 @@ public class Bonus extends BaseEntity {
 	 */
 	public void setTenantId(int tenantId) {
 		this.tenantId = tenantId;
+	}
+
+	/**
+	 * @return the expirationTime
+	 */
+	public long getExpirationTime() {
+		return expirationTime;
+	}
+
+	/**
+	 * @param expirationTime the expirationTime to set
+	 */
+	public void setExpirationTime(long expirationTime) {
+		this.expirationTime = expirationTime;
 	}
 }

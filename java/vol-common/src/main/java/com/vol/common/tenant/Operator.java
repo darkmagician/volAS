@@ -3,6 +3,8 @@
  */
 package com.vol.common.tenant;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import com.vol.common.BaseEntity;
 
 /**
@@ -10,6 +12,7 @@ import com.vol.common.BaseEntity;
  *
  * @author scott
  */
+@JsonIgnoreProperties("password")
 public class Operator extends BaseEntity {
 	
 	/**

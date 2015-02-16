@@ -17,10 +17,23 @@
         <property name="promotionId" column="promotionId" />
         <property name="volumeType" column="volumeType" />
         <property name="tenantId" column="tenantId" />
+        <property name="expirationTime" column="expirationTime" />
     </class> 
      <query name="bonus.byUser">   
         <![CDATA[  
-            from Bonus as bonus where bonus.userId = :userId
+            from Bonus as bonus where bonus.targetUserId = :userId
         ]]>   
-    </query>      
+    </query> 
+
+
+     <query name="bonus.transfer">   
+        <![CDATA[  
+              update Bonus set targetUserId=:targetUserId, updateTime=:current where id=:id and targetUserId=:currentUserId and activationTime=0
+        ]]>   
+    </query> 
+     <query name="bonus.activate">   
+        <![CDATA[  
+              update Bonus set activationTime=:current, updateTime=:current , targetQuotaId=:targetQuotaId where id=:id and targetUserId=:currentUserId and activationTime=0
+        ]]>   
+    </query>              
 </hibernate-mapping>

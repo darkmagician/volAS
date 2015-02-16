@@ -11,7 +11,7 @@
      class="com.vol.rest.service.external.PromotionServiceImpl" init-method="init"/>
  
 
-	<bean id="GetBonusRest" class="com.vol.rest.service.external.GetBonusRest"/>  
+	<bean id="bonusAction" class="com.vol.rest.service.external.BonusAction"/>  
 	<bean id="BonusRest" class="com.vol.rest.service.external.BonusRest"/>     
 	<bean id="PromotionPublicRest" class="com.vol.rest.service.external.PromotionPublicRest"/>     
  	<bean id="QuotaRest" class="com.vol.rest.service.external.QuotaRest"/>     

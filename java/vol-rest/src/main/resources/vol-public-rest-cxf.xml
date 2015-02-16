@@ -4,7 +4,7 @@
     <import resource="classpath:vol-public-rest-beans.xml"/>   
     <jaxrs:server id="public" address="/public">
         <jaxrs:serviceBeans>
-             <ref bean="GetBonusRest" />
+             <ref bean="bonusAction" />
              <ref bean="BonusRest" />
              <ref bean="PromotionPublicRest" />
              <ref bean="QuotaRest" />

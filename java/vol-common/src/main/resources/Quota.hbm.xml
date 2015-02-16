@@ -35,5 +35,10 @@
         <![CDATA[  
              update Quota set balance=:initial, maximum=:initial, updateTime=:updateTime, expirationTime=:newExpirationTime where id=:id and expirationTime=:oldExpirationTime
         ]]>   
-    </query>        
+    </query>    
+    <query name="quota.byUserVolType">   
+        <![CDATA[  
+            from Quota as quota where quota.userId=:userId and quota.volumeType=:volumeType
+        ]]>   
+    </query>         
 </hibernate-mapping>

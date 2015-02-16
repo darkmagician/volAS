@@ -42,4 +42,18 @@ public class OperationResult {
 	public void setMessage(String message) {
 		this.message = message;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("OperationResult [code=");
+		builder.append(code);
+		builder.append(", message=");
+		builder.append(message);
+		builder.append("]");
+		return builder.toString();
+	}
 }
