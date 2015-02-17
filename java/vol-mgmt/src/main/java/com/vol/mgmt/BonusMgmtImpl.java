@@ -93,7 +93,7 @@ public class BonusMgmtImpl extends AbstractService {
 	}
 	
 	public boolean transfer(final Integer tenantid, final Long id,
-			final String userName){
+			final Long fromUser, final String toUser){
 		
 		return this.transaction.execute(new TransactionCallback<Boolean>() {
 
@@ -120,15 +120,21 @@ public class BonusMgmtImpl extends AbstractService {
 					}
 					return false;
 				}
+				if(bonus.getTargetUserId() != fromUser){
+					if (log.isDebugEnabled()) {
+						log.debug("bonus is not owned by userId={}", fromUser);
+					}
+					return false;				
+				}
 				Map<String, Object> parameters = new HashMap<String, Object>();
-				parameters.put("name", userName);
+				parameters.put("name", toUser);
 				parameters.put("tenantId", tenantid);
 				User user = userDao.find("user.byName", parameters);
 				if (user == null) {
 					if (log.isDebugEnabled()) {
 						log.debug(
 								"bonus is not found because User[name={},tenantid={}] is not found",
-								userName, tenantid);
+								toUser, tenantid);
 					}
 					return false;
 				} 

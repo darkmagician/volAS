@@ -3,7 +3,7 @@
         "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="com.vol.common.user">
-    <class name="Quota" table="Quota">
+    <class name="Quota" table="QUOTA">
         <id name="id" column="id">
             <generator class="native"/>
         </id>
@@ -17,7 +17,7 @@
         <property name="expirationTime" column="expirationTime" />
         <property name="volumeType" column="volumeType" />
         <property name="tenantId" column="tenantId" />
-        <property name="userName" column="userName" index="quota_username_idx"/>
+        <property name="userName" column="userName" index="quota_username_idx" length="32"/>
         <property name="reserved" column="reserved" />
     </class> 
     <query name="quota.byUser">   

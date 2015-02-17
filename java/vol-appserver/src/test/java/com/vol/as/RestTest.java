@@ -35,9 +35,39 @@ public class RestTest {
 
 	private final String json = "application/json";
 	private final String form = "application/x-www-form-urlencoded";
+	
+	private int tenantId=1;
+	private int operatorid=1;
+	private int promotionId =1 ;
+	private String userName="abc";
+	private long userId =1;
+	private long bonusId = 1;
+	
+	
+	private WebClient client, client2;
+	
+	private final String server = "http://52.1.96.115:8080";
 
+	private void initClient(){
+		JacksonJsonProvider jsonProvider = new JacksonJsonProvider();
+		FormEncodingProvider formProvider = new FormEncodingProvider(true);
+		List providers = new ArrayList();
+		providers.add(jsonProvider);
+		providers.add(formProvider);
+		
+		client = WebClient.create(server+"/vol-appserver/admin",providers);
+		WebClient.getConfig(client).getInInterceptors().add(new LoggingInInterceptor());
+		WebClient.getConfig(client).getOutInterceptors().add(new LoggingOutInterceptor()); 
+		
+		// public service 
+		client2 = WebClient.create(server+"/vol-appserver/public",providers);
+		WebClient.getConfig(client2).getInInterceptors().add(new LoggingInInterceptor());
+		WebClient.getConfig(client2).getOutInterceptors().add(new LoggingOutInterceptor());
+	}
 	@Test
 	public void test(){
+		initClient();
+		
 		Response restResult;
 		
 		Tenant tanent = new Tenant();
@@ -54,57 +84,205 @@ public class RestTest {
 		promotion.setEndTime(System.currentTimeMillis()+2*24*60*60*1000);
 		promotion.setDescription("Promotion Test1");
 		promotion.setName("Promotion1");
-		promotion.setMaximum(200000);
-		promotion.setRule("return 1000;");
+		promotion.setMaximum(270000);
+		promotion.setRule("if(parameters.vip==1) {return 2300;} else {return 200;}");
 		
-		JacksonJsonProvider jsonProvider = new JacksonJsonProvider();
-		FormEncodingProvider formProvider = new FormEncodingProvider(true);
-		List providers = new ArrayList();
-		providers.add(jsonProvider);
-		providers.add(formProvider);
-		
-		WebClient client = WebClient.create("http://127.0.0.1:8080/vol-appserver/admin",providers);
-		WebClient.getConfig(client).getInInterceptors().add(new LoggingInInterceptor());
-		WebClient.getConfig(client).getOutInterceptors().add(new LoggingOutInterceptor()); 
-		
-		// create tenant
-		System.out.println("creating Tenant");
-		client.path("tenant");
-		client.type(json).accept(json);
-		
-		restResult = client.put(tanent);
-		PutOperationResult result = restResult.readEntity(PutOperationResult.class);
-		System.out.println("put tenant "+result);
 
 		
-		client.reset();
-		System.out.println("check Tenant");
-		int tenantId = 1;//(int) result.getId();
-		client.path("tenant/"+tenantId);
-		restResult = client.get();
-		Tenant tenant1 = restResult.readEntity(Tenant.class);
-		System.out.println("get tenant:"+tenant1);
 		
-		client.reset();
+		createTenant( tanent);
+		showTenant(tenantId);
+		createOperator(operator);
+		showOperator(operatorid);
+		createPromotion(promotion);
+		showPromotion(promotionId);	
+		activePromotion(promotionId);
+		listPublicPromotion(client2);	
+		crabBonus(promotionId, userName);	
 		
-		// create operator
-		System.out.println("creating Operator");
-		client.path("operator");
-		client.type(json).accept(json);
-		
-		operator.setTenantId(tenantId);
-		restResult = client.put(operator);
-		PutOperationResult result2 = restResult.readEntity(PutOperationResult.class);
-		System.out.println("put operator "+result2);
-		
-		client.reset();
-		System.out.println("Check Operator");
-		int operatorid = (int) result2.getId();
-		client.path("operator/"+operatorid);
-		restResult = client.get();
-		Operator operator1 = restResult.readEntity(Operator.class);
-		System.out.println("get operator:"+operator1);
+		showUser(userName);
+		showUserBonus(userId);
 
+		checkPromotionbalance(promotionId);			
+		
+		activeBonus(bonusId);	
+		
+		checkActivatedBonus(userId,bonusId);
+		
+		checkQuota(userId);
+		
+	}
+	/**
+	 * @param userId 
+	 * 
+	 */
+	private void checkQuota(long userId) {
+		Response restResult;
+		client2.reset();
+		//check quota
+		System.out.println("check quota");
+		client2.path("quota/"+tenantId+"/"+userId);
+		client2.type(form).accept(json);
+		restResult = client2.get();
+		 GenericType<List<Quota>> quotalistType = new GenericType<List<Quota>>(){};
+		List<Quota> quota = restResult.readEntity(quotalistType);
+		System.out.println("get quotas:"+quota);
+	}
+	/**
+	 * @param bonusId 
+	 * 
+	 */
+	private void checkActivatedBonus(long userId, long bonusId) {
+		Response restResult;
+		client2.reset();
+		System.out.println("check activated bonus");
+		//check bonus
+		client2.path("bonus/"+tenantId+"/"+userId+"/"+bonusId);
+		client2.type(form).accept(json);
+		restResult = client2.get();
+		Bonus bonus = restResult.readEntity(Bonus.class);
+		System.out.println("get bonus:"+bonus);
+	}
+	/**
+	 * @param bonusId 
+	 * 
+	 */
+	private void activeBonus(long bonusId) {
+		Response restResult;
+		client2.reset();
+		
+		System.out.println("active bonus");
+		client2.path("activebonus/"+tenantId);
+		client2.type(form).accept(json);
+		restResult = client2.post("bonusId="+bonusId);
+		boolean b = restResult.readEntity(Boolean.class);
+		System.out.println("get active bonues :"+b);
+	}
+	/**
+	 * @param promotionId 
+	 * 
+	 */
+	private void checkPromotionbalance(int promotionId) {
+		Response restResult;
+		//check promotion balance
+		client.reset();
+
+		System.out.println("check promotionbalance");
+		client.path("promotionbalance");
+		client.type(json).accept(json);
+		client.query("promotionId", promotionId);
+		restResult = client.get();
+		PromotionBalance balance = restResult.readEntity(PromotionBalance.class);
+		System.out.println("get promotion balance:"+balance);
+	}
+	/**
+	 * @param userId
+	 * @return
+	 */
+	private long showUserBonus(long userId) {
+		Response restResult;
+		client2.reset();
+		
+	
+		System.out.println("check user's bonus");
+		//check bonus
+		client2.path("bonus/"+tenantId+"/"+userId);
+		client2.type(form).accept(json);
+		restResult = client2.get();
+		 GenericType<List<Bonus>> bonusListType = new GenericType<List<Bonus>>(){};
+		List<Bonus> bonuses = restResult.readEntity(bonusListType);
+		System.out.println("list bonuses:"+bonuses);
+		 bonusId = bonuses.get(bonuses.size()-1).getId();
+		return bonusId;
+	}
+	/**
+	 * @param userName 
+	 * @return
+	 */
+	private long showUser(String userName) {
+		Response restResult;
+		client2.reset();
+		//get user info
+		System.out.println("get User info");
+		client2.path("user/"+tenantId);
+		client2.type(json).accept(json);
+		client2.query("userName", userName);
+		restResult = client2.get();
+		User usr = restResult.readEntity(User.class);
+		System.out.println("get user info :"+usr);		
+		userId = usr.getId();
+		return userId;
+	}
+	/**
+	 * @param promotionId 
+	 * 
+	 */
+	private void crabBonus(int promotionId,String userName) {
+		Response restResult;
+		client2.reset();
+		
+		//grab
+		System.out.println("Grab .....");
+		client2.path("getbonus/"+tenantId);
+		client2.type(form).accept(json);
+		restResult = client2.post("promotionId="+promotionId+"&userName="+userName+"&vip=1");
+		BunosResult br = restResult.readEntity(BunosResult.class);
+		System.out.println("get bonusResult :"+br);
+	}
+
+	/**
+	 * @param client2
+	 */
+	private void listPublicPromotion(WebClient client2) {
+		Response restResult;
+		client2.reset();
+		System.out.println("list  promotion from public");
+		client2.path("promotion/"+tenantId);
+		client2.type(form).accept(json);
+		restResult = client2.get();
+		 GenericType<List<Promotion>> promotionListType = new GenericType<List<Promotion>>(){};
+		List<Promotion> promotions = restResult.readEntity(promotionListType);
+		System.out.println("list promotion:"+promotions);
+	}
+
+	/**
+	 * @param promotionId 
+	 */
+	private void activePromotion(int promotionId) {
+		Response restResult;
+		client.reset();
+		
+		System.out.println("active  promotion");
+		//active promotion
+		client.path("promotion/active/"+promotionId);
+		client.type(json).accept(json);
+		restResult = client.post(null);
+		OperationResult result4 = restResult.readEntity(OperationResult.class);
+		System.out.println("active promotion:"+result4);
+	}
+
+	/**
+	 * @param promotionId 
+	 */
+	private void showPromotion(int promotionId) {
+		Response restResult;
+		client.reset();
+		
+		System.out.println("get  promotion");
+
+		client.path("promotion/"+tenantId+"/"+promotionId);
+		client.type(json).accept(json);
+		restResult = client.get();
+		Promotion promotion1 = restResult.readEntity(Promotion.class);
+		System.out.println("get promotion:"+promotion1);
+	}
+
+	/**
+	 * @param promotion
+	 * @return
+	 */
+	private int createPromotion(Promotion promotion) {
+		Response restResult;
 		client.reset();
 		
 		//create promotion
@@ -117,113 +295,73 @@ public class RestTest {
 		restResult = client.put(promotion);
 		PutOperationResult result3 = restResult.readEntity(PutOperationResult.class);
 		System.out.println("put promotion "+result3);
-		
-		client.reset();
-		
-		System.out.println("get  promotion");
-		int promotionId = (int) result3.getId();
-		client.path("promotion/"+tenantId+"/"+promotionId);
-		client.type(json).accept(json);
-		restResult = client.get();
-		Promotion promotion1 = restResult.readEntity(Promotion.class);
-		System.out.println("get promotion:"+promotion1);	
-		
-		client.reset();
-		
-		System.out.println("active  promotion");
-		//active promotion
-		client.path("promotion/active/"+promotionId);
-		client.type(json).accept(json);
-		restResult = client.post(null);
-		OperationResult result4 = restResult.readEntity(OperationResult.class);
-		System.out.println("active promotion:"+result4);
-		client.reset();
-		
-		// public service 
-		WebClient client2 = WebClient.create("http://127.0.0.1:8080/vol-appserver/public",providers);
-		WebClient.getConfig(client2).getInInterceptors().add(new LoggingInInterceptor());
-		WebClient.getConfig(client2).getOutInterceptors().add(new LoggingOutInterceptor());
-		
-		System.out.println("list  promotion from public");
-		client2.path("promotion/"+tenantId);
-		client2.type(form).accept(json);
-		restResult = client2.get();
-		 GenericType<List<Promotion>> promotionListType = new GenericType<List<Promotion>>(){};
-		List<Promotion> promotions = restResult.readEntity(promotionListType);
-		System.out.println("list promotion:"+promotions);	
-		
-		client2.reset();
-		
-		//grab
-		System.out.println("Grab .....");
-		client2.path("getbonus/"+tenantId);
-		client2.type(form).accept(json);
-		restResult = client2.post("promotionId="+promotionId+"&userName=User1111");
-		BunosResult br = restResult.readEntity(BunosResult.class);
-		System.out.println("get bonusResult :"+br);	
-		
-		client2.reset();
-		//get user info
-		System.out.println("get User info");
-		client2.path("user/"+tenantId);
-		client2.type(json).accept(json);
-		client2.query("userName", "User1111");
-		restResult = client2.get();
-		User usr = restResult.readEntity(User.class);
-		System.out.println("get user info :"+usr);		
-		
-		
-		client2.reset();
-		
-		long userId = usr.getId();
-		System.out.println("check user's bonus");
-		//check bonus
-		client2.path("bonus/"+tenantId+"/"+userId);
-		client2.type(form).accept(json);
-		restResult = client2.get();
-		 GenericType<List<Bonus>> bonusListType = new GenericType<List<Bonus>>(){};
-		List<Bonus> bonuses = restResult.readEntity(bonusListType);
-		System.out.println("list bonuses:"+bonuses);
-		long bonusId = bonuses.get(bonuses.size()-1).getId();
+		promotionId = (int) result3.getId();
+		return promotionId;
+	}
 
-		client2.reset();
-		
-		//check promotion balance
-		System.out.println("check promotionbalance");
-		client.path("promotionbalance");
-		client.type(json).accept(json);
-		client.query("promotionId", promotionId);
+	/**
+	 * @param operatorid 
+	 */
+	private void showOperator(int operatorid) {
+		Response restResult;
+		client.reset();
+		System.out.println("Check Operator");
+		client.path("operator/"+operatorid);
 		restResult = client.get();
-		PromotionBalance balance = restResult.readEntity(PromotionBalance.class);
-		System.out.println("get promotion balance:"+balance);			
-		
+		Operator operator1 = restResult.readEntity(Operator.class);
+		System.out.println("get operator:"+operator1);
+	}
+
+	/**
+	 * @param operator
+	 */
+	private void createOperator(Operator operator) {
+		Response restResult;
 		client.reset();
 		
-		System.out.println("active bonus");
-		client2.path("activebonus/"+tenantId);
-		client2.type(form).accept(json);
-		restResult = client2.post("bonusId="+bonusId);
-		boolean b = restResult.readEntity(Boolean.class);
-		System.out.println("get active bonues :"+b);	
+		// create operator
+		System.out.println("creating Operator");
+		client.path("operator");
+		client.type(json).accept(json);
 		
-		client2.reset();
-		System.out.println("check activated bonus");
-		//check bonus
-		client2.path("bonus/"+tenantId+"/"+userId+"/"+bonusId);
-		client2.type(form).accept(json);
-		restResult = client2.get();
-		Bonus bonus = restResult.readEntity(Bonus.class);
-		System.out.println("get bonus:"+bonus);
+		operator.setTenantId(tenantId);
+		restResult = client.put(operator);
+		PutOperationResult result2 = restResult.readEntity(PutOperationResult.class);
+		System.out.println("put operator "+result2);
+		operatorid = (int) result2.getId();
+	}
+
+	/**
+	 * @param tanent
+	 * @return
+	 */
+	private int createTenant(Tenant tanent) {
+		Response restResult;
+		client.reset();
+		// create tenant
+		System.out.println("creating Tenant");
+		client.path("tenant");
+		client.type(json).accept(json);
 		
-		client2.reset();
-		//check quota
-		System.out.println("check quota");
-		client2.path("quota/"+tenantId+"/"+userId);
-		client2.type(form).accept(json);
-		restResult = client2.get();
-		 GenericType<List<Quota>> quotalistType = new GenericType<List<Quota>>(){};
-		List<Quota> quota = restResult.readEntity(quotalistType);
-		System.out.println("get quotas:"+quota);
-		
+		restResult = client.put(tanent);
+		PutOperationResult result = restResult.readEntity(PutOperationResult.class);
+		System.out.println("put tenant "+result);
+
+		tenantId = (int) result.getId();
+		return tenantId;
+	}
+
+	/**
+	 * @param tenantId
+	 */
+	private void showTenant(int tenantId) {
+		Response restResult;
+		client.reset();
+		System.out.println("check Tenant");
+
+		client.path("tenant/"+tenantId);
+		restResult = client.get();
+		Tenant tenant1 = restResult.readEntity(Tenant.class);
+		System.out.println("get tenant:"+tenant1);
 	}
 }
