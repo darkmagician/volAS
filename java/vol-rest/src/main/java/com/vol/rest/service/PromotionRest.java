@@ -37,7 +37,7 @@ public class PromotionRest extends BaseRest<Promotion>{
     @Path("/{tenantId}/{promotionid}")
     @Produces("application/json")
 	public Promotion get(@PathParam("tenantId")Integer tenantId, @PathParam("promotionid")Integer promotionId){
-    	return promotionMgmt.getPromotion(promotionId);
+    	return promotionMgmt.get(promotionId);
     }
     
     @GET
@@ -62,7 +62,7 @@ public class PromotionRest extends BaseRest<Promotion>{
     public PutOperationResult create(Promotion promotion){
     	PutOperationResult result = new PutOperationResult();
     	try{
-    		Integer id = promotionMgmt.addPromotion(promotion);
+    		Integer id = promotionMgmt.add(promotion);
     		result.setCode(PutOperationResult.SUCCESS);
     		result.setId(id.intValue());
     	}catch(Throwable e){
@@ -75,10 +75,11 @@ public class PromotionRest extends BaseRest<Promotion>{
     @Path("/")
     @Consumes("application/json")
     @Produces("application/json")
-    public OperationResult update(Promotion promotion){
+    public OperationResult update(Promotion promotion,@PathParam("id")Integer id){
     	OperationResult result = new OperationResult();
     	try{
-    		promotionMgmt.updatePromotion(promotion);
+    		promotion.setId(id);
+    		promotionMgmt.update(id,promotion);
     		result.setCode(PutOperationResult.SUCCESS);
     	}catch(Throwable e){
     		log.error("failed to update promotion, "+promotion,e);

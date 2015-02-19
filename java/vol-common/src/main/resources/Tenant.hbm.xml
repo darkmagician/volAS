@@ -18,5 +18,10 @@
         <![CDATA[  
             from Tenant
         ]]>   
-    </query>     
+    </query>   
+    <query name="tenant.all.total">   
+        <![CDATA[  
+           select count(*) from Tenant
+        ]]>   
+    </query>       
 </hibernate-mapping>

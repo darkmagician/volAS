@@ -7,6 +7,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import com.vol.common.mgmt.PagingResult;
+
 
 /**
  * The Interface DAO.
@@ -78,4 +80,21 @@ public interface DAO <K extends Serializable, T extends BaseEntity>{
 	 * @return the t
 	 */
 	public abstract T get(K id);
+
+	/**
+	 * @param queryName
+	 * @param parameters
+	 * @return
+	 */
+	public abstract long getTotal(String queryName, Map<String, Object> parameters);
+
+	/**
+	 * @param queryName
+	 * @param parameters
+	 * @param startPage
+	 * @param pageSize
+	 * @return
+	 */
+	public abstract PagingResult<T> queryByPage(String queryName, Map<String, Object> parameters, int startPage,
+			int pageSize);
 }

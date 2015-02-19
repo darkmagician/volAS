@@ -16,27 +16,18 @@ import org.springframework.transaction.support.TransactionCallback;
 import com.vol.common.DAO;
 import com.vol.common.user.Quota;
 import com.vol.common.user.User;
-import com.vol.dao.AbstractService;
+import com.vol.dao.AbstractQueryService;
 
 /**
  * @author scott
  *
  */
-public class QuotaMgmtImpl extends AbstractService {
+public class QuotaMgmtImpl  extends AbstractQueryService<Long,Quota>  {
 	@Resource(name="quotaDao")
 	protected DAO<Long,Quota> quotaDao;
 	@Resource(name="userDao")
 	protected DAO<Long,User> userDao;
 	
-	public Quota getQuota(final long id){
-		Quota quota = this.readonlyTransaction.execute(new TransactionCallback<Quota>(){
-
-			@Override
-			public Quota doInTransaction(TransactionStatus status) {
-				return quotaDao.get(id);
-			}});	
-		return quota;
-	}
 	public List<Quota> getQuotasByUser( final Long userid){
 		return this.readonlyTransaction
 				.execute(new TransactionCallback<List<Quota>>() {
@@ -69,12 +60,11 @@ public class QuotaMgmtImpl extends AbstractService {
 			}});	
 	}
 	
-	public List<Quota> list(final String queryName, final Map<String,Object> parameters){
-		return this.readonlyTransaction.execute(new TransactionCallback<List<Quota>>(){
-
-			@Override
-			public List<Quota> doInTransaction(TransactionStatus status) {
-				return quotaDao.query(queryName, parameters);
-			}});	
+	/* (non-Javadoc)
+	 * @see com.vol.dao.AbstractQueryService#getDAO()
+	 */
+	@Override
+	protected DAO<Long, Quota> getDAO() {
+		return quotaDao;
 	}
 }

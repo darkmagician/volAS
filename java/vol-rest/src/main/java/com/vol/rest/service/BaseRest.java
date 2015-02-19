@@ -9,6 +9,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -58,10 +59,10 @@ public abstract class BaseRest<T> {
 	 * @return the operation result
 	 */
     @POST
-    @Path("/")
+    @Path("/{id}")
     @Consumes("application/json")
     @Produces("application/json")
-	public abstract OperationResult update(T obj);	
+	public abstract OperationResult update(T obj, @PathParam("id")Integer id);	
     
     /**
 	 * Creates the.
@@ -98,13 +99,13 @@ public abstract class BaseRest<T> {
 	 *             the invocation target exception
 	 */
 	@POST
-    @Path("/")
+    @Path("/{id}")
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
-    public OperationResult update(MultivaluedMap<String,String> map) throws IllegalAccessException, InvocationTargetException{
+    public OperationResult update(MultivaluedMap<String,String> map, @PathParam("id")Integer id) throws IllegalAccessException, InvocationTargetException{
     	T obj = createObject();
 		BeanUtils.populate(obj, new FormMap(map));
-		return update(obj);
+		return update(obj,id);
     	
     }
 }

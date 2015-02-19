@@ -18,13 +18,13 @@ import com.vol.common.tenant.Tenant;
 import com.vol.common.user.Bonus;
 import com.vol.common.user.Quota;
 import com.vol.common.user.User;
-import com.vol.dao.AbstractService;
+import com.vol.dao.AbstractQueryService;
 
 /**
  * @author scott
  *
  */
-public class BonusMgmtImpl extends AbstractService {
+public class BonusMgmtImpl extends AbstractQueryService<Long,Bonus> {
 
 	@Resource(name = "userDao")
 	protected DAO<Long, User> userDao;
@@ -41,17 +41,6 @@ public class BonusMgmtImpl extends AbstractService {
 	@Resource(name = "cycleHandler")
 	protected CycleHandler cycleHandler;
 	
-	public Bonus getBonus(final Long id) {
-		Bonus bonus = this.readonlyTransaction
-				.execute(new TransactionCallback<Bonus>() {
-
-					@Override
-					public Bonus doInTransaction(TransactionStatus status) {
-						return bonusDao.get(id);
-					}
-				});
-		return bonus;
-	}
 
 	public List<Bonus> listBonusByUserName(final Integer tenantid,
 			final String userName) {
@@ -93,7 +82,7 @@ public class BonusMgmtImpl extends AbstractService {
 	}
 	
 	public boolean transfer(final Integer tenantid, final Long id,
-			final Long fromUser, final String toUser){
+			final Long fromUserId, final String fromUserName, final String toUser){
 		
 		return this.transaction.execute(new TransactionCallback<Boolean>() {
 
@@ -120,9 +109,21 @@ public class BonusMgmtImpl extends AbstractService {
 					}
 					return false;
 				}
-				if(bonus.getTargetUserId() != fromUser){
+				Long fromUserId0 = fromUserId;
+				if(fromUserId0==null){
+					Map<String, Object> parameters = new HashMap<String, Object>();
+					parameters.put("name", fromUserName);
+					parameters.put("tenantId", tenantid);
+					User user = userDao.find("user.byName", parameters);
+					if(user == null){
+						log.debug("invalid fromUserName: {}", fromUserName);
+						return false;
+					}
+					fromUserId0 = user.getId();
+				}
+				if(bonus.getTargetUserId() != fromUserId0){
 					if (log.isDebugEnabled()) {
-						log.debug("bonus is not owned by userId={}", fromUser);
+						log.debug("bonus is not owned by userId={}", fromUserId0);
 					}
 					return false;				
 				}
@@ -288,5 +289,14 @@ public class BonusMgmtImpl extends AbstractService {
 	private long calculateExpirationTime(long activationTime, Integer tenantid) {
 		Tenant tenant = tenantDao.get(tenantid);
 		return cycleHandler.calculateCycleEndTime(activationTime, tenant);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.vol.dao.AbstractService#getDAO()
+	 */
+	@Override
+	protected DAO<Long, Bonus> getDAO() {
+		return bonusDao;
 	}
 }

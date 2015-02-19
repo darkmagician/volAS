@@ -15,6 +15,7 @@ import org.hibernate.SessionFactory;
 
 import com.vol.common.BaseEntity;
 import com.vol.common.DAO;
+import com.vol.common.mgmt.PagingResult;
 
 /**
  * The Class DAOImpl.
@@ -148,6 +149,37 @@ public class DAOImpl<K extends Serializable, T extends BaseEntity> implements DA
 	public T find(String queryName, Map<String, Object> parameters) {
 		List<T> list = query(queryName, parameters);
 		return list==null || list.isEmpty()? null: list.iterator().next();
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see com.vol.common.DAO#getTotal(java.lang.String, java.util.Map)
+	 */
+	@Override
+	public long getTotal(String queryName, Map<String, Object> parameters) {
+		queryName = queryName+".total";
+		Session session = getCurrentSession();
+		Query query=session.getNamedQuery(queryName);
+		query.setProperties(parameters);
+		return (Long) query.uniqueResult();
+	}
+	
+	@Override
+	public PagingResult<T> queryByPage(String queryName, Map<String, Object> parameters , int startPage, int pageSize){
+		PagingResult<T> result = new PagingResult<T>();
+		Session session = getCurrentSession();
+		
+		Query query1=session.getNamedQuery(queryName+".total");
+		query1.setProperties(parameters);
+		long total = (Long) query1.uniqueResult();
+		result.setTotal((int)total);
+		
+		Query query=session.getNamedQuery(queryName);
+		query.setProperties(parameters);
+		query.setFirstResult((startPage - 1) * pageSize);
+		query.setMaxResults(pageSize);
+		result.setRows( query.list());
+		return result;
 	}
 
 }

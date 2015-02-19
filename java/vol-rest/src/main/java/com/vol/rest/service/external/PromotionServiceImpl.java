@@ -22,14 +22,14 @@ import com.vol.common.tenant.Promotion;
 import com.vol.common.tenant.PromotionBalance;
 import com.vol.common.user.Bonus;
 import com.vol.common.user.User;
-import com.vol.dao.AbstractService;
+import com.vol.dao.AbstractTransactionService;
 import com.vol.rest.result.BunosResult;
 
 /**
  * @author scott
  *
  */
-public class PromotionServiceImpl extends AbstractService {
+public class PromotionServiceImpl extends AbstractTransactionService{
 
 	/**
 	 * 

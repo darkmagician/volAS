@@ -32,7 +32,7 @@ public class PromotionPublicRest{
 	@Path("/{tenantId}/{promotionId}")
 	@Produces("application/json")
 	public Promotion get(@PathParam("tenantId")Integer tenantId, @PathParam("promotionId")Integer promotionId){
-		Promotion promotion = promotionMgmt.getPromotion(promotionId);
+		Promotion promotion = promotionMgmt.get(promotionId);
 		if(promotion != null){
 			if(promotion.getTenantId() != tenantId){
 				return null;

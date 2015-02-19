@@ -31,7 +31,7 @@ public class UserRest {
 	@Path("/{tenantId}/{userId}")
 	@Produces("application/json")
 	public User get(@PathParam("tenantId")Integer tenantId, @PathParam("userId")Long userId){
-		User user = userMgmt.getUser(userId);
+		User user = userMgmt.get(userId);
 		if(user != null){
 			if(user.getTenantId() != tenantId){
 				return null;

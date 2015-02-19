@@ -3,12 +3,11 @@
  */
 package com.vol.dao;
 
-import javax.annotation.Resource;
+import java.io.Serializable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
 import com.vol.common.BaseEntity;
 import com.vol.common.mgmt.VolMgmtException;
@@ -17,21 +16,10 @@ import com.vol.common.mgmt.VolMgmtException;
  * @author scott
  *
  */
-public class AbstractService {
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+public abstract class AbstractService<K extends Serializable, V extends BaseEntity> extends AbstractQueryService<K,V>{
+
 	
-	@Resource(name="transactionManager")
-	protected PlatformTransactionManager txManager;
-	
-	protected final TransactionTemplate readonlyTransaction = new TransactionTemplate();
-	protected final TransactionTemplate transaction = new TransactionTemplate();
-	
-	public void init(){ 
-		log.info("{} is starting.",getClass());
-		readonlyTransaction.setReadOnly(true);
-		readonlyTransaction.setTransactionManager(txManager);
-		transaction.setTransactionManager(txManager);
-	}
+
 	
 	/**
 	 * @param newEntity
@@ -45,21 +33,39 @@ public class AbstractService {
 		}
 	}
 
-	/**
-	 * @param obj
-	 */
-	public static void initEntity(BaseEntity obj) {
-		obj.setStatus(BaseEntity.ACTIVE);
-		long now = System.currentTimeMillis();
-		obj.setUpdateTime(now);
-		obj.setCreationTime(now);
+
+
+	
+	public K add(final V obj){
+		K id = this.transaction.execute(new TransactionCallback<K>(){
+
+			@Override
+			public K doInTransaction(TransactionStatus status) {
+				initEntity(obj);
+				return getDAO().create(obj);
+			}
+
+			});
+		return id;
 	}
 	
-	/**
-	 * @param obj
-	 */
-	static public void updateEntity(BaseEntity obj) {
-		long now = System.currentTimeMillis();
-		obj.setUpdateTime(now);
+	
+	public void update(final K id, final V obj){
+		this.transaction.execute(new TransactionCallbackWithoutResult(){
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				V old = getDAO().get(id);
+				validateUpdateTime(obj, old);
+				updateEntity(old);
+				copyAttribute(obj,old);
+				getDAO().update(old);
+				
+			}
+
+		});
 	}
+	protected  void copyAttribute(V obj, V old){};
+	
+
 }

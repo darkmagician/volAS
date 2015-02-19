@@ -32,7 +32,7 @@ public class OperatorRest extends BaseRest<Operator>{
     @Path("/{operatorId}")
     @Produces("application/json")
 	public Operator get(@PathParam("operatorId")Integer operatorId){
-    	Operator operator = operatorMgmt.getOperator(operatorId);
+    	Operator operator = operatorMgmt.get(operatorId);
     	operator.setPassword(null);
     	return operator;
     }
@@ -53,7 +53,7 @@ public class OperatorRest extends BaseRest<Operator>{
     public PutOperationResult create(Operator operator){
     	PutOperationResult result = new PutOperationResult();
     	try{
-    		Integer id = operatorMgmt.addOperator(operator);
+    		Integer id = operatorMgmt.add(operator);
     		result.setCode(PutOperationResult.SUCCESS);
     		result.setId(id.intValue());
     	}catch(Throwable e){
@@ -63,10 +63,11 @@ public class OperatorRest extends BaseRest<Operator>{
 		return result;
     }
     
-    public OperationResult update(Operator operator){
+    public OperationResult update(Operator operator, @PathParam("id")Integer id){
     	OperationResult result = new OperationResult();
     	try{
-    		operatorMgmt.updateOperator(operator);
+    		operator.setId(id);
+    		operatorMgmt.update(id,operator);
     		result.setCode(PutOperationResult.SUCCESS);
     	}catch(Throwable e){
     		log.error("failed to update operator, "+operator,e);

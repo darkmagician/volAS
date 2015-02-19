@@ -47,7 +47,7 @@ public class RestTest {
 	private WebClient client, client2;
 	
 	private final String server = "http://52.1.96.115:8080";
-
+	//private final String server = "http://localhost:8080/vol-admin/rs/";
 	private void initClient(){
 		JacksonJsonProvider jsonProvider = new JacksonJsonProvider();
 		FormEncodingProvider formProvider = new FormEncodingProvider(true);
@@ -55,12 +55,12 @@ public class RestTest {
 		providers.add(jsonProvider);
 		providers.add(formProvider);
 		
-		client = WebClient.create(server+"/vol-appserver/admin",providers);
+		client = WebClient.create(server+"admin",providers);
 		WebClient.getConfig(client).getInInterceptors().add(new LoggingInInterceptor());
 		WebClient.getConfig(client).getOutInterceptors().add(new LoggingOutInterceptor()); 
 		
 		// public service 
-		client2 = WebClient.create(server+"/vol-appserver/public",providers);
+		client2 = WebClient.create(server+"public",providers);
 		WebClient.getConfig(client2).getInInterceptors().add(new LoggingInInterceptor());
 		WebClient.getConfig(client2).getOutInterceptors().add(new LoggingOutInterceptor());
 	}
@@ -103,6 +103,7 @@ public class RestTest {
 		showUser(userName);
 		showUserBonus(userId);
 
+		showUserBonus(userName);
 		checkPromotionbalance(promotionId);			
 		
 		activeBonus(bonusId);	
@@ -110,7 +111,7 @@ public class RestTest {
 		checkActivatedBonus(userId,bonusId);
 		
 		checkQuota(userId);
-		
+		checkQuota(userName);
 	}
 	/**
 	 * @param userId 
@@ -128,6 +129,25 @@ public class RestTest {
 		List<Quota> quota = restResult.readEntity(quotalistType);
 		System.out.println("get quotas:"+quota);
 	}
+	
+	/**
+	 * @param userId 
+	 * 
+	 */
+	private void checkQuota(String userName) {
+		Response restResult;
+		client2.reset();
+		//check quota
+		System.out.println("check quota by userName");
+		client2.path("quota/"+tenantId);
+		client2.query("userName", userName);
+		client2.type(form).accept(json);
+		restResult = client2.get();
+		 GenericType<List<Quota>> quotalistType = new GenericType<List<Quota>>(){};
+		List<Quota> quota = restResult.readEntity(quotalistType);
+		System.out.println("get quotas:"+quota);
+	}
+	
 	/**
 	 * @param bonusId 
 	 * 
@@ -195,6 +215,30 @@ public class RestTest {
 		 bonusId = bonuses.get(bonuses.size()-1).getId();
 		return bonusId;
 	}
+	
+	/**
+	 * @param userName
+	 * @return
+	 */
+	private long showUserBonus(String userName) {
+		Response restResult;
+		client2.reset();
+		
+	
+		System.out.println("check user's bonus by name");
+		//check bonus
+		client2.path("bonus/"+tenantId);
+		client2.query("userName", userName);
+		client2.type(form).accept(json);
+		restResult = client2.get();
+		 GenericType<List<Bonus>> bonusListType = new GenericType<List<Bonus>>(){};
+		List<Bonus> bonuses = restResult.readEntity(bonusListType);
+		System.out.println("list bonuses:"+bonuses);
+		 bonusId = bonuses.get(bonuses.size()-1).getId();
+		return bonusId;
+	}
+	
+	
 	/**
 	 * @param userName 
 	 * @return
