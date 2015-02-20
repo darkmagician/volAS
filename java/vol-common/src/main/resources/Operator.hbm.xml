@@ -19,5 +19,11 @@
         <![CDATA[  
             from Operator
         ]]>   
+    </query>  
+    
+     <query name="operator.byName">   
+        <![CDATA[  
+            from Operator where name=:name
+        ]]>   
     </query>    
 </hibernate-mapping>

@@ -3,6 +3,9 @@
  */
 package com.vol.rest.service.external;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -16,7 +19,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import com.vol.common.util.StringParser;
 import com.vol.mgmt.BonusMgmtImpl;
 import com.vol.rest.result.BunosResult;
-import com.vol.rest.service.FormMap;
+import com.vol.rest.service.MapConverter;
 
 
 /**
@@ -45,7 +48,8 @@ public class BonusAction {
 	@Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
 	public BunosResult giveMeBonus(@PathParam("tenantId")Integer tenantId, MultivaluedMap<String, String> params) {
-	   FormMap input = new FormMap(params);
+    	Map<String,String> input = new HashMap<String,String>();
+    	MapConverter.convert(params, input);
 	   Integer promotionId = StringParser.parseInteger(input.get("promotionId"));
        String name = input.get("userName");
        return promotionService.giveMeBonus(tenantId,promotionId,name,input);

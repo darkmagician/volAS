@@ -46,8 +46,8 @@ public class RestTest {
 	
 	private WebClient client, client2;
 	
-	private final String server = "http://52.1.96.115:8080";
-	//private final String server = "http://localhost:8080/vol-admin/rs/";
+	//private final String server = "http://52.1.96.115:8080/vol-appserver/";
+	private final String server = "http://localhost:8080/vol-admin/rs/";
 	private void initClient(){
 		JacksonJsonProvider jsonProvider = new JacksonJsonProvider();
 		FormEncodingProvider formProvider = new FormEncodingProvider(true);
@@ -68,8 +68,6 @@ public class RestTest {
 	public void test(){
 		initClient();
 		
-		Response restResult;
-		
 		Tenant tanent = new Tenant();
 		tanent.setName("Tenant1");
 		tanent.setDescription("first Tenant");
@@ -89,12 +87,20 @@ public class RestTest {
 		
 
 		
+		if(getTenantByName(tanent.getName()) == null){
+			createTenant( tanent);
+		}
 		
-		createTenant( tanent);
 		showTenant(tenantId);
-		createOperator(operator);
+		
+		if(getOperatorByName(operator.getName()) == null){
+			createOperator(operator);
+		}
 		showOperator(operatorid);
-		createPromotion(promotion);
+		if(getPromotionByName(promotion.getName()) == null){
+			createPromotion(promotion);
+		}
+		
 		showPromotion(promotionId);	
 		activePromotion(promotionId);
 		listPublicPromotion(client2);	
@@ -320,6 +326,34 @@ public class RestTest {
 		Promotion promotion1 = restResult.readEntity(Promotion.class);
 		System.out.println("get promotion:"+promotion1);
 	}
+	
+	
+	/**
+	 * @param promotionId 
+	 * @return 
+	 */
+	private Promotion getPromotionByName(String name) {
+		Response restResult;
+		client.reset();
+		
+		System.out.println("get  promotion");
+
+		client.path("promotion/"+tenantId);
+		client.query("query", "byName");
+		client.query("name", name);
+		client.type(json).accept(json);
+		restResult = client.get();
+		List<Promotion> promotion1;
+		 GenericType<List<Promotion>> promotionListType = new GenericType<List<Promotion>>(){};
+		promotion1 = restResult.readEntity(promotionListType);
+		System.out.println("get promotion:"+promotion1);
+		if(promotion1.isEmpty()){
+			return null;
+		}
+		this.promotionId = promotion1.get(0).getId();
+		return promotion1.get(0);
+	}
+
 
 	/**
 	 * @param promotion
@@ -351,9 +385,31 @@ public class RestTest {
 		client.reset();
 		System.out.println("Check Operator");
 		client.path("operator/"+operatorid);
+		client.type(json).accept(json);
 		restResult = client.get();
 		Operator operator1 = restResult.readEntity(Operator.class);
 		System.out.println("get operator:"+operator1);
+	}
+	
+	
+	private Operator getOperatorByName(String name) {
+		Response restResult;
+		client.reset();
+		System.out.println("Check Operator");
+		client.path("operator");
+		client.query("query", "byName");
+		client.query("name", name);
+		client.type(json).accept(json);
+		restResult = client.get();
+		List<Operator> operator1;
+		 GenericType<List<Operator>> operatorListType = new GenericType<List<Operator>>(){};
+		operator1 = restResult.readEntity(operatorListType);
+		System.out.println("get operator:"+operator1);
+		if(operator1.isEmpty()){
+			return null;
+		}
+		this.operatorid = operator1.get(0).getId();
+		return operator1.get(0);
 	}
 
 	/**
@@ -407,5 +463,25 @@ public class RestTest {
 		restResult = client.get();
 		Tenant tenant1 = restResult.readEntity(Tenant.class);
 		System.out.println("get tenant:"+tenant1);
+	}
+	
+	private Tenant getTenantByName(String name) {
+		Response restResult;
+		client.reset();
+		System.out.println("get Tenant by name");
+
+		client.path("tenant");
+		client.query("query", "byName");
+		client.query("name", name);
+		restResult = client.get();
+		List<Tenant> tenant1;
+		 GenericType<List<Tenant>> tenantListType = new GenericType<List<Tenant>>(){};
+		tenant1 = restResult.readEntity(tenantListType);
+		System.out.println("getbyName tenant:"+tenant1);
+		if(tenant1.isEmpty()){
+			return null;
+		}
+		this.tenantId = tenant1.get(0).getId();
+		return tenant1.get(0);
 	}
 }

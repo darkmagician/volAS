@@ -4,18 +4,24 @@
 package com.vol.rest.service;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriInfo;
 
 import com.vol.common.tenant.Operator;
 import com.vol.mgmt.OperatorMgmtImpl;
 import com.vol.rest.result.OperationResult;
 import com.vol.rest.result.PutOperationResult;
+import com.vol.rest.service.MapConverter.Converter;
 
 /**
  * @author scott
@@ -37,7 +43,7 @@ public class OperatorRest extends BaseRest<Operator>{
     	return operator;
     }
     
-    @GET
+/*    @GET
     @Path("/")
     @Produces("application/json")
 	public List<Operator> list(){
@@ -49,6 +55,26 @@ public class OperatorRest extends BaseRest<Operator>{
     	 }
     	 return list;
     }  
+    
+    */
+    @GET
+    @Path("/")
+    @Produces("application/json")
+	public List<Operator> list(@Context UriInfo uriInfo){
+    	MultivaluedMap<String, String> pathPara = uriInfo.getQueryParameters();
+    	String queryName = pathPara.getFirst("query");
+    	
+    	if(queryName == null || "".equals(queryName)){
+    		return operatorMgmt.list("operator.all", Collections.<String, Object> emptyMap());
+    	}else{
+    		Map<String,Object> map = new HashMap<String,Object>();
+    		map.put("current", System.currentTimeMillis());
+    		MapConverter.convert(pathPara, map, Collections.<String, Converter> emptyMap());
+    		return operatorMgmt.list("operator."+queryName, map);
+    		
+    	}
+    }  
+    
     
     public PutOperationResult create(Operator operator){
     	PutOperationResult result = new PutOperationResult();

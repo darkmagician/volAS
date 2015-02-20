@@ -4,6 +4,8 @@
 package com.vol.rest.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -81,7 +83,9 @@ public abstract class BaseRest<T> {
     @Produces("application/json")
     public PutOperationResult create(MultivaluedMap<String,String> map) throws IllegalAccessException, InvocationTargetException{
     	T obj = createObject();
-		BeanUtils.populate(obj, new FormMap(map));
+    	Map<String,String> formMap = new HashMap<String,String>();
+    	MapConverter.convert(map, formMap);
+		BeanUtils.populate(obj, formMap);
 		return create(obj);
     	
     }
@@ -104,8 +108,13 @@ public abstract class BaseRest<T> {
     @Produces("application/json")
     public OperationResult update(MultivaluedMap<String,String> map, @PathParam("id")Integer id) throws IllegalAccessException, InvocationTargetException{
     	T obj = createObject();
-		BeanUtils.populate(obj, new FormMap(map));
+    	Map<String,String> formMap = new HashMap<String,String>();
+    	MapConverter.convert(map, formMap);
+		BeanUtils.populate(obj, formMap);
 		return update(obj,id);
     	
     }
+	
+	
+	
 }

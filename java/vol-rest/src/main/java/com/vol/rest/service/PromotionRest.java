@@ -16,12 +16,15 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriInfo;
 
 import com.vol.common.tenant.Promotion;
 import com.vol.mgmt.PromotionMgmtImpl;
 import com.vol.rest.result.OperationResult;
 import com.vol.rest.result.PutOperationResult;
+import com.vol.rest.service.MapConverter.Converter;
 
 /**
  * @author scott
@@ -43,13 +46,16 @@ public class PromotionRest extends BaseRest<Promotion>{
     @GET
     @Path("/{tenantId}")
     @Produces("application/json")
-	public List<Promotion> list(@PathParam("tenantId")Integer tenantId, @QueryParam("query")String queryName){
+	public List<Promotion> list(@PathParam("tenantId")Integer tenantId, @Context UriInfo uriInfo){
+    	MultivaluedMap<String, String> pathPara = uriInfo.getQueryParameters();
+    	String queryName = pathPara.getFirst("query");
     	if(queryName == null || "".equals(queryName)){
     		return promotionMgmt.list("promotion.all", Collections.singletonMap("tenantId", (Object)tenantId));
     	}else{
     		Map<String,Object> map = new HashMap<String,Object>();
     		map.put("current", System.currentTimeMillis());
     		map.put("tenantId", tenantId);
+    		MapConverter.convert(pathPara, map, Collections.<String, Converter> emptyMap());
     		return promotionMgmt.list("promotion."+queryName, map);
     		
     	}

@@ -23,5 +23,11 @@
         <![CDATA[  
            select count(*) from Tenant
         ]]>   
-    </query>       
+    </query>  
+
+    <query name="tenant.byName">   
+        <![CDATA[  
+            from Tenant where name=:name
+        ]]>   
+    </query>          
 </hibernate-mapping>

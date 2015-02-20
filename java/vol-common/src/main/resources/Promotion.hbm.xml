@@ -46,5 +46,11 @@
         <![CDATA[  
             from Promotion as promotion where promotion.tenantId=:tenantId and promotion.status=2 and promotion.endTime<:current
         ]]>   
-    </query>                   
+    </query>   
+    
+   <query name="promotion.byName">   
+        <![CDATA[  
+            from Promotion as promotion where promotion.name=:name and promotion.tenantId=:tenantId
+        ]]>   
+    </query>                    
 </hibernate-mapping>

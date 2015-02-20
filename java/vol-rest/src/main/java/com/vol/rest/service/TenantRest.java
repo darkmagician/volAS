@@ -4,7 +4,9 @@
 package com.vol.rest.service;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.Consumes;
@@ -14,12 +16,16 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriInfo;
 
 import com.vol.common.mgmt.PagingResult;
 import com.vol.common.tenant.Tenant;
 import com.vol.mgmt.TenantMgmtImpl;
 import com.vol.rest.result.OperationResult;
 import com.vol.rest.result.PutOperationResult;
+import com.vol.rest.service.MapConverter.Converter;
 
 /**
  * @author scott
@@ -41,8 +47,19 @@ public class TenantRest extends BaseRest<Tenant>{
     @GET
     @Path("/")
     @Produces("application/json")
-	public List<Tenant> list(@PathParam("pageSize")Integer tenantId){
-    	return tenantMgmt.list("tenant.all", Collections.<String, Object> emptyMap());
+	public List<Tenant> list(@Context UriInfo uriInfo){
+    	MultivaluedMap<String, String> pathPara = uriInfo.getQueryParameters();
+    	String queryName = pathPara.getFirst("query");
+    	if(queryName == null || "".equals(queryName)){
+    		return tenantMgmt.list("tenant.all", Collections.<String, Object> emptyMap());
+    	}else{
+    		Map<String,Object> map = new HashMap<String,Object>();
+    		map.put("current", System.currentTimeMillis());
+    		MapConverter.convert(pathPara, map, Collections.<String, Converter> emptyMap());
+    		log.info("parameters,{}",pathPara);
+    		return tenantMgmt.list("tenant."+queryName, map);
+    		
+    	}
     }  
     
     @POST
