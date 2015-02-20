@@ -102,6 +102,7 @@ public class DAOImpl<K extends Serializable, T extends BaseEntity> implements DA
 	}
 
 
+	@Override
 	public void delete(T obj){
 		Session session = getCurrentSession();
 		session.delete(obj);

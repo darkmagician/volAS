@@ -97,4 +97,9 @@ public interface DAO <K extends Serializable, T extends BaseEntity>{
 	 */
 	public abstract PagingResult<T> queryByPage(String queryName, Map<String, Object> parameters, int startPage,
 			int pageSize);
+
+	/**
+	 * @param obj
+	 */
+	public abstract void delete(T obj);
 }

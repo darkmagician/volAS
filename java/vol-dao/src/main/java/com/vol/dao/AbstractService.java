@@ -67,5 +67,27 @@ public abstract class AbstractService<K extends Serializable, V extends BaseEnti
 	}
 	protected  void copyAttribute(V obj, V old){};
 	
+	
+	public void delete(final K id){
+		this.transaction.execute(new TransactionCallbackWithoutResult(){
 
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				V old = getDAO().get(id);
+				if(old == null){
+					throw new IllegalStateException("The object doesnt exist.");
+				}
+				validateToBeDelete(old);
+				getDAO().delete(old);
+				
+			}
+
+
+		});
+	}
+	
+
+	protected void validateToBeDelete(V old) {
+		throw new UnsupportedOperationException("DELETE is not supported");
+	}
 }

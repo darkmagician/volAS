@@ -125,4 +125,17 @@ public class PromotionMgmtImpl extends AbstractService<Integer, Promotion> {
 	protected DAO<Integer, Promotion> getDAO() {
 		return promotionDAO;
 	}
+
+
+
+
+	/* (non-Javadoc)
+	 * @see com.vol.dao.AbstractService#validateToBeDelete(com.vol.common.BaseEntity)
+	 */
+	@Override
+	protected void validateToBeDelete(Promotion old) {
+		if(old.getStatus() != BaseEntity.DRAFT){
+			throw new IllegalStateException("the promotion is not in draft. It cannot be deleted");
+		}
+	}
 }

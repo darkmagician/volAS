@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -117,4 +118,13 @@ public class PromotionRest extends BaseRest<Promotion>{
 		return result;
 		
 	}
+    
+    
+    
+    @DELETE
+    @Path("/{tenantId}/{promotionid}")
+    @Produces("application/json")
+	public void delete(@PathParam("tenantId")Integer tenantId, @PathParam("promotionid")Integer promotionId){
+    	promotionMgmt.delete(promotionId);
+    }
 }
