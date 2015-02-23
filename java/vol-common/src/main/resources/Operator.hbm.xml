@@ -13,8 +13,14 @@
         <property name="password" column="password" length="32" />
         <property name="tenantId" column="tenantId" />
         <property name="status" column="status" />
+        <property name="description" column="description" />
     </class> 
-   
+ 
+    <query name="operator.all.total">   
+        <![CDATA[  
+           select count(*) from Operator
+        ]]>   
+    </query>     
     <query name="operator.all">   
         <![CDATA[  
             from Operator

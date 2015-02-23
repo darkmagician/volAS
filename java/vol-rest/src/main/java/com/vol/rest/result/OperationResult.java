@@ -10,7 +10,7 @@ package com.vol.rest.result;
 public class OperationResult {
 	static final public short SUCCESS=2001,BUSY=3001;
 	static final public short UNLUCKY=4001, PROMOTION_USEDUP=4002;		
-	static final public short INTERNAL_ERROR=5001, INVALID_PROMOTION=5002;
+	static final public short INTERNAL_ERROR=5001, INVALID_PROMOTION=5002, UNKNOWN_ACTION=5003;
 	
 	protected short code;
 	protected String message;

@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.annotation.Resource;
 import javax.ws.rs.Consumes;
@@ -63,7 +64,7 @@ public class TenantRest extends BaseRest<Tenant>{
     }  
     
     @POST
-    @Path("/")
+    @Path("/paging")
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
 	public PagingResult<Tenant> listPage(@FormParam("page")Integer startPage,@FormParam("rows")Integer pageSize){
@@ -104,5 +105,37 @@ public class TenantRest extends BaseRest<Tenant>{
 	public Tenant createObject() {
 		return new Tenant();
 	}
+
+	/* (non-Javadoc)
+	 * @see com.vol.rest.service.BaseRest#delete(java.lang.Integer)
+	 */
+	@Override
+	public OperationResult delete(Integer id) {
+		OperationResult result = new OperationResult();
+    	try{
+    		tenantMgmt.delete(id);
+    		result.setCode(PutOperationResult.SUCCESS);
+    	}catch(Throwable e){
+    		log.error("failed to delete tenant, "+id,e);
+    		result.setCode(PutOperationResult.INTERNAL_ERROR);
+    	}
+		return result;
+	}
+	
+    @POST
+    @Path("/select")
+    @Consumes("application/x-www-form-urlencoded")
+    @Produces("application/json")
+	public Map<Integer,String> listAsKeyName(){
+    	Map<Integer,String> map = new TreeMap<Integer,String>();
+    	 List<Tenant> tenants = tenantMgmt.list("tenant.all", Collections.<String, Object> emptyMap());
+    	 if(tenants != null){
+    		 for(Tenant t:tenants ){
+    			 map.put(t.getId(), t.getName());
+    		 }
+    	 }
+    	 return map;
+    }	
+    
 	
 }

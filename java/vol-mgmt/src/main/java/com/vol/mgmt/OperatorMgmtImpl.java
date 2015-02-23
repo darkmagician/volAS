@@ -23,6 +23,7 @@ public class OperatorMgmtImpl extends AbstractService<Integer,Operator>{
 	protected void copyAttribute(Operator operator, Operator old) {
 		old.setName(operator.getName());
 		old.setStatus(operator.getStatus());
+		old.setDescription(operator.getDescription());
 		
 	}
 	
@@ -35,4 +36,12 @@ public class OperatorMgmtImpl extends AbstractService<Integer,Operator>{
 	}
 	
 
+	/* (non-Javadoc)
+	 * @see com.vol.dao.AbstractService#validateToBeDelete(com.vol.common.BaseEntity)
+	 */
+	@Override
+	protected void validateToBeDelete(Operator old) {
+		//super.validateToBeDelete(old);
+	}
+	
 }

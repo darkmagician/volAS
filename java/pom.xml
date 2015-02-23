@@ -20,5 +20,6 @@
         <module>vol-rest</module>
         <module>vol-dao</module>
         <module>vol-appserver</module>        
+        <module>vol-admin</module>      
     </modules>  
 </project>

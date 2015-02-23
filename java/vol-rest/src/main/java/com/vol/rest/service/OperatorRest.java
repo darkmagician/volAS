@@ -9,7 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -17,6 +20,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
+import com.vol.common.mgmt.PagingResult;
 import com.vol.common.tenant.Operator;
 import com.vol.mgmt.OperatorMgmtImpl;
 import com.vol.rest.result.OperationResult;
@@ -43,20 +47,15 @@ public class OperatorRest extends BaseRest<Operator>{
     	return operator;
     }
     
-/*    @GET
-    @Path("/")
+    @POST
+    @Path("/paging")
+    @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
-	public List<Operator> list(){
-		List<Operator> list = operatorMgmt.list("operator.all", Collections.<String, Object> emptyMap());
-    	 if(list != null){
-    		 for(Operator operator: list){
-    			 operator.setPassword(null);;
-    		 }
-    	 }
-    	 return list;
-    }  
+	public PagingResult<Operator> listPage(@FormParam("page")Integer startPage,@FormParam("rows")Integer pageSize){
+    	return operatorMgmt.listByPaging("operator.all", Collections.<String, Object> emptyMap(), startPage, pageSize);
+    }
     
-    */
+    
     @GET
     @Path("/")
     @Produces("application/json")
@@ -108,5 +107,22 @@ public class OperatorRest extends BaseRest<Operator>{
 	@Override
 	public Operator createObject() {
 		return new Operator();
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see com.vol.rest.service.BaseRest#delete(java.lang.Integer)
+	 */
+	@Override
+	public OperationResult delete(Integer id) {
+		OperationResult result = new OperationResult();
+    	try{
+    		operatorMgmt.delete(id);
+    		result.setCode(PutOperationResult.SUCCESS);
+    	}catch(Throwable e){
+    		log.error("failed to delete operator, "+id,e);
+    		result.setCode(PutOperationResult.INTERNAL_ERROR);
+    	}
+		return result;
 	}
 }

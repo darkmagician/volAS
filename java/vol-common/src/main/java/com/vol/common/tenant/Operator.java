@@ -31,6 +31,11 @@ public class Operator extends BaseEntity {
 	private int tenantId;
 	
 	/**
+	 * 
+	 */
+	private String description;
+	
+	/**
 	 * The password.
 	 */
 	private String password;
@@ -123,6 +128,8 @@ public class Operator extends BaseEntity {
 		builder.append(name);
 		builder.append(", tenantId=");
 		builder.append(tenantId);
+		builder.append(", description=");
+		builder.append(description);
 		builder.append(", password=");
 		builder.append(password);
 		builder.append(", creationTime=");
@@ -133,5 +140,19 @@ public class Operator extends BaseEntity {
 		builder.append(status);
 		builder.append("]");
 		return builder.toString();
+	}
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }

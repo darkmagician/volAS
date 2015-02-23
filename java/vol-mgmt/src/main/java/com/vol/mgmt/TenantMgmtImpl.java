@@ -39,6 +39,14 @@ public class TenantMgmtImpl extends AbstractService<Integer,Tenant>{
 	protected DAO<Integer,Tenant> getDAO() {
 		return this.tenantDAO;
 	}
+
+	/* (non-Javadoc)
+	 * @see com.vol.dao.AbstractService#validateToBeDelete(com.vol.common.BaseEntity)
+	 */
+	@Override
+	protected void validateToBeDelete(Tenant old) {
+		//super.validateToBeDelete(old);
+	}
 	
 
 }
