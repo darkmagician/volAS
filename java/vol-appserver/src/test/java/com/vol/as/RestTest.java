@@ -40,6 +40,7 @@ public class RestTest {
 	private int operatorid=1;
 	private int promotionId =1 ;
 	private String userName="abc";
+	private String userName2="edf";
 	private long userId =1;
 	private long bonusId = 1;
 	
@@ -48,6 +49,7 @@ public class RestTest {
 	
 	//private final String server = "http://52.1.96.115:8080/vol-appserver/";
 	private final String server = "http://localhost:8080/vol-admin/rs/";
+
 	private void initClient(){
 		JacksonJsonProvider jsonProvider = new JacksonJsonProvider();
 		FormEncodingProvider formProvider = new FormEncodingProvider(true);
@@ -119,6 +121,60 @@ public class RestTest {
 		checkQuota(userId);
 		checkQuota(userName);
 	}
+	
+	@Test
+	public void testTransfer(){
+		initClient();
+		
+		Tenant tanent = new Tenant();
+		tanent.setName("Tenant1");
+		tanent.setDescription("first Tenant");
+		
+		Operator operator = new Operator();
+		operator.setName("operator1");
+		operator.setPassword("passwor22d");
+		
+		Promotion promotion = new Promotion();
+		promotion.setBonusExpirationTime(System.currentTimeMillis()+3*24*60*60*1000);
+		promotion.setStartTime(System.currentTimeMillis());
+		promotion.setEndTime(System.currentTimeMillis()+2*24*60*60*1000);
+		promotion.setDescription("Promotion Test1");
+		promotion.setName("Promotion1");
+		promotion.setMaximum(270000);
+		promotion.setRule("if(parameters.vip==1) {return 2300;} else {return 200;}");
+		
+
+		
+		if(getTenantByName(tanent.getName()) == null){
+			createTenant( tanent);
+		}
+		
+		showTenant(tenantId);
+		
+		if(getOperatorByName(operator.getName()) == null){
+			createOperator(operator);
+		}
+		showOperator(operatorid);
+		if(getPromotionByName(promotion.getName()) == null){
+			createPromotion(promotion);
+		}
+		
+		showPromotion(promotionId);	
+		activePromotion(promotionId);
+		listPublicPromotion(client2);	
+		crabBonus(promotionId, userName);	
+		crabBonus(promotionId, userName2);	
+		
+		showUser(userName);
+		showUserBonus(userId);
+
+		showUserBonus(userName);
+		checkPromotionbalance(promotionId);			
+		
+		transferBonus(bonusId,userName,userName2);
+		//showUserBonus(userName);
+		showUserBonus(userName2);
+	}
 	/**
 	 * @param userId 
 	 * 
@@ -169,6 +225,19 @@ public class RestTest {
 		Bonus bonus = restResult.readEntity(Bonus.class);
 		System.out.println("get bonus:"+bonus);
 	}
+	
+	private void transferBonus(long bonusId, String fromUser, String toUser) {
+		Response restResult;
+		client2.reset();
+		
+		System.out.println("transfer bonus");
+		client2.path("sendbonus/"+tenantId);
+		client2.type(form).accept(json);
+		restResult = client2.put("bonusId="+bonusId+"&toUser="+toUser+"&fromUser="+fromUser);
+		boolean b = restResult.readEntity(Boolean.class);
+		System.out.println("transfer bonues :"+b);
+	}
+	
 	/**
 	 * @param bonusId 
 	 * 
