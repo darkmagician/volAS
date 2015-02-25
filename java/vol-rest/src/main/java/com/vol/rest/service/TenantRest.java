@@ -14,6 +14,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -71,7 +72,10 @@ public class TenantRest extends BaseRest<Tenant>{
     	return tenantMgmt.listByPaging("tenant.all", Collections.<String, Object> emptyMap(), startPage, pageSize);
     }
     
-    
+    @PUT
+    @Path("/")
+    @Consumes("application/json")
+    @Produces("application/json")
     public PutOperationResult create(Tenant tenant){
     	PutOperationResult result = new PutOperationResult();
     	try{
@@ -84,8 +88,11 @@ public class TenantRest extends BaseRest<Tenant>{
     	}
 		return result;
     }
-
-    public OperationResult update(Tenant tenant, Integer id){
+    @POST
+    @Path("/{id}")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public OperationResult update(Tenant tenant, @PathParam("id") Integer id){
     	OperationResult result = new OperationResult();
     	try{
     		tenant.setId(id);

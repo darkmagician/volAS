@@ -13,6 +13,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -74,7 +75,10 @@ public class OperatorRest extends BaseRest<Operator>{
     	}
     }  
     
-    
+    @PUT
+    @Path("/")
+    @Consumes("application/json")
+    @Produces("application/json")
     public PutOperationResult create(Operator operator){
     	PutOperationResult result = new PutOperationResult();
     	try{
@@ -88,6 +92,10 @@ public class OperatorRest extends BaseRest<Operator>{
 		return result;
     }
     
+    @POST
+    @Path("/{id}")
+    @Consumes("application/json")
+    @Produces("application/json")
     public OperationResult update(Operator operator, @PathParam("id")Integer id){
     	OperationResult result = new OperationResult();
     	try{

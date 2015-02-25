@@ -15,6 +15,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
 import com.vol.common.BaseEntity;
 import com.vol.common.DAO;
+import com.vol.common.mgmt.PagingResult;
 import com.vol.common.mgmt.VolMgmtException;
 import com.vol.common.tenant.Promotion;
 import com.vol.common.tenant.PromotionBalance;
@@ -35,6 +36,7 @@ public class PromotionMgmtImpl extends AbstractService<Integer, Promotion> {
 		oldPromotion.setDescription(promotion.getDescription());
 		oldPromotion.setStartTime(promotion.getStartTime());
 		oldPromotion.setEndTime(promotion.getEndTime());
+		oldPromotion.setBonusExpirationTime(promotion.getBonusExpirationTime());
 		oldPromotion.setName(promotion.getName());
 		oldPromotion.setRule(promotion.getRule());
 	}
@@ -111,7 +113,7 @@ public class PromotionMgmtImpl extends AbstractService<Integer, Promotion> {
 							TransactionStatus status) {
 
 						return promotionBalanceDAO.query(
-								"PromotionBalance.byPromotionId", parameters);
+								"promotionBalance.byPromotion", parameters);
 					}
 				});
 	}
@@ -138,4 +140,32 @@ public class PromotionMgmtImpl extends AbstractService<Integer, Promotion> {
 			throw new IllegalStateException("the promotion is not in draft. It cannot be deleted");
 		}
 	}
+	
+	
+	public PagingResult<Promotion> searchHistory(final Map<String,Object> parameters, final int startPage, final int pageSize){
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("from Promotion where tenantId=:tenantId ");
+		
+		Object fromTime = parameters.get("fromTime");
+		if(fromTime != null){
+			sb.append(" AND endTime>:fromTime ");
+		}
+		Object toTime = parameters.get("toTime");
+		if(toTime != null){
+			sb.append(" AND startTime<:toTime ");
+		}
+		String name = (String) parameters.get("name");
+		if(name != null && !name.isEmpty()){
+			sb.append(" AND name like '%'||:name||'%' ");
+		}
+		final String hql = sb.toString();
+		return this.readonlyTransaction.execute(new TransactionCallback<PagingResult<Promotion>>(){
+
+			@Override
+			public PagingResult<Promotion> doInTransaction(TransactionStatus status) {
+				return getDAO().queryByPageUsingHQL(hql, parameters, startPage, pageSize);
+			}});
+	}
+	
 }

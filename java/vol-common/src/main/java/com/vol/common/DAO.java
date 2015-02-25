@@ -102,4 +102,14 @@ public interface DAO <K extends Serializable, T extends BaseEntity>{
 	 * @param obj
 	 */
 	public abstract void delete(T obj);
+
+	/**
+	 * @param hql
+	 * @param parameters
+	 * @param startPage
+	 * @param pageSize
+	 * @return
+	 */
+	PagingResult<T> queryByPageUsingHQL(String hql,
+			Map<String, Object> parameters, int startPage, int pageSize);
 }

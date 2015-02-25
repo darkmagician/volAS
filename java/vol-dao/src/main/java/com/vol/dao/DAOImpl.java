@@ -169,17 +169,46 @@ public class DAOImpl<K extends Serializable, T extends BaseEntity> implements DA
 	public PagingResult<T> queryByPage(String queryName, Map<String, Object> parameters , int startPage, int pageSize){
 		PagingResult<T> result = new PagingResult<T>();
 		Session session = getCurrentSession();
-		
-		Query query1=session.getNamedQuery(queryName+".total");
-		query1.setProperties(parameters);
-		long total = (Long) query1.uniqueResult();
-		result.setTotal((int)total);
-		
 		Query query=session.getNamedQuery(queryName);
+		return queryPaging(parameters, startPage, pageSize, result, session,
+				query);
+	}
+	
+	
+	@Override
+	public PagingResult<T> queryByPageUsingHQL(String hql, Map<String, Object> parameters , int startPage, int pageSize){
+		PagingResult<T> result = new PagingResult<T>();
+		Session session = getCurrentSession();
+		Query query= session.createQuery(hql);
+		return queryPaging(parameters, startPage, pageSize, result, session,
+				query);
+	}
+
+	/**
+	 * @param parameters
+	 * @param startPage
+	 * @param pageSize
+	 * @param result
+	 * @param session
+	 * @param query
+	 * @return
+	 */
+	private PagingResult<T> queryPaging(Map<String, Object> parameters,
+			int startPage, int pageSize, PagingResult<T> result,
+			Session session, Query query) {
 		query.setProperties(parameters);
 		query.setFirstResult((startPage - 1) * pageSize);
 		query.setMaxResults(pageSize);
 		result.setRows( query.list());
+		
+		if(startPage == 1 && query.list().size() < pageSize){
+			result.setTotal(query.list().size());
+		}else{
+			Query querytotal=session.createQuery("select count(*) "+query.getQueryString());
+			querytotal.setProperties(parameters);
+			long total = (Long) querytotal.uniqueResult();
+			result.setTotal((int)total);
+		}
 		return result;
 	}
 

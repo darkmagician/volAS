@@ -12,6 +12,8 @@ import com.vol.common.BaseEntity;
  * @author scott
  */
 public class Promotion extends BaseEntity {
+	
+	public final static short MOBILE=0, WIFI=1, DIRECTION=2;
 
 	/**
 	 * The name.
@@ -58,10 +60,16 @@ public class Promotion extends BaseEntity {
 	 * The max.
 	 */
 	private long maximum;
+	/**
+	 * The volume type.
+	 */
+	private short volumeType;
 	
 	
 	/** The bonus expiration time. */
 	private long bonusExpirationTime;
+	
+	private long balance;
 
 	/**
 	 * Gets the name.
@@ -236,10 +244,8 @@ public class Promotion extends BaseEntity {
 	}
 
 
-	/**
-	 * To string.
-	 *
-	 * @return the string
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
@@ -262,6 +268,8 @@ public class Promotion extends BaseEntity {
 		builder.append(tenantId);
 		builder.append(", maximum=");
 		builder.append(maximum);
+		builder.append(", volumeType=");
+		builder.append(volumeType);
 		builder.append(", bonusExpirationTime=");
 		builder.append(bonusExpirationTime);
 		builder.append(", creationTime=");
@@ -290,6 +298,34 @@ public class Promotion extends BaseEntity {
 	 */
 	public void setBonusExpirationTime(long bonusExpirationTime) {
 		this.bonusExpirationTime = bonusExpirationTime;
+	}
+
+	/**
+	 * @return the volumeType
+	 */
+	public short getVolumeType() {
+		return volumeType;
+	}
+
+	/**
+	 * @param volumeType the volumeType to set
+	 */
+	public void setVolumeType(short volumeType) {
+		this.volumeType = volumeType;
+	}
+
+	/**
+	 * @return the balance
+	 */
+	public long getBalance() {
+		return balance;
+	}
+
+	/**
+	 * @param balance the balance to set
+	 */
+	public void setBalance(long balance) {
+		this.balance = balance;
 	}
 	
 	

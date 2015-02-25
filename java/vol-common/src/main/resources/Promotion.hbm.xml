@@ -19,6 +19,7 @@
         <property name="startTime" column="startTime" /> 
         <property name="endTime" column="endTime" /> 
         <property name="maximum" column="maximum" /> 
+        <property name="volumeType" column="volumeType" /> 
     </class> 
   
   
@@ -27,11 +28,28 @@
             from Promotion as promotion where promotion.tenantId=:tenantId
         ]]>   
     </query> 
+    
+    <query name="promotion.byDraft.total">   
+        <![CDATA[  
+           select count(*) from Promotion as promotion where promotion.tenantId=:tenantId and promotion.status=1
+        ]]>   
+    </query> 
     <query name="promotion.byDraft">   
         <![CDATA[  
             from Promotion as promotion where promotion.tenantId=:tenantId and promotion.status=1
         ]]>   
-    </query>   
+    </query>  
+    <query name="promotion.byNotEnded.total">   
+        <![CDATA[  
+           select count(*) from Promotion as promotion where promotion.tenantId=:tenantId and promotion.status=2 and promotion.endTime>:current
+        ]]>   
+    </query>  
+    
+    <query name="promotion.byNotEnded">   
+        <![CDATA[  
+            from Promotion as promotion where promotion.tenantId=:tenantId and promotion.status=2 and promotion.endTime>:current
+        ]]>   
+    </query>       
     <query name="promotion.byStarted">   
         <![CDATA[  
             from Promotion as promotion where promotion.tenantId=:tenantId and promotion.status=2 and promotion.startTime<=:current and promotion.endTime>=:current

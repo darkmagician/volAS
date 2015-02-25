@@ -84,7 +84,7 @@ public class RestTest {
 		promotion.setEndTime(System.currentTimeMillis()+2*24*60*60*1000);
 		promotion.setDescription("Promotion Test1");
 		promotion.setName("Promotion1");
-		promotion.setMaximum(270000);
+		promotion.setMaximum(270001);
 		promotion.setRule("if(parameters.vip==1) {return 2300;} else {return 200;}");
 		
 
