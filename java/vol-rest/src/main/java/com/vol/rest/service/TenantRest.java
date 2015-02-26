@@ -43,6 +43,7 @@ public class TenantRest extends BaseRest<Tenant>{
     @Path("/{tenantId}")
     @Produces("application/json")
 	public Tenant get(@PathParam("tenantId")Integer tenantId){
+    	checkPermission(null);
     	return tenantMgmt.get(tenantId);
     }
     
@@ -50,6 +51,7 @@ public class TenantRest extends BaseRest<Tenant>{
     @Path("/")
     @Produces("application/json")
 	public List<Tenant> list(@Context UriInfo uriInfo){
+    	checkPermission(null);
     	MultivaluedMap<String, String> pathPara = uriInfo.getQueryParameters();
     	String queryName = pathPara.getFirst("query");
     	if(queryName == null || "".equals(queryName)){
@@ -69,6 +71,7 @@ public class TenantRest extends BaseRest<Tenant>{
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
 	public PagingResult<Tenant> listPage(@FormParam("page")Integer startPage,@FormParam("rows")Integer pageSize){
+    	checkPermission(null);
     	return tenantMgmt.listByPaging("tenant.all", Collections.<String, Object> emptyMap(), startPage, pageSize);
     }
     
@@ -77,6 +80,7 @@ public class TenantRest extends BaseRest<Tenant>{
     @Consumes("application/json")
     @Produces("application/json")
     public PutOperationResult create(Tenant tenant){
+    	checkPermission(null);
     	PutOperationResult result = new PutOperationResult();
     	try{
     		Integer id = tenantMgmt.add(tenant);
@@ -93,6 +97,7 @@ public class TenantRest extends BaseRest<Tenant>{
     @Consumes("application/json")
     @Produces("application/json")
     public OperationResult update(Tenant tenant, @PathParam("id") Integer id){
+    	checkPermission(null);
     	OperationResult result = new OperationResult();
     	try{
     		tenant.setId(id);
@@ -118,6 +123,7 @@ public class TenantRest extends BaseRest<Tenant>{
 	 */
 	@Override
 	public OperationResult delete(Integer id) {
+		checkPermission(null);
 		OperationResult result = new OperationResult();
     	try{
     		tenantMgmt.delete(id);
@@ -134,6 +140,7 @@ public class TenantRest extends BaseRest<Tenant>{
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
 	public Map<Integer,String> listAsKeyName(){
+    	checkPermission(null);
     	Map<Integer,String> map = new TreeMap<Integer,String>();
     	 List<Tenant> tenants = tenantMgmt.list("tenant.all", Collections.<String, Object> emptyMap());
     	 if(tenants != null){

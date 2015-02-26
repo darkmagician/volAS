@@ -30,5 +30,11 @@
      class="com.vol.mgmt.QuotaMgmtImpl" init-method="init"/>       
      
     <bean id="userMgmt"
-     class="com.vol.mgmt.UserMgmtImpl" init-method="init"/>            
+     class="com.vol.mgmt.UserMgmtImpl" init-method="init"/>    
+     
+ 
+      
+    <bean id="authentication"
+     class="com.vol.mgmt.auth.Authentication"/>       
+            
 </beans>

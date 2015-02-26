@@ -3,13 +3,15 @@
  */
 package com.vol.common;
 
+import java.io.Serializable;
+
 
 /**
  * The Class BaseEntity.
  *
  * @author scott
  */
-public abstract class BaseEntity {
+public abstract class BaseEntity implements Serializable{
 	static final public short UNSPECIFIED=0, DRAFT=1, ACTIVE=2;
 
 	/** The creation time. */

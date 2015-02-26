@@ -14,6 +14,11 @@ import com.vol.common.BaseEntity;
 public class User extends BaseEntity {
 	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
 	 * The id.
 	 */
 	private long id;

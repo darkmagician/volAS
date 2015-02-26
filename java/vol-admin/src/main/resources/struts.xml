@@ -7,12 +7,12 @@
  	<constant name="struts.devMode" value="true" />
  	<constant name="struts.custom.i18n.resources"
 		value="ApplicationResources" />
-	<package name="default" namespace="/struts2/" extends="struts-default">
+	<package name="default" namespace="/" extends="struts-default">
  
-		<action name="helloAction" 
-			class="userSpringAction" >
-			<result name="success">user.jsp</result>
-			<result name="error">Login.jsp</result>
+		<action name="index" 
+			class="mainAction" >
+			<result name="success">pages/main.jsp</result>
+			<result name="error">login.html</result>
 		</action>
  
 	</package>

@@ -10,7 +10,7 @@
         <property name="name" column="name" length="32"/>
         <property name="creationTime" column="creationTime" />
         <property name="updateTime" column="updateTime" />
-        <property name="password" column="password" length="32" />
+        <property name="password" column="password" length="40" />
         <property name="tenantId" column="tenantId" />
         <property name="status" column="status" />
         <property name="description" column="description" />

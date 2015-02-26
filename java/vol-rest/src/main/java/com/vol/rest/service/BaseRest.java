@@ -7,17 +7,21 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vol.common.tenant.Operator;
 import com.vol.common.util.StringParser;
 import com.vol.rest.result.OperationResult;
 import com.vol.rest.result.PutOperationResult;
@@ -32,6 +36,9 @@ import com.vol.rest.result.PutOperationResult;
 public abstract class BaseRest<T> {
 
 	protected final Logger log = LoggerFactory.getLogger(getClass());
+	
+	@Context
+	protected HttpServletRequest httppServletRequest;
 	
 	
 	/**
@@ -59,6 +66,26 @@ public abstract class BaseRest<T> {
 	 */
 
 	public abstract OperationResult update(T obj, @PathParam("id")Integer id);	
+	
+	
+	protected void checkPermission(Integer tenantId){
+		HttpSession session = httppServletRequest.getSession();
+		if(session != null){
+			Operator operator = (Operator) session.getAttribute("operator");
+			if(operator != null){
+				if(operator.getTenantId() == 0 || (tenantId!=null && tenantId == operator.getTenantId()) ){
+					//if(log.isTraceEnabled()){
+						log.info("Permission is allowed for operator:{} accessing tenant {}", operator.getName(),tenantId);
+				//	}
+					return;
+				}
+				
+			}else{
+				log.warn("operator is mssing0");
+			}
+		}
+		log.warn("Permission NOT is allowed for accessing tenant {}", tenantId);
+	}
     
 
 	@POST

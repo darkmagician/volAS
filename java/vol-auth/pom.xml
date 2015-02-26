@@ -1,0 +1,29 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>  
+      <artifactId>dependency</artifactId>  
+      <groupId>com.vol</groupId>  
+      <version>1.0-SNAPSHOT</version>  
+      <relativePath>../dependency</relativePath>
+  </parent> 
+    
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.vol</groupId>
+  <artifactId>vol-auth</artifactId>
+  <packaging>jar</packaging>
+
+  <name>vol-auth</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+	<dependency>
+		<groupId>org.eclipse.jetty</groupId>
+		<artifactId>jetty-security</artifactId>
+	</dependency>
+
+  </dependencies>
+</project>

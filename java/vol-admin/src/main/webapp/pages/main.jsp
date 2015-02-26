@@ -1,23 +1,22 @@
-
-<!DOCTYPE html>
+<%@ page contentType="text/html; charset=UTF-8"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>SMART NETWORK TRAFFIC ENGINE</title>
+<title>SMART NETWORK APPLICATION ENGINE</title>
 <link rel="stylesheet" type="text/css"
-	href="../static/themes/gray/easyui.css">
-<link rel="stylesheet" type="text/css" href="../static/themes/icon.css">
-<link rel="stylesheet" type="text/css" href="../static/style.css">
-<link rel="shortcut icon" href="../static/images/favicon.ico"
+	href="./static/themes/gray/easyui.css">
+<link rel="stylesheet" type="text/css" href="./static/themes/icon.css">
+<link rel="stylesheet" type="text/css" href="./static/style.css">
+<link rel="shortcut icon" href="./static/images/favicon.ico"
 	type="image/x-icon" />
-<script type="text/javascript" src="../static/jquery.min.js"></script>
-<script type="text/javascript" src="../static/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="./static/jquery.min.js"></script>
+<script type="text/javascript" src="./static/jquery.easyui.min.js"></script>
 <!-- code mirror -->
-<!-- <link rel="stylesheet" href="../static/codemirror/lib/codemirror.css">
-<script src="../static/codemirror/lib/codemirror.js"></script>
-<script src="../static/codemirror/addon/edit/matchbrackets.js"></script>
-<script src="../static/codemirror/mode/clike.js"></script>
-<link rel="stylesheet" href="../static/codemirror/theme/eclipse.css"> -->
+<!-- <link rel="stylesheet" href="./static/codemirror/lib/codemirror.css">
+<script src="./static/codemirror/lib/codemirror.js"></script>
+<script src="./static/codemirror/addon/edit/matchbrackets.js"></script>
+<script src="./static/codemirror/mode/clike.js"></script>
+<link rel="stylesheet" href="./static/codemirror/theme/eclipse.css"> -->
 </head>
 <body class="easyui-layout">
 	<!-- ************************************ Delete Window Start************************************ -->
@@ -40,6 +39,8 @@
 	</div>
 
 	<!-- ************************************ Delete Window End************************************ -->
+<s:if test="%{operator.tenantId==0}">	
+
 	<!-- ************************************ Tenant Editor Start************************************ -->
 	<div id="tenantEditor" class="easyui-dialog"
 		style="width: 400px; height: 280px; padding: 10px 20px" closed="true"
@@ -109,6 +110,8 @@
 			style="width: 90px">取消</a>
 	</div>
 	<!-- ************************************ Operator Editor End************************************ -->
+</s:if>
+	
 	<!-- ************************************ Promotion Editor Start************************************ -->
 	<div id="promotionEditor" class="easyui-dialog"
 		style="width:700px; height: 700px; padding: 10px 20px" closed="true"
@@ -181,25 +184,35 @@
 
 	<!-- ************************************ Promotion Editor End************************************ -->
 	<div id="header" data-options="region:'north'"
-		style="height: 120px; padding: 20px">
+		style="height: 120px; padding: 20px; background:#D3D3D3">
 		<h2>流量管理系统</h2>
 		<p>SMART NETWORK TRAFFIC ENGINE.</p>
-		<label>当前租户:</label> <input id="currentTenant" class="easyui-combobox"
-			data-options="valueField:'id',textField:'text', onSelect: function(rec){
-					changeCurrentPromotion(rec.id);
-				}"">
-
-
+		<label>当前租户:</label>
+<s:if test="%{operator.tenantId==0}">
+		<input id="currentTenant" class="easyui-combobox"
+				data-options="valueField:'id',textField:'text', onSelect: function(rec){
+						changeCurrentPromotion(rec.id);
+					}">		
+</s:if>
+<s:else>
+		<s:property value="tenantName" />
+</s:else>
+		<div style="width: 400px; height: 50px; position: absolute; right: 10px; bottom: 10px">
+			<label>当前用户:</label>
+			<s:property value="operator.name" />
+			<a href="logout.jsp">注销</a>
+		</div>
 	</div>
 	<div data-options="region:'center'">
 
 		<div id="tt" class="easyui-tabs">
 			<div title="关于" style="padding: 20px;">流量管理系统</div>
+<s:if test="%{operator.tenantId==0}">			
 			<div title="租户管理" style="padding: 20px;">
 
 				<table id="tenantMgr" class="easyui-datagrid" title="租户列表"
 					style="height: 700px"
-					data-options="rownumbers:true,singleSelect:true,url:'../rs/admin/tenant/paging',toolbar:tenantToolbar,pagination:true">
+					data-options="rownumbers:true,singleSelect:true,url:'./rs/admin/tenant/paging',toolbar:tenantToolbar,pagination:true">
 					<thead>
 						<tr>
 							<th field="name" width="120">名字</th>
@@ -216,7 +229,7 @@
 			<div title="账户管理" style="padding: 20px;">
 				<table id="operatorMgr" class="easyui-datagrid" title="账户列表"
 					style="height: 700px"
-					data-options="rownumbers:true,singleSelect:true,url:'../rs/admin/operator/paging',toolbar:operatorToolbar,pagination:true">
+					data-options="rownumbers:true,singleSelect:true,url:'./rs/admin/operator/paging',toolbar:operatorToolbar,pagination:true">
 					<thead>
 						<tr>
 							<th field="name" width="120">名字</th>
@@ -231,6 +244,7 @@
 					</thead>
 				</table>
 			</div>
+</s:if>			
 			<div title="活动定义" style="padding: 20px;">
 				<table id="draftPromotionMgr" class="easyui-datagrid" title="活动列表"
 					style="height: 700px"
@@ -321,50 +335,7 @@
 
 	<script type="text/javascript">
 	
-
-    
-		var tenantMap;
-		
-		function loadTenant(){
-			$.ajax({
-			     type: "POST",
-			     url: "../rs/admin/tenant/select",
-			     async: true,
-			     contentType: "application/x-www-form-urlencoded",
-				 dataType: "json",
-				 success: function(data){
-				 	tenantMap=data;
-				 	
-					var options = new Array();
-					$.each(data, function(k, v) {
-					    var item = new Object();
-					    item.id=k;
-					    item.text=v;
-					    options.push(item);
-				    });
-					$('#currentTenant').combobox('loadData', options);
-					
-				    var item = new Object();
-				    item.id=0;
-				    item.text='超级管理员';
-				    options.push(item);
-					$('#operatorTenantId').combobox('loadData', options);
-				 }
-			});
-		}
 	
-		
-		loadTenant();
-		
-		
-		function formatTenant(val, row){
-			if(val == 0){
-				return "超级管理员";
-			}else{
-				return tenantMap[val];
-			}
-		}
-		
 		function formatDateBox(date){
 			var h=date.getHours();
 			var M=date.getMinutes();
@@ -433,12 +404,9 @@
 		var parentdg;
 		var confirmurl;
 		var afterConfirm;
-		var currentTenantId=0;
+
 		
-		function changeCurrentPromotion(id){
-			currentTenantId=id;
-			loadPromotion();
-		}
+
 		
 		function searchPromotionHistory(){
 			if(!currentTenantId){
@@ -452,7 +420,7 @@
 			var toDate = parseDateToLong( $('#toDate').datetimebox('getValue'));
 			var searchName = $('#searchName').textbox('getValue');
 		    $('#historyPromotionMgr').datagrid({
-		        url:'../rs/admin/promotion/'+currentTenantId+'/historypaging',
+		        url:'./rs/admin/promotion/'+currentTenantId+'/historypaging',
 		        queryParams:{
 		        	from:fromDate,
 		        	to:toDate,
@@ -474,10 +442,10 @@
 				return;
 			}
 		    $('#draftPromotionMgr').datagrid({
-		        url:'../rs/admin/promotion/'+currentTenantId+'/draftpaging'
+		        url:'./rs/admin/promotion/'+currentTenantId+'/draftpaging'
 		        });
 		    $('#activePromotionMgr').datagrid({
-		        url:'../rs/admin/promotion/'+currentTenantId+'/activepaging'
+		        url:'./rs/admin/promotion/'+currentTenantId+'/activepaging'
 		        }); 
 		}
 		
@@ -499,121 +467,7 @@
 						}
 					});
 		}	
-		<!-- ************************************ Tenant Editor ************************************ -->
-		var tenantToolbar = [ {
-			text : '添加',
-			iconCls : 'icon-add',
-			handler : function() {
-				$('#tenantEditor').dialog('open').dialog('setTitle', '添加');
-				$('#tenantForm').form('clear');
-				url = '../rs/admin/tenant/add';
-				parentdg='#tenantMgr';
-			}
-		}, {
-			text : '编辑',
-			iconCls : 'icon-edit',
-			handler : function() {
-				var row = $('#tenantMgr').datagrid('getSelected');
-				if (row) {
-					$('#tenantEditor').dialog('open').dialog('setTitle', '编辑');
-					$('#tenantForm').form('load', row);
-					url = '../rs/admin/tenant/update';
-					parentdg='#tenantMgr';
-				}
-
-			}
-		}, '-', {
-			text : '删除',
-			iconCls : 'icon-remove',
-			handler : function() {
-				var row = $('#tenantMgr').datagrid('getSelected');
-				if (row) {
-					$('#confirm').dialog('open').dialog('setTitle', '删除租户:'+row.name);
-					$('#confirmForm').form('load', row);
-					confirmurl = '../rs/admin/tenant/delete';
-					afterConfirm=function(){
-						$('#tenantMgr').datagrid('reload'); // reload the user data
-						loadTenant();
-					}
-				}
-			}
-		} ];
-
-		function saveTenant() {
-			$('#tenantForm').form(
-					'submit',
-					{
-						url : url,
-						success : function(result) {
-							var result = eval('(' + result + ')');
-							if (result.code == 2001) {
-								$('#tenantEditor').dialog('close'); // close the dialog
-								$(parentdg).datagrid('reload'); // reload the user data
-								loadTenant();
-							} else {
-								$('#tenantEditorInfo').text(
-										'error code: ' + result.code);
-							}
-						}
-					});
-		}
 		
-		<!-- ************************************ Operator Editor ************************************ -->
-		var operatorToolbar = [ {
-			text : '添加',
-			iconCls : 'icon-add',
-			handler : function() {
-				$('#operatorEditor').dialog('open').dialog('setTitle', '添加');
-				$('#operatorForm').form('clear');
-				url = '../rs/admin/operator/add';
-				parentdg='#operatorMgr';
-			}
-		}, {
-			text : '编辑',
-			iconCls : 'icon-edit',
-			handler : function() {
-				var row = $('#operatorMgr').datagrid('getSelected');
-				if (row) {
-					$('#operatorEditor').dialog('open').dialog('setTitle', '编辑');
-					$('#operatorForm').form('load', row);
-					url = '../rs/admin/operator/update';
-					parentdg='#operatorMgr';
-				}
-
-			}
-		}, '-', {
-			text : '删除',
-			iconCls : 'icon-remove',
-			handler : function() {
-				var row = $('#operatorMgr').datagrid('getSelected');
-				if (row) {
-					$('#confirm').dialog('open').dialog('setTitle', '删除管理员:'+row.name);
-					$('#confirmForm').form('load', row);
-					confirmurl = '../rs/admin/operator/delete';
-					afterConfirm=function(){
-						$('#operatorMgr').datagrid('reload'); // reload the user data
-					}
-				}
-			}
-		} ];
-
-		function saveOperator() {
-			$('#operatorForm').form(
-					'submit',
-					{
-						url : url,
-						success : function(result) {
-							var result = eval('(' + result + ')');
-							if (result.code == 2001) {
-								$('#operatorEditor').dialog('close'); // close the dialog
-								$(parentdg).datagrid('reload'); // reload the user data
-							} else {
-								$('#operatorEditorInfo').text(
-										'error code: ' + result.code);
-							}
-						}
-					});
-		}	
 		<!-- ************************************ Promotion Editor ************************************ -->
 
 		var promotionToolbar = [ {
@@ -623,7 +477,7 @@
 				$('#promotionEditor').dialog('open').dialog('setTitle', '添加');
 				$('#promotionForm').form('clear');
 				enablePromotionEditor(true);
-				url = '../rs/admin/promotion/add';
+				url = './rs/admin/promotion/add';
 				parentdg='#draftPromotionMgr';
 			}
 		}, {
@@ -639,7 +493,7 @@
 					row.bonusExpirationTimeStr=formatDateBox(new Date(row.bonusExpirationTime));
 					enablePromotionEditor(true);
 					$('#promotionForm').form('load', row);
-					url = '../rs/admin/promotion/update';
+					url = './rs/admin/promotion/update';
 					parentdg='#draftPromotionMgr';
 				}
 
@@ -652,7 +506,7 @@
 				if (row) {
 					$('#confirm').dialog('open').dialog('setTitle', '删除活动:'+row.name);
 					$('#confirmForm').form('load', row);
-					confirmurl = '../rs/admin/promotion/delete';
+					confirmurl = './rs/admin/promotion/delete';
 					afterConfirm=function(){
 						$('#draftPromotionMgr').datagrid('reload'); // reload the user data
 					}
@@ -666,7 +520,7 @@
 				if (row) {
 					$('#confirm').dialog('open').dialog('setTitle', '激活活动:'+row.name);
 					$('#confirmForm').form('load', row);
-					confirmurl = '../rs/admin/promotion/active/'+row.id;
+					confirmurl = './rs/admin/promotion/active/'+row.id;
 					afterConfirm=function(){
 						$('#draftPromotionMgr').datagrid('reload'); // reload the user data
 						$('#activePromotionMgr').datagrid('reload'); // reload the user data
@@ -741,7 +595,179 @@
 			}
 		}];
 
+		<s:if test="%{operator.tenantId==0}">
+
+		<!-- ************************************ Tenant selector ************************************ -->
+		var tenantMap;
 		
+		function loadTenant(){
+			$.ajax({
+			     type: "POST",
+			     url: "./rs/admin/tenant/select",
+			     async: true,
+			     contentType: "application/x-www-form-urlencoded",
+				 dataType: "json",
+				 success: function(data){
+				 	tenantMap=data;
+				 	
+					var options = new Array();
+					$.each(data, function(k, v) {
+					    var item = new Object();
+					    item.id=k;
+					    item.text=v;
+					    options.push(item);
+				    });
+					$('#currentTenant').combobox('loadData', options);
+					
+				    var item = new Object();
+				    item.id=0;
+				    item.text='超级管理员';
+				    options.push(item);
+					$('#operatorTenantId').combobox('loadData', options);
+				 }
+			});
+		}
+	
+		
+		loadTenant();
+		
+		
+		function formatTenant(val, row){
+			if(val == 0){
+				return "超级管理员";
+			}else{
+				return tenantMap[val];
+			}
+		}
+		
+		function changeCurrentPromotion(id){
+			currentTenantId=id;
+			loadPromotion();
+		}
+		
+		<!-- ************************************ Tenant Editor ************************************ -->
+		var tenantToolbar = [ {
+			text : '添加',
+			iconCls : 'icon-add',
+			handler : function() {
+				$('#tenantEditor').dialog('open').dialog('setTitle', '添加');
+				$('#tenantForm').form('clear');
+				url = './rs/admin/tenant/add';
+				parentdg='#tenantMgr';
+			}
+		}, {
+			text : '编辑',
+			iconCls : 'icon-edit',
+			handler : function() {
+				var row = $('#tenantMgr').datagrid('getSelected');
+				if (row) {
+					$('#tenantEditor').dialog('open').dialog('setTitle', '编辑');
+					$('#tenantForm').form('load', row);
+					url = './rs/admin/tenant/update';
+					parentdg='#tenantMgr';
+				}
+
+			}
+		}, '-', {
+			text : '删除',
+			iconCls : 'icon-remove',
+			handler : function() {
+				var row = $('#tenantMgr').datagrid('getSelected');
+				if (row) {
+					$('#confirm').dialog('open').dialog('setTitle', '删除租户:'+row.name);
+					$('#confirmForm').form('load', row);
+					confirmurl = './rs/admin/tenant/delete';
+					afterConfirm=function(){
+						$('#tenantMgr').datagrid('reload'); // reload the user data
+						loadTenant();
+					}
+				}
+			}
+		} ];
+
+		function saveTenant() {
+			$('#tenantForm').form(
+					'submit',
+					{
+						url : url,
+						success : function(result) {
+							var result = eval('(' + result + ')');
+							if (result.code == 2001) {
+								$('#tenantEditor').dialog('close'); // close the dialog
+								$(parentdg).datagrid('reload'); // reload the user data
+								loadTenant();
+							} else {
+								$('#tenantEditorInfo').text(
+										'error code: ' + result.code);
+							}
+						}
+					});
+		}
+		
+		<!-- ************************************ Operator Editor ************************************ -->
+		var operatorToolbar = [ {
+			text : '添加',
+			iconCls : 'icon-add',
+			handler : function() {
+				$('#operatorEditor').dialog('open').dialog('setTitle', '添加');
+				$('#operatorForm').form('clear');
+				url = './rs/admin/operator/add';
+				parentdg='#operatorMgr';
+			}
+		}, {
+			text : '编辑',
+			iconCls : 'icon-edit',
+			handler : function() {
+				var row = $('#operatorMgr').datagrid('getSelected');
+				if (row) {
+					$('#operatorEditor').dialog('open').dialog('setTitle', '编辑');
+					$('#operatorForm').form('load', row);
+					url = './rs/admin/operator/update';
+					parentdg='#operatorMgr';
+				}
+
+			}
+		}, '-', {
+			text : '删除',
+			iconCls : 'icon-remove',
+			handler : function() {
+				var row = $('#operatorMgr').datagrid('getSelected');
+				if (row) {
+					$('#confirm').dialog('open').dialog('setTitle', '删除管理员:'+row.name);
+					$('#confirmForm').form('load', row);
+					confirmurl = './rs/admin/operator/delete';
+					afterConfirm=function(){
+						$('#operatorMgr').datagrid('reload'); // reload the user data
+					}
+				}
+			}
+		} ];
+
+		function saveOperator() {
+			$('#operatorForm').form(
+					'submit',
+					{
+						url : url,
+						success : function(result) {
+							var result = eval('(' + result + ')');
+							if (result.code == 2001) {
+								$('#operatorEditor').dialog('close'); // close the dialog
+								$(parentdg).datagrid('reload'); // reload the user data
+							} else {
+								$('#operatorEditorInfo').text(
+										'error code: ' + result.code);
+							}
+						}
+					});
+		}	
+		
+		
+		var currentTenantId=0;
+	</s:if>
+	<s:else>
+		var currentTenantId=<s:property value="operator.tenantId" />;
+		loadPromotion();
+	</s:else>			
 
 	</script>
 </body>
