@@ -69,22 +69,27 @@ public abstract class BaseRest<T> {
 	
 	
 	protected void checkPermission(Integer tenantId){
-		HttpSession session = httppServletRequest.getSession();
-		if(session != null){
-			Operator operator = (Operator) session.getAttribute("operator");
-			if(operator != null){
-				if(operator.getTenantId() == 0 || (tenantId!=null && tenantId == operator.getTenantId()) ){
-					//if(log.isTraceEnabled()){
-						log.info("Permission is allowed for operator:{} accessing tenant {}", operator.getName(),tenantId);
-				//	}
-					return;
-				}
-				
-			}else{
-				log.warn("operator is mssing0");
+		Operator operator = getCurrentOperator();
+		if(operator != null){
+			if(operator.getTenantId() == 0 || (tenantId!=null && tenantId == operator.getTenantId()) ){
+				//if(log.isTraceEnabled()){
+					log.info("Permission is allowed for operator:{} accessing tenant {}", operator.getName(),tenantId);
+			//	}
+				return;
 			}
+			
+		}else{
+			log.warn("operator is mssing0");
 		}
 		log.warn("Permission NOT is allowed for accessing tenant {}", tenantId);
+	}
+	
+	protected Operator getCurrentOperator(){
+		HttpSession session = httppServletRequest.getSession();
+		if(session != null){
+			return (Operator) session.getAttribute("operator");
+		}
+		return null;
 	}
     
 

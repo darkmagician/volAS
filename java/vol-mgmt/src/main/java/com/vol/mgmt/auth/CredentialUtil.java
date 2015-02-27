@@ -6,9 +6,13 @@ package com.vol.mgmt.auth;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Random;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.vol.auth.AuthenticationServiceHolder;
+import com.vol.auth.IdentityChangeListener;
 
 /**
  * @author scott
@@ -88,4 +92,13 @@ public class CredentialUtil {
         }
         return buf.toString();
     }
+    
+    
+    public static void revoke(String name){
+    	 Set<IdentityChangeListener> listeners = AuthenticationServiceHolder.getInstance().getListeners();
+    	 for(IdentityChangeListener listener: listeners){
+    		 listener.onChange(name);
+    	 }
+    }
+    
 }

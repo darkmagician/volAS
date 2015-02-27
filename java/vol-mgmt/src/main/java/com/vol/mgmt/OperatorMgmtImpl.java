@@ -70,8 +70,63 @@ public class OperatorMgmtImpl extends AbstractService<Integer,Operator>{
 	@Override
 	public Integer add(Operator obj) {
 		String pass = CredentialUtil.generatePass();
+		return add(obj, pass);
+	}
+
+	/**
+	 * @param obj
+	 * @param pass
+	 * @return
+	 */
+	public Integer add(Operator obj, String pass) {
 		obj.setPassword(CredentialUtil.digest(pass));
 		log.info("New User name:{}, pass:{}, digest:{}", obj.getName(), pass, obj.getPassword());
 		return super.add(obj);
 	}
+	
+	
+	public boolean updatePassword(final int id, final String oldpass, String newpass){
+		final String oldDigest = CredentialUtil.digest(oldpass);
+		final String newDigest = CredentialUtil.digest(newpass);
+		boolean rc= this.transaction.execute(new TransactionCallback<Boolean>(){
+
+			@Override
+			public Boolean doInTransaction(TransactionStatus status) {
+				Operator old = getDAO().get(id);
+				String previousDigest = old.getPassword();
+				if(previousDigest.equals(oldDigest)){
+					old.setPassword(newDigest);
+					operatorDAO.update(old);
+					CredentialUtil.revoke(old.getName());
+					return true;
+				}
+				log.info("old pass {}, old degist {}, pre digest {}", oldpass, oldDigest, previousDigest);
+				return false;
+			}
+
+		});
+		return rc;
+	}
+	
+	public boolean resetPassword(final int id){
+		final String pass = CredentialUtil.generatePass();
+		String mail =  this.transaction.execute(new TransactionCallback<String>(){
+
+			@Override
+			public String doInTransaction(TransactionStatus status) {
+				Operator old = getDAO().get(id);
+				String mail = "111";
+				if(mail != null){
+					old.setPassword(pass);
+					operatorDAO.update(old);
+					return mail;
+				}
+				return mail;
+			}
+
+		});
+		return mail != null;
+	}
+	
+	
 }

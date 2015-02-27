@@ -133,4 +133,22 @@ public class OperatorRest extends BaseRest<Operator>{
     	}
 		return result;
 	}
+	
+    @POST
+    @Path("/changepass")
+    @Consumes("application/x-www-form-urlencoded")
+    @Produces("application/json")
+	public OperationResult changePassword(@FormParam("oldpass")String oldpass,@FormParam("newpass")String newpass){
+    	OperationResult result = new OperationResult();
+    	try {
+			Operator operator = getCurrentOperator();
+			operatorMgmt.updatePassword(operator.getId(), oldpass, newpass);
+			result.setCode(PutOperationResult.SUCCESS);
+		} catch (Exception e) {
+    		log.error("failed to update password of operator",e);
+    		result.setCode(PutOperationResult.INTERNAL_ERROR);
+		}
+    	return result;
+    }
+    
 }
