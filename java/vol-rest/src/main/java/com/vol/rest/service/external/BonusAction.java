@@ -81,7 +81,7 @@ public class BonusAction {
     @PUT
     @Path("/sendbonus/{tenantId}")
     @Produces("application/json")   
-    public boolean transfer(@PathParam("tenantId")Integer tenant,@FormParam("userId")Long fromUserId, @FormParam("fromUser")String fromUserName,@FormParam("bonusId")Long bonusId, @FormParam("toUser")String toUser){
-    	return bonusMgmt.transfer(tenant, bonusId, fromUserId, fromUserName, toUser);
+    public boolean transfer(@PathParam("tenantId")Integer tenant, @FormParam("fromUser")String fromUserName,@FormParam("bonusId")Long bonusId, @FormParam("toUser")String toUser){
+    	return bonusMgmt.transfer(tenant, bonusId, fromUserName, toUser);
     }	 
 }

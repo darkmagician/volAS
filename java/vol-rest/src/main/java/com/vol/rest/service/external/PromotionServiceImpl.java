@@ -186,7 +186,7 @@ public class PromotionServiceImpl extends AbstractTransactionService{
 		bonus.setSize(bonusSize);
 		bonus.setPromotionId(promotion.getId());
 		bonus.setUserId(user.getId());
-		bonus.setTargetUserId(user.getId());
+		bonus.setTargetUserName(user.getName());
 		bonus.setTenantId(promotion.getTenantId());
 		bonus.setExpirationTime(promotion.getBonusExpirationTime());
 		Long id = this.transaction.execute(new TransactionCallback<Long>(){

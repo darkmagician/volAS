@@ -8,6 +8,8 @@
              <ref bean="TenantRest" />
              <ref bean="PromotionBalanceRest" />    
              <ref bean="OperatorRest" />    
+             <ref bean="BonusRest" />
+             <ref bean="QuotaRest" />
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>

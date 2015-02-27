@@ -19,9 +19,9 @@
         <property name="tenantId" column="tenantId" />
         <property name="expirationTime" column="expirationTime" />
     </class> 
-     <query name="bonus.byUser">   
+     <query name="bonus.byUserPromotion">   
         <![CDATA[  
-            from Bonus as bonus where bonus.targetUserId = :userId
+            from Bonus as bonus where bonus.userId = :userId and promotionId=:promotionId
         ]]>   
     </query> 
      <query name="bonus.byOwnedName">   

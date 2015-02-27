@@ -12,4 +12,6 @@
  	<bean id="PromotionBalanceRest" class="com.vol.rest.service.PromotionBalanceRest"/>     
 	<bean id="PromotionRest" class="com.vol.rest.service.PromotionRest"/>     
  	<bean id="TenantRest" class="com.vol.rest.service.TenantRest"/>   
+ 	<bean id="BonusRest" class="com.vol.rest.service.BonusRest"/>   
+ 	<bean id="QuotaRest" class="com.vol.rest.service.QuotaRest"/>    	 	
 </beans>

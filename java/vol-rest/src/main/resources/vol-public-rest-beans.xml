@@ -12,9 +12,9 @@
  
 
 	<bean id="bonusAction" class="com.vol.rest.service.external.BonusAction"/>  
-	<bean id="BonusRest" class="com.vol.rest.service.external.BonusPublicRest"/>     
+	<bean id="BonusPublicRest" class="com.vol.rest.service.external.BonusPublicRest"/>     
 	<bean id="PromotionPublicRest" class="com.vol.rest.service.external.PromotionPublicRest"/>     
- 	<bean id="QuotaRest" class="com.vol.rest.service.external.QuotaPublicRest"/>     
- 	<bean id="UserRest" class="com.vol.rest.service.external.UserPublicRest"/>  
+ 	<bean id="QuotaPublicRest" class="com.vol.rest.service.external.QuotaPublicRest"/>     
+ 	<bean id="UserPublicRest" class="com.vol.rest.service.external.UserPublicRest"/>  
  
 </beans>

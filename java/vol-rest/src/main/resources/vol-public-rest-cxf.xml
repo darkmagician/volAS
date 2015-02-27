@@ -5,10 +5,10 @@
     <jaxrs:server id="public" address="/public">
         <jaxrs:serviceBeans>
              <ref bean="bonusAction" />
-             <ref bean="BonusRest" />
+             <ref bean="BonusPublicRest" />
              <ref bean="PromotionPublicRest" />
-             <ref bean="QuotaRest" />
-             <ref bean="UserRest" />
+             <ref bean="QuotaPublicRest" />
+             <ref bean="UserPublicRest" />
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
