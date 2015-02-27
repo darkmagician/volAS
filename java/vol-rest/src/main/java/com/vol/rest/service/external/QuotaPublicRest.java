@@ -20,7 +20,7 @@ import com.vol.mgmt.QuotaMgmtImpl;
  *
  */
 @Path("/quota")
-public class QuotaRest {
+public class QuotaPublicRest {
 	@Resource(name="quotaMgmt")
 	protected QuotaMgmtImpl quotaMgmt;
 	

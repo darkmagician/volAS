@@ -21,7 +21,7 @@ import com.vol.mgmt.UserMgmtImpl;
  *
  */
 @Path("/user")
-public class UserRest {
+public class UserPublicRest {
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 
 	@Resource(name="userMgmt")

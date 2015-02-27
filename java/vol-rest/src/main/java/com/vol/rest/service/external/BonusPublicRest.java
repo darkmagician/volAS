@@ -20,7 +20,7 @@ import com.vol.mgmt.BonusMgmtImpl;
  *
  */
 @Path("/bonus")
-public class BonusRest {
+public class BonusPublicRest {
 	@Resource(name="bonusMgmt")
 	protected BonusMgmtImpl bonusMgmt;
 	
