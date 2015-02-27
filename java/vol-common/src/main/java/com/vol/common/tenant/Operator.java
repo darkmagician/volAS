@@ -40,6 +40,46 @@ public class Operator extends BaseEntity {
 	 */
 	private String password;
 	
+	
+	/**
+	 * 
+	 */
+	private String email;
+	
+	
+	/**
+	 * 
+	 */
+	private String phone;
+	
+	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		return email;
+	}
+
+	/**
+	 * @param email the email to set
+	 */
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	/**
+	 * @return the phone
+	 */
+	public String getPhone() {
+		return phone;
+	}
+
+	/**
+	 * @param phone the phone to set
+	 */
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
 	/**
 	 * Gets the id.
 	 *
@@ -116,6 +156,22 @@ public class Operator extends BaseEntity {
 		this.password = password;
 	}
 
+	
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -132,6 +188,10 @@ public class Operator extends BaseEntity {
 		builder.append(description);
 		builder.append(", password=");
 		builder.append(password);
+		builder.append(", email=");
+		builder.append(email);
+		builder.append(", phone=");
+		builder.append(phone);
 		builder.append(", creationTime=");
 		builder.append(creationTime);
 		builder.append(", updateTime=");
@@ -140,19 +200,5 @@ public class Operator extends BaseEntity {
 		builder.append(status);
 		builder.append("]");
 		return builder.toString();
-	}
-
-	/**
-	 * @return the description
-	 */
-	public String getDescription() {
-		return description;
-	}
-
-	/**
-	 * @param description the description to set
-	 */
-	public void setDescription(String description) {
-		this.description = description;
 	}
 }

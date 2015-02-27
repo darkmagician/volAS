@@ -28,7 +28,8 @@ public class OperatorMgmtImpl extends AbstractService<Integer,Operator>{
 	
 
 	protected void copyAttribute(Operator operator, Operator old) {
-		old.setName(operator.getName());
+		old.setEmail(operator.getEmail());
+		old.setPhone(operator.getPhone());
 		old.setStatus(operator.getStatus());
 		old.setDescription(operator.getDescription());
 		

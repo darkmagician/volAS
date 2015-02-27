@@ -14,6 +14,8 @@
         <property name="tenantId" column="tenantId" />
         <property name="status" column="status" />
         <property name="description" column="description" />
+        <property name="email" column="email" length="32" />
+        <property name="phone" column="phone" length="32" />
     </class> 
  
     <query name="operator.all.total">   

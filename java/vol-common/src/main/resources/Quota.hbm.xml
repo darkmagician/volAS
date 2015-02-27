@@ -25,6 +25,11 @@
             from Quota as quota where quota.userId=:userId
         ]]>   
     </query> 
+    <query name="quota.byUserName">   
+        <![CDATA[  
+            from Quota as quota where quota.userName=:userName and tenantId=:tenantId
+        ]]>   
+    </query>     
     <query name="quota.topup">   
         <![CDATA[  
         
@@ -38,7 +43,7 @@
     </query>    
     <query name="quota.byUserVolType">   
         <![CDATA[  
-            from Quota as quota where quota.userId=:userId and quota.volumeType=:volumeType
+            from Quota as quota where quota.userName=:userName and tenantId=:tenantId and quota.volumeType=:volumeType
         ]]>   
     </query>         
 </hibernate-mapping>

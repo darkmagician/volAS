@@ -11,7 +11,7 @@
         <property name="creationTime" column="creationTime" />
         <property name="updateTime" column="updateTime" />
         <property name="size" column="size" />
-        <property name="targetUserId" column="targetUserId" />
+        <property name="targetUserName" column="targetUserName" />
         <property name="targetQuotaId" column="targetQuotaId" />
         <property name="activationTime" column="activationTime" />
         <property name="promotionId" column="promotionId" />
@@ -24,16 +24,20 @@
             from Bonus as bonus where bonus.targetUserId = :userId
         ]]>   
     </query> 
-
+     <query name="bonus.byOwnedName">   
+        <![CDATA[  
+            from Bonus as bonus where bonus.targetUserName = :targetUserName
+        ]]>   
+    </query> 
 
      <query name="bonus.transfer">   
         <![CDATA[  
-              update Bonus set targetUserId=:targetUserId, updateTime=:current where id=:id and targetUserId=:currentUserId and activationTime=0
+              update Bonus set targetUserId=:newTargetUserName, updateTime=:current where id=:id and targetUserName=:targetUserName and activationTime=0
         ]]>   
     </query> 
      <query name="bonus.activate">   
         <![CDATA[  
-              update Bonus set activationTime=:current, updateTime=:current , targetQuotaId=:targetQuotaId where id=:id and targetUserId=:currentUserId and activationTime=0
+              update Bonus set activationTime=:current, updateTime=:current , targetQuotaId=:targetQuotaId where id=:id and targetUserName=:targetUserName and activationTime=0
         ]]>   
     </query>              
 </hibernate-mapping>

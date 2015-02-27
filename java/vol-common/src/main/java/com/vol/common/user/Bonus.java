@@ -28,9 +28,9 @@ public class Bonus extends BaseEntity {
 	private long size;
 	
 	/**
-	 * The target user id.
+	 * 
 	 */
-	private long targetUserId;
+	private String targetUserName;
 	
 	/**
 	 * The target quota id.
@@ -118,25 +118,6 @@ public class Bonus extends BaseEntity {
 	}
 	
 	/**
-	 * Gets the target user id.
-	 *
-	 * @return the targetUserId
-	 */
-	public long getTargetUserId() {
-		return targetUserId;
-	}
-	
-	/**
-	 * Sets the target user id.
-	 *
-	 * @param targetUserId
-	 *            the targetUserId to set
-	 */
-	public void setTargetUserId(long targetUserId) {
-		this.targetUserId = targetUserId;
-	}
-	
-	/**
 	 * Gets the target quota id.
 	 *
 	 * @return the targetQuotaId
@@ -212,42 +193,6 @@ public class Bonus extends BaseEntity {
 		this.volumeType = volumeType;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Bonus [id=");
-		builder.append(id);
-		builder.append(", userId=");
-		builder.append(userId);
-		builder.append(", size=");
-		builder.append(size);
-		builder.append(", targetUserId=");
-		builder.append(targetUserId);
-		builder.append(", targetQuotaId=");
-		builder.append(targetQuotaId);
-		builder.append(", activationTime=");
-		builder.append(activationTime);
-		builder.append(", expirationTime=");
-		builder.append(expirationTime);
-		builder.append(", promotionId=");
-		builder.append(promotionId);
-		builder.append(", volumeType=");
-		builder.append(volumeType);
-		builder.append(", tenantId=");
-		builder.append(tenantId);
-		builder.append(", creationTime=");
-		builder.append(creationTime);
-		builder.append(", updateTime=");
-		builder.append(updateTime);
-		builder.append(", status=");
-		builder.append(status);
-		builder.append("]");
-		return builder.toString();
-	}
-
 	/**
 	 * @return the tenantId
 	 */
@@ -274,5 +219,55 @@ public class Bonus extends BaseEntity {
 	 */
 	public void setExpirationTime(long expirationTime) {
 		this.expirationTime = expirationTime;
+	}
+
+	/**
+	 * @return the targetUserName
+	 */
+	public String getTargetUserName() {
+		return targetUserName;
+	}
+
+	/**
+	 * @param targetUserName the targetUserName to set
+	 */
+	public void setTargetUserName(String targetUserName) {
+		this.targetUserName = targetUserName;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Bonus [id=");
+		builder.append(id);
+		builder.append(", userId=");
+		builder.append(userId);
+		builder.append(", size=");
+		builder.append(size);
+		builder.append(", targetUserName=");
+		builder.append(targetUserName);
+		builder.append(", targetQuotaId=");
+		builder.append(targetQuotaId);
+		builder.append(", activationTime=");
+		builder.append(activationTime);
+		builder.append(", expirationTime=");
+		builder.append(expirationTime);
+		builder.append(", promotionId=");
+		builder.append(promotionId);
+		builder.append(", volumeType=");
+		builder.append(volumeType);
+		builder.append(", tenantId=");
+		builder.append(tenantId);
+		builder.append(", creationTime=");
+		builder.append(creationTime);
+		builder.append(", updateTime=");
+		builder.append(updateTime);
+		builder.append(", status=");
+		builder.append(status);
+		builder.append("]");
+		return builder.toString();
 	}
 }

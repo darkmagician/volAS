@@ -81,8 +81,7 @@ public class BonusMgmtImpl extends AbstractQueryService<Long,Bonus> {
 				});
 	}
 	
-	public boolean transfer(final Integer tenantid, final Long id,
-			final Long fromUserId, final String fromUserName, final String toUser){
+	public boolean transfer(final Integer tenantid, final Long id, final String fromUserName, final String toUser){
 		
 		return this.transaction.execute(new TransactionCallback<Boolean>() {
 
@@ -109,41 +108,17 @@ public class BonusMgmtImpl extends AbstractQueryService<Long,Bonus> {
 					}
 					return false;
 				}
-				Long fromUserId0 = fromUserId;
-				if(fromUserId0==null){
-					Map<String, Object> parameters = new HashMap<String, Object>();
-					parameters.put("name", fromUserName);
-					parameters.put("tenantId", tenantid);
-					User user = userDao.find("user.byName", parameters);
-					if(user == null){
-						log.debug("invalid fromUserName: {}", fromUserName);
-						return false;
-					}
-					fromUserId0 = user.getId();
-				}
-				if(bonus.getTargetUserId() != fromUserId0){
+				if(!fromUserName.equals(bonus.getTargetUserName())){
 					if (log.isDebugEnabled()) {
-						log.debug("bonus is not owned by userId={}", fromUserId0);
+						log.debug("bonus is not owned by userName={}", fromUserName);
 					}
 					return false;				
 				}
 				Map<String, Object> parameters = new HashMap<String, Object>();
-				parameters.put("name", toUser);
-				parameters.put("tenantId", tenantid);
-				User user = userDao.find("user.byName", parameters);
-				if (user == null) {
-					if (log.isDebugEnabled()) {
-						log.debug(
-								"bonus is not found because User[name={},tenantid={}] is not found",
-								toUser, tenantid);
-					}
-					return false;
-				} 
-				parameters.clear();
 				parameters.put("id", bonus.getId());
 				parameters.put("current", now);
-				parameters.put("currentUserId", bonus.getTargetUserId());
-				parameters.put("targetUserId", user.getId());
+				parameters.put("targetUserName", fromUserName);
+				parameters.put("newTargetUserName", toUser);
 				int rc=bonusDao.batchUpdate("bonus.transfer", parameters );
 				if(rc != 1){
 					return false;
@@ -168,6 +143,12 @@ public class BonusMgmtImpl extends AbstractQueryService<Long,Bonus> {
 					
 					return false;
 				}
+				if(bonus.getTenantId() != tenantid){
+					if (log.isDebugEnabled()) {
+						log.debug("TenantId is not matched [current={}, bonusTenant={}]", tenantid,bonus.getTenantId());
+					}
+					return false;
+				}
 				if(bonus.getTargetQuotaId() > 0){
 					if (log.isDebugEnabled()) {
 						log.debug("bonus is actived id={} to quota [{}]", id,bonus.getTargetQuotaId());
@@ -182,26 +163,10 @@ public class BonusMgmtImpl extends AbstractQueryService<Long,Bonus> {
 					return false;
 				}
 				Map<String, Object> parameters = new HashMap<String, Object>();
-				long userId = bonus.getUserId();
-				User user=null;
-				if (userName != null) {
-					parameters.put("name", userName);
-					parameters.put("tenantId", tenantid);
-					user = userDao.find("user.byName", parameters);
-					if (user == null) {
-						if (log.isDebugEnabled()) {
-							log.debug(
-									"bonus is not found because User[name={},tenantid={}] is not found",
-									userName, tenantid);
-						}
-						return null;
-					} else {
-						userId = user.getId();
-					}
-
-				}
-				parameters.clear();
-				parameters.put("userId", userId);
+				String userName = bonus.getTargetUserName();
+				
+				parameters.put("tenantId", tenantid);
+				parameters.put("userName", userName);
 				parameters.put("volumeType", bonus.getVolumeType());
 				Quota quota = quotaDao.find("quota.byUserVolType", parameters);
 
@@ -209,12 +174,10 @@ public class BonusMgmtImpl extends AbstractQueryService<Long,Bonus> {
 				
 				long size = bonus.getSize();
 				if (quota == null) {
-					if(user == null){
-						user = userDao.get(userId);
-					}
+					User user = findUser(userName,tenantid);
 					// init the quota
 					quota = new Quota();
-					quota.setUserId(userId);
+					quota.setUserId(user.getId());
 					quota.setUserName(user.getName());
 					quota.setTenantId(user.getTenantId());
 					quota.setMaximum(size);
@@ -265,9 +228,27 @@ public class BonusMgmtImpl extends AbstractQueryService<Long,Bonus> {
 
 
 
+
 		}
 
 		);
+	}
+	
+	
+
+	private User findUser(String userName, Integer tenantId) {
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("name", userName);
+		parameters.put("tenantId", tenantId);
+		User user = userDao.find("user.byName", parameters);
+		if(user == null){
+			user = new User();
+			user.setName(userName);
+			user.setTenantId(tenantId);
+			initEntity(user);
+			userDao.create(user);
+		}
+		return user;
 	}
 	/**
 	 * @param bonus
@@ -279,7 +260,7 @@ public class BonusMgmtImpl extends AbstractQueryService<Long,Bonus> {
 		parameters.put("id", bonus.getId());
 		parameters.put("targetQuotaId", quotaId);
 		parameters.put("current", now);
-		parameters.put("currentUserId", bonus.getTargetUserId());
+		parameters.put("targetUserName", bonus.getTargetUserName());
 		int rc=bonusDao.batchUpdate("bonus.activate", parameters );
 		if(rc != 1){
 			throw new IllegalStateException("failed to update bonus");
