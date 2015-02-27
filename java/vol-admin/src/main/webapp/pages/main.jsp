@@ -106,6 +106,8 @@
 
 
 	<!-- ************************************ Tenant Editor End************************************ -->
+</s:if>
+	
 	<!-- ************************************ Operator Editor Start************************************ -->
 	<div id="operatorEditor" class="easyui-dialog"
 		style="width: 400px; height: 280px; padding: 10px 20px" closed="true"
@@ -114,7 +116,7 @@
 		<label id="operatorEditorInfo"></label>
 		<form id="operatorForm" method="post">
 			<div class="fitem">
-				<label>名字:</label> <input name="name" class="easyui-textbox"
+				<label>名字:</label> <input id="operatorName" name="name" class="easyui-textbox"
 					required="true">
 			</div>
 			<div class="fitem">
@@ -140,7 +142,7 @@
 			style="width: 90px">取消</a>
 	</div>
 	<!-- ************************************ Operator Editor End************************************ -->
-</s:if>
+
 	
 	<!-- ************************************ Promotion Editor Start************************************ -->
 	<div id="promotionEditor" class="easyui-dialog"
@@ -525,7 +527,27 @@
 						}
 					});
 		}	
-		
+		<!-- ************************************ Operator Editor ************************************ -->
+
+
+		function saveOperator() {
+			$('#operatorForm').form(
+					'submit',
+					{
+						url : url,
+						success : function(result) {
+							var result = eval('(' + result + ')');
+							if (result.code == 2001) {
+								$('#operatorEditor').dialog('close'); // close the dialog
+								$(parentdg).datagrid('reload'); // reload the user data
+							} else {
+								$('#operatorEditorInfo').text(
+										'error code: ' + result.code);
+							}
+						}
+					});
+		}	
+				
 		<!-- ************************************ Promotion Editor ************************************ -->
 
 		var promotionToolbar = [ {
@@ -762,12 +784,13 @@
 					});
 		}
 		
-		<!-- ************************************ Operator Editor ************************************ -->
+		<!-- ************************************ Operator Toolbar ************************************ -->
 		var operatorToolbar = [ {
 			text : '添加',
 			iconCls : 'icon-add',
 			handler : function() {
 				$('#operatorEditor').dialog('open').dialog('setTitle', '添加');
+				$('#operatorName').textbox('enable');
 				$('#operatorForm').form('clear');
 				url = './rs/admin/operator/add';
 				parentdg='#operatorMgr';
@@ -779,6 +802,7 @@
 				var row = $('#operatorMgr').datagrid('getSelected');
 				if (row) {
 					$('#operatorEditor').dialog('open').dialog('setTitle', '编辑');
+					$('#operatorName').textbox('disable');
 					$('#operatorForm').form('load', row);
 					url = './rs/admin/operator/update';
 					parentdg='#operatorMgr';
@@ -799,27 +823,7 @@
 					}
 				}
 			}
-		} ];
-
-		function saveOperator() {
-			$('#operatorForm').form(
-					'submit',
-					{
-						url : url,
-						success : function(result) {
-							var result = eval('(' + result + ')');
-							if (result.code == 2001) {
-								$('#operatorEditor').dialog('close'); // close the dialog
-								$(parentdg).datagrid('reload'); // reload the user data
-							} else {
-								$('#operatorEditorInfo').text(
-										'error code: ' + result.code);
-							}
-						}
-					});
-		}	
-		
-		
+		} ];		
 		var currentTenantId=0;
 	</s:if>
 	<s:else>
