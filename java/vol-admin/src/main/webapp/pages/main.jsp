@@ -207,13 +207,26 @@
 	 <div id="historyPromotionTB" style="padding:2px 5px;">
 		时间从: <input id="fromDate" class="easyui-datebox" style="width:110px">
 		到: <input id="toDate" class="easyui-datetimebox" style="width:110px">
-		名字:<input id="searchName" class="easyui-datetimebox"></input>
+		名字:<input id="searchName" class="easyui-textbox"></input>
 		<a href="javascript:void(0)" class="easyui-linkbutton"
 			iconCls="icon-search"
 			onclick="searchPromotionHistory()"
 			style="width: 90px">查找</a>		
 	</div>
-
+	 <div id="bonusTB" style="padding:2px 5px;">
+		用户名:<input id="searchBonusUserName" class="easyui-textbox"></input>
+		<a href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-search"
+			onclick="searchBonus()"
+			style="width: 90px">查找</a>		
+	</div>
+	 <div id="quotaTB" style="padding:2px 5px;">
+		用户名:<input id="searchQuotaUserName" class="easyui-textbox"></input>
+		<a href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-search"
+			onclick="searchQuota()"
+			style="width: 90px">查找</a>		
+	</div>	
 	<!-- ************************************ Promotion Editor End************************************ -->
 	<div id="header" data-options="region:'north'"
 		style="height: 120px; padding: 20px; background:#D3D3D3">
@@ -362,7 +375,55 @@
 						</tr>
 					</thead>
 				</table>
-			</div>								
+			</div>	
+			<div title="用户红包" style="padding: 20px;">
+				<table id="bonusMgr" class="easyui-datagrid" title="活动列表"
+					style="height: 700px"
+					data-options="rownumbers:true,singleSelect:true,toolbar:'#bonusTB',pagination:true">
+					<thead>
+						<tr>
+							<th field="promotionName" width="180">活动</th>
+							<th field="userName" width="120">来源者</th>
+							<th field="targetUserName" width="120">拥有者</th>
+							<th field="size" width="180" align="right"
+								formatter="formatVolume">大小</th>
+							<th field="volumeType" width="180" align="right"
+								formatter="formatVolumeType">流量类型</th>
+							<th field="expirationTime" width="180" align="right"
+								formatter="formatDate">过期时间</th>								
+							<th field="updateTime" width="180" align="right"
+								formatter="formatDate">更新时间</th>
+							<th field="creationTime" width="180" align="right"
+								formatter="formatDate">创建时间</th>
+						</tr>
+					</thead>
+				</table>
+			</div>	
+			<div title="用户流量" style="padding: 20px;">
+				<table id="quotaMgr" class="easyui-datagrid" title="活动列表"
+					style="height: 700px"
+					data-options="rownumbers:true,singleSelect:true,toolbar:'#quotaTB',pagination:true">
+					<thead>
+						<tr>
+							<th field="userName" width="120">用户</th>
+							<th field="volumeType" width="180" align="right"
+								formatter="formatVolumeType">流量类型</th>
+							<th field="maximum" width="180" align="right"
+								formatter="formatVolume">总流量</th>
+							<th field="balance" width="180" align="right"
+								formatter="formatLeftVolume">剩余流量</th>	
+							<th field="expirationTime" width="180" align="right"
+								formatter="formatDate">过期时间</th>
+							<th field="activationTime" width="180" align="right"
+								formatter="formatActivationDate">激活时间</th>									
+							<th field="updateTime" width="180" align="right"
+								formatter="formatDate">更新时间</th>
+							<th field="creationTime" width="180" align="right"
+								formatter="formatDate">创建时间</th>
+						</tr>
+					</thead>
+				</table>
+			</div>														
 		</div>
 	</div>
 
@@ -415,7 +476,14 @@
 		 function formatDate(val,row){
 			 return formatDateBox(new Date(val));
 		 }
-	 
+
+		 function formatActivationDate(val,row){
+			 if(val==0){
+				 return '未激活';
+			 }
+			 return formatDateBox(new Date(val));
+		 }
+		 
 		 var K=1000.0;
 		 var M=K*K;
 		 var G=M*K;
@@ -465,7 +533,38 @@
 		var confirmurl;
 		var afterConfirm;
 
-		
+		function searchQuota(){
+			if(!currentTenantId){
+				return;
+			}
+			if(0==currentTenantId){
+				return;
+			}
+			
+			var searchName = $('#searchQuotaUserName').textbox('getValue');
+		    $('#quotaMgr').datagrid({
+		        url:'./rs/admin/quota/'+currentTenantId+'/paging',
+		        queryParams:{
+		        	name:searchName
+		        }
+		        });				
+		}
+		function searchBonus(){
+			if(!currentTenantId){
+				return;
+			}
+			if(0==currentTenantId){
+				return;
+			}
+			
+			var searchName = $('#searchBonusUserName').textbox('getValue');
+		    $('#bonusMgr').datagrid({
+		        url:'./rs/admin/bonus/'+currentTenantId+'/paging',
+		        queryParams:{
+		        	name:searchName
+		        }
+		        });			
+		}
 
 		
 		function searchPromotionHistory(){

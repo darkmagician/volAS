@@ -14,6 +14,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 
 import com.vol.common.DAO;
+import com.vol.common.mgmt.PagingResult;
+import com.vol.common.tenant.Promotion;
 import com.vol.common.tenant.Tenant;
 import com.vol.common.user.Bonus;
 import com.vol.common.user.Quota;
@@ -41,6 +43,43 @@ public class BonusMgmtImpl extends AbstractQueryService<Long,Bonus> {
 	@Resource(name = "cycleHandler")
 	protected CycleHandler cycleHandler;
 	
+	@Resource(name = "promotionDao")
+	protected DAO<Integer, Promotion> promotionDAO;
+	
+	
+	private final PostProcess<Bonus> bonusPostProcessor = new PostProcess<Bonus>(){
+
+		@Override
+		public void process(PagingResult<Bonus> result) {
+			List<Bonus> rows = result.getRows();
+			if(rows != null){
+				Map<Long, String> users = new HashMap<Long, String>();
+				Map<Integer, String> promotions = new HashMap<Integer, String>();
+				for(Bonus bonus: rows){
+					long userId = bonus.getUserId();
+					String userName = users.get(userId);
+					if(userName == null){
+						User user = userDao.get(userId);
+						userName = user.getName();
+						users.put(userId, userName);
+					}
+					bonus.setUserName(userName);
+					
+
+					int promotionId = bonus.getPromotionId();
+					String promotionName = promotions.get(promotionId);
+					if(promotionName == null){
+						Promotion promotion = promotionDAO.get(promotionId);
+						promotionName = promotion.getName();
+						promotions.put(promotionId, promotionName);
+					}
+					bonus.setPromotionName(promotionName);
+				}
+			}
+		}
+		
+	};
+	
 
 	public List<Bonus> listBonusByUserName(final Integer tenantid,
 			final String userName) {
@@ -50,20 +89,9 @@ public class BonusMgmtImpl extends AbstractQueryService<Long,Bonus> {
 					@Override
 					public List<Bonus> doInTransaction(TransactionStatus status) {
 						Map<String, Object> parameters = new HashMap<String, Object>();
-						parameters.put("name", userName);
+						parameters.put("targetUserName", userName);
 						parameters.put("tenantId", tenantid);
-						User user = userDao.find("user.byName", parameters);
-						if (user == null) {
-							if (log.isDebugEnabled()) {
-								log.debug(
-										"bonus is not found because User[name={},tenantid={}] is not found",
-										userName, tenantid);
-							}
-							return null;
-						}
-						parameters.clear();
-						parameters.put("userId", user.getId());
-						return bonusDao.query("bonus.byUser", parameters);
+						return bonusDao.query("bonus.byOwnedName", parameters);
 					}
 				});
 	}
@@ -280,4 +308,15 @@ public class BonusMgmtImpl extends AbstractQueryService<Long,Bonus> {
 	protected DAO<Long, Bonus> getDAO() {
 		return bonusDao;
 	}
+
+	/* (non-Javadoc)
+	 * @see com.vol.dao.AbstractQueryService#listByPaging(java.lang.String, java.util.Map, int, int)
+	 */
+	@Override
+	public PagingResult<Bonus> listByPaging(String queryName,
+			Map<String, Object> parameters, int startPage, int pageSize) {
+		return super.listByPaging(queryName, parameters, startPage, pageSize,bonusPostProcessor);
+	}
+	
+
 }

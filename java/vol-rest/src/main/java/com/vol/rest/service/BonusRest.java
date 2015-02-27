@@ -39,6 +39,7 @@ public class BonusRest {
 		Map<String,Object> map = new HashMap<String,Object>();
 		map.put("targetUserName", name);
 		map.put("tenantId", tenantId);
-    	return bonusMgmt.listByPaging("bonus.byOwnedName", map, startPage, pageSize);
+		PagingResult<Bonus> result = bonusMgmt.listByPaging("bonus.byOwnedName", map, startPage, pageSize);
+		return result;
     }
 }

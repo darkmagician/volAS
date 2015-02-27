@@ -129,7 +129,7 @@ public class PromotionServiceImpl extends AbstractTransactionService{
 				parameters.clear();
 				parameters.put("promotionId", promotionId);
 				parameters.put("userId", user.getId());
-				List<Bonus> bonuses = bonusDAO.query("bonus.byUser", parameters);
+				List<Bonus> bonuses = bonusDAO.query("bonus.byUserPromotion", parameters);
 				context.put(GRANTED, bonuses);
 			}
 		});

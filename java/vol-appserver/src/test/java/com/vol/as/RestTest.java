@@ -109,7 +109,7 @@ public class RestTest {
 		crabBonus(promotionId, userName);	
 		
 		showUser(userName);
-		showUserBonus(userId);
+		//showUserBonus(userId);
 
 		showUserBonus(userName);
 		checkPromotionbalance(promotionId);			
@@ -166,7 +166,7 @@ public class RestTest {
 		crabBonus(promotionId, userName2);	
 		
 		showUser(userName);
-		showUserBonus(userId);
+		//showUserBonus(userId);
 
 		showUserBonus(userName);
 		checkPromotionbalance(promotionId);			
@@ -274,7 +274,7 @@ public class RestTest {
 	 * @param userId
 	 * @return
 	 */
-	private long showUserBonus(long userId) {
+/*	private long showUserBonus(long userId) {
 		Response restResult;
 		client2.reset();
 		
@@ -289,7 +289,7 @@ public class RestTest {
 		System.out.println("list bonuses:"+bonuses);
 		 bonusId = bonuses.get(bonuses.size()-1).getId();
 		return bonusId;
-	}
+	}*/
 	
 	/**
 	 * @param userName

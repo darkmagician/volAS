@@ -49,17 +49,8 @@ public class QuotaMgmtImpl  extends AbstractQueryService<Long,Quota>  {
 			@Override
 			public List<Quota> doInTransaction(TransactionStatus status) {
 				Map<String,Object> parameters= new HashMap<String,Object> ();
-				parameters.put("name", userName);
+				parameters.put("userName", userName);
 				parameters.put("tenantId", tenantid);
-				User user = userDao.find("user.byName", parameters);
-				if(user == null){
-					if(log.isDebugEnabled()){
-						log.debug("quota is not found because User[name={},tenantid={}] is not found",userName,tenantid);
-					}
-					return null;
-				}	
-				parameters.clear();
-				parameters.put("userId", user.getId());
 				return quotaDao.query("quota.byUserName", parameters);
 			}});	
 		 adjustBalance(list);

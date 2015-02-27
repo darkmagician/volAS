@@ -13,6 +13,11 @@ import com.vol.common.BaseEntity;
 public class Bonus extends BaseEntity {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
 	 * The id.
 	 */
 	private long id;
@@ -60,6 +65,11 @@ public class Bonus extends BaseEntity {
 	 * The tenant id.
 	 */
 	private int tenantId;
+	
+	private String promotionName;
+	
+	private String userName;
+	
 	/**
 	 * Gets the id.
 	 *
@@ -269,5 +279,33 @@ public class Bonus extends BaseEntity {
 		builder.append(status);
 		builder.append("]");
 		return builder.toString();
+	}
+
+	/**
+	 * @return the promotionName
+	 */
+	public String getPromotionName() {
+		return promotionName;
+	}
+
+	/**
+	 * @param promotionName the promotionName to set
+	 */
+	public void setPromotionName(String promotionName) {
+		this.promotionName = promotionName;
+	}
+
+	/**
+	 * @return the userName
+	 */
+	public String getUserName() {
+		return userName;
+	}
+
+	/**
+	 * @param userName the userName to set
+	 */
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 }

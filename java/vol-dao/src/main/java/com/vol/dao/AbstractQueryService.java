@@ -43,13 +43,27 @@ public abstract class AbstractQueryService<K extends Serializable, V extends Bas
 	
 	
 	public PagingResult<V> listByPaging(final String queryName, final Map<String,Object> parameters, final int startPage, final int pageSize){
+		return this.listByPaging(queryName, parameters, startPage, pageSize, null);
+
+	}
+	
+	
+	public PagingResult<V> listByPaging(final String queryName, final Map<String,Object> parameters, final int startPage, final int pageSize, final PostProcess<V> postProcess){
 		return this.readonlyTransaction.execute(new TransactionCallback<PagingResult<V>>(){
 
 			@Override
 			public PagingResult<V> doInTransaction(TransactionStatus status) {
-				return getDAO().queryByPage(queryName, parameters,startPage,pageSize);
+				PagingResult<V> result = getDAO().queryByPage(queryName, parameters,startPage,pageSize);
+				if(postProcess != null){
+					postProcess.process(result);
+				}
+				return result;
 			}});
 	}
 	
 	protected abstract DAO<K,V> getDAO();
+	
+	protected interface PostProcess<V>{
+		public void process(PagingResult<V> result);
+	}
 }
