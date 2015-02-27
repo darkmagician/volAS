@@ -10,7 +10,7 @@
 
  
  
-    <context:property-placeholder location="classpath:persistence-ds.properties" />
+    <context:property-placeholder location="classpath:persistence-ds.properties"  ignore-unresolvable="true"/>
  
    <bean id="sessionFactory"
     class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">

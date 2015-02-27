@@ -120,14 +120,22 @@
 					required="true">
 			</div>
 			<div class="fitem">
-				<label>描述:</label> <input name="description" class="easyui-textbox"
+				<label>邮箱:</label> <input name="email" class="easyui-textbox" validType="email"
 					required="true">
-			</div>
+			</div>	
+			<div class="fitem">
+				<label>手机:</label> <input name="phone" class="easyui-textbox"
+					required="true">
+			</div>				
 			<div class="fitem">
 				<label>所属租户:</label> <input id="operatorTenantId" name="tenantId"
 					class="easyui-combobox"
 					data-options="valueField:'id',textField:'text'">
 			</div>
+			<div class="fitem">
+				<label>描述:</label> <input name="description" class="easyui-textbox"
+					required="true">
+			</div>			
 			<input name="id" type="hidden"> <input name="creationTime"
 				type="hidden"> <input name="updateTime" type="hidden">
 

@@ -1,40 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xmlns:context="http://www.springframework.org/schema/context"
-   xsi:schemaLocation="
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
       http://www.springframework.org/schema/beans
       http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
       http://www.springframework.org/schema/context
       http://www.springframework.org/schema/context/spring-context-3.2.xsd">
-    <bean id="MVELPromotionPolicy"
-     class="com.vol.mgmt.MVELPromotionPolicy"/>
-     
-   <bean id="promotionMgmt"
-     class="com.vol.mgmt.PromotionMgmtImpl" init-method="init"/>
- 
-   <bean id="operatorMgmt"
-     class="com.vol.mgmt.OperatorMgmtImpl" init-method="init"/>
-     
-   <bean id="tenantMgmt"
-     class="com.vol.mgmt.TenantMgmtImpl" init-method="init"/>     
- 
-    <bean id="cycleHandler"
-     class="com.vol.mgmt.CycleHandler"/> 
-     
-      
-    <bean id="bonusMgmt"
-     class="com.vol.mgmt.BonusMgmtImpl" init-method="init"/>    
+	<bean id="MVELPromotionPolicy" class="com.vol.mgmt.MVELPromotionPolicy" />
 
-    <bean id="quotaMgmt"
-     class="com.vol.mgmt.QuotaMgmtImpl" init-method="init"/>       
-     
-    <bean id="userMgmt"
-     class="com.vol.mgmt.UserMgmtImpl" init-method="init"/>    
-     
- 
-      
-    <bean id="authentication"
-     class="com.vol.mgmt.auth.Authentication"/>       
-            
+	<bean id="promotionMgmt" class="com.vol.mgmt.PromotionMgmtImpl"
+		init-method="init" />
+
+	<bean id="operatorMgmt" class="com.vol.mgmt.OperatorMgmtImpl"
+		init-method="init" />
+
+	<bean id="tenantMgmt" class="com.vol.mgmt.TenantMgmtImpl"
+		init-method="init" />
+
+	<bean id="cycleHandler" class="com.vol.mgmt.CycleHandler" />
+
+
+	<bean id="bonusMgmt" class="com.vol.mgmt.BonusMgmtImpl"
+		init-method="init" />
+
+	<bean id="quotaMgmt" class="com.vol.mgmt.QuotaMgmtImpl"
+		init-method="init" />
+
+	<bean id="userMgmt" class="com.vol.mgmt.UserMgmtImpl" init-method="init" />
+
+
+
+	<bean id="authentication" class="com.vol.mgmt.auth.Authentication" />
+
+
+ 	 <context:property-placeholder location="classpath:mail-config.properties"  ignore-unresolvable="true"/>
+
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="${smtp.host}" />
+		<property name="port" value="${smtp.port}" />
+		<property name="username" value="${smtp.username}" />
+		<property name="password" value="${smtp.password}" />
+
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.smtp.auth">${smtp.auth}</prop>
+				<prop key="mail.smtp.starttls.enable">${smtp.ssl}</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="mailservice" class="com.vol.mgmt.MailService" init-method="init">
+		<property name="sender" value="${mail.sender}" />
+		<property name="registrationSubject" value="${mail.registrationSubject}" />
+		<property name="registrationTemplate" value="${mail.registrationTemplate}" />
+		<property name="resetSubject" value="${mail.resetSubject}" />
+		<property name="resetTemplate" value="${mail.resetTemplate}" />
+		<property name="enable" value="${mail.enable}" />
+	</bean>
 </beans>

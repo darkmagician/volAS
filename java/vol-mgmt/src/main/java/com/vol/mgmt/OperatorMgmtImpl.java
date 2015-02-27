@@ -24,6 +24,8 @@ public class OperatorMgmtImpl extends AbstractService<Integer,Operator>{
 
 	@Resource(name="operatorDao")
 	protected DAO<Integer,Operator> operatorDAO;
+	@Resource(name="mailservice")
+	protected MailService mailService;
 	
 	
 
@@ -71,7 +73,11 @@ public class OperatorMgmtImpl extends AbstractService<Integer,Operator>{
 	@Override
 	public Integer add(Operator obj) {
 		String pass = CredentialUtil.generatePass();
-		return add(obj, pass);
+		Integer id = add(obj, pass);
+		if(id != null){
+			mailService.sendMailForRegistration(obj, pass, null);
+		}
+		return id;
 	}
 
 	/**
@@ -111,22 +117,26 @@ public class OperatorMgmtImpl extends AbstractService<Integer,Operator>{
 	
 	public boolean resetPassword(final int id){
 		final String pass = CredentialUtil.generatePass();
-		String mail =  this.transaction.execute(new TransactionCallback<String>(){
+		Operator operator =  this.transaction.execute(new TransactionCallback<Operator>(){
 
 			@Override
-			public String doInTransaction(TransactionStatus status) {
+			public Operator doInTransaction(TransactionStatus status) {
 				Operator old = getDAO().get(id);
-				String mail = "111";
-				if(mail != null){
+				if(old != null){
 					old.setPassword(pass);
 					operatorDAO.update(old);
-					return mail;
+					return old;
 				}
-				return mail;
+				return null;
 			}
 
 		});
-		return mail != null;
+		if(operator != null )
+		{
+			mailService.sendMailForRegistration(operator, pass, null);
+			return true;
+		}
+		return false;
 	}
 	
 	
