@@ -15,7 +15,7 @@ import org.eclipse.jetty.util.security.Credential;
  * @author scott
  *
  */
-public class JettyLogin extends MappedLoginService {
+public class JettyLogin extends MappedLoginService implements IdentityChangeListener{
 	
 	private final AuthenticationServiceHolder holder = AuthenticationServiceHolder.getInstance();
 
@@ -29,6 +29,7 @@ public class JettyLogin extends MappedLoginService {
 			System.err.println("authentication service is not ready! Login failed.");
 			return null;
 		}
+		holder.register(this);
 		Map<String, Object> context = new HashMap<String, Object>();
 		String credentials = service.getCredential(username, context );
 		if(credentials == null){
@@ -44,6 +45,14 @@ public class JettyLogin extends MappedLoginService {
 	@Override
 	protected void loadUsers() throws IOException {
 		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.vol.auth.IdentityChangeListener#onChange(java.lang.String)
+	 */
+	@Override
+	public void onChange(String name) {
+		this._users.remove(name);
 	}
 
 }

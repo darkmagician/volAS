@@ -38,6 +38,36 @@
 			style="width: 90px">取消</a>
 	</div>
 
+	<!-- ************************************ Password Window Start************************************ -->
+	<div id="passdlg" class="easyui-dialog"
+		style="width: 400px; height: 300px; padding: 10px 20px" closed="true"
+		buttons="#passButtons">
+		<div class="ftitle">修改密码</div>
+		<label id="passInfo"></label>
+		<form id="passForm" method="post">
+			<div class="fitem">
+				<label>旧密码:</label> <input name="oldpass" class="easyui-textbox" type="password"
+					required="true">
+			</div>
+			<div class="fitem">
+				<label>新密码:</label> <input name="newpass" class="easyui-textbox" type="password"
+					required="true">
+			</div>
+			<div class="fitem">
+				<label>确认密码:</label> <input name="newpass2" class="easyui-textbox" type="password"
+					required="true">
+			</div>			
+		</form>
+	</div>
+	<div id="passButtons">
+		<a href="javascript:void(0)" class="easyui-linkbutton c6"
+			iconCls="icon-ok" onclick="updatePassword()" style="width: 90px">确定</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-cancel"
+			onclick="javascript:$('#confirm').dialog('close')"
+			style="width: 90px">取消</a>
+	</div>
+	
 	<!-- ************************************ Delete Window End************************************ -->
 <s:if test="%{operator.tenantId==0}">	
 
@@ -201,6 +231,7 @@
 			<label>当前用户:</label>
 			<s:property value="operator.name" />
 			<a href="logout.jsp">注销</a>
+			<a href="javascript:openPassDLG()">修改密码</a>
 		</div>
 	</div>
 	<div data-options="region:'center'">
@@ -334,7 +365,34 @@
 	</div>
 
 	<script type="text/javascript">
-	
+		function openPassDLG(){
+				$('#passdlg').dialog('open').dialog('setTitle', '修改密码');
+				$('#passForm').form('clear');
+		}
+		function updatePassword(){
+			$('#passForm').form(
+					'submit',
+					{
+						onSubmit: function(param){
+							if(this.newpass.value === this.newpass2.value){			
+								return true;
+							}
+							$('#passInfo').text("新密码不一致，请重新输入！");
+							return false;
+						},
+						url : './rs/admin/operator/changepass',
+						success : function(result) {
+							var result = eval('(' + result + ')');
+							if (result.code == 2001) {
+								$('#passdlg').dialog('close'); // close the dialog
+								
+							} else {
+								$('#passInfo').text(
+										'error code: ' + result.code);
+							}
+						}
+					});		
+		}
 	
 		function formatDateBox(date){
 			var h=date.getHours();
