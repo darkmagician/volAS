@@ -1,17 +1,17 @@
 CREATE TABLE BONUS
   (
      id             BIGINT NOT NULL auto_increment,
-     userid         BIGINT,
-     creationtime   BIGINT,
-     updatetime     BIGINT,
+     userId         BIGINT,
+     creationTime   BIGINT,
+     updateTime     BIGINT,
      size           BIGINT,
-     targetuserid   BIGINT,
-     targetquotaid  BIGINT,
-     activationtime BIGINT,
-     promotionid    INTEGER,
-     volumetype     SMALLINT,
-     tenantid       INTEGER,
-     expirationtime BIGINT,
+     targetUserName VARCHAR(32),
+     targetQuotaId  BIGINT,
+     activationTime BIGINT,
+     promotionId    INTEGER,
+     volumeType     SMALLINT,
+     tenantId       INTEGER,
+     expirationTime BIGINT,
      PRIMARY KEY (id)
   );
 
@@ -19,11 +19,14 @@ CREATE TABLE OPERATOR
   (
      id           INTEGER NOT NULL auto_increment,
      name         VARCHAR(32),
-     creationtime BIGINT,
-     updatetime   BIGINT,
-     password     VARCHAR(32),
-     tenantid     INTEGER,
+     creationTime BIGINT,
+     updateTime   BIGINT,
+     password     VARCHAR(40),
+     tenantId     INTEGER,
      status       SMALLINT,
+     description  VARCHAR(255),
+     email        VARCHAR(32),
+     phone        VARCHAR(32),
      PRIMARY KEY (id)
   );
 
@@ -31,26 +34,27 @@ CREATE TABLE PROMOTION
   (
      id                  INTEGER NOT NULL auto_increment,
      name                VARCHAR(64),
-     creationtime        BIGINT,
-     updatetime          BIGINT,
+     creationTime        BIGINT,
+     updateTime          BIGINT,
      description         VARCHAR(255),
      rule                LONGTEXT,
      status              SMALLINT,
-     lastupdateoperator  INTEGER,
-     bonusexpirationtime BIGINT,
-     tenantid            INTEGER,
-     starttime           BIGINT,
-     endtime             BIGINT,
+     lastUpdateOperator  INTEGER,
+     bonusExpirationTime BIGINT,
+     tenantId            INTEGER,
+     startTime           BIGINT,
+     endTime             BIGINT,
      maximum             BIGINT,
+     volumeType          SMALLINT,
      PRIMARY KEY (id)
   );
 
 CREATE TABLE PROMOTIONBALANCE
   (
      id           INTEGER NOT NULL auto_increment,
-     creationtime BIGINT,
-     updatetime   BIGINT,
-     promotionid  INTEGER,
+     creationTime BIGINT,
+     updateTime   BIGINT,
+     promotionId  INTEGER,
      balance      BIGINT,
      maximum      BIGINT,
      reserved     BIGINT,
@@ -60,16 +64,16 @@ CREATE TABLE PROMOTIONBALANCE
 CREATE TABLE QUOTA
   (
      id             BIGINT NOT NULL auto_increment,
-     creationtime   BIGINT,
-     updatetime     BIGINT,
-     userid         BIGINT,
+     creationTime   BIGINT,
+     updateTime     BIGINT,
+     userId         BIGINT,
      maximum        BIGINT,
      balance        BIGINT,
-     activationtime BIGINT,
-     expirationtime BIGINT,
-     volumetype     SMALLINT,
-     tenantid       INTEGER,
-     username       VARCHAR(32),
+     activationTime BIGINT,
+     expirationTime BIGINT,
+     volumeType     SMALLINT,
+     tenantId       INTEGER,
+     userName       VARCHAR(32),
      reserved       BIGINT,
      PRIMARY KEY (id)
   );
@@ -78,10 +82,10 @@ CREATE TABLE TENANT
   (
      id           INTEGER NOT NULL auto_increment,
      name         VARCHAR(64),
-     creationtime BIGINT,
-     updatetime   BIGINT,
+     creationTime BIGINT,
+     updateTime   BIGINT,
      description  VARCHAR(255),
-     cycletype    INTEGER,
+     cycleType    INTEGER,
      PRIMARY KEY (id)
   );
 
@@ -89,20 +93,24 @@ CREATE TABLE USER
   (
      id           BIGINT NOT NULL auto_increment,
      name         VARCHAR(32),
-     creationtime BIGINT,
-     updatetime   BIGINT,
-     tenantid     INTEGER,
+     creationTime BIGINT,
+     updateTime   BIGINT,
+     tenantId     INTEGER,
      PRIMARY KEY (id)
   );
 
-CREATE INDEX bonus_user_idx ON BONUS (userid);
+CREATE INDEX bonus_user_idx ON BONUS (userId);
 
-CREATE INDEX promotion_tenant_idx ON PROMOTION (tenantid);
+CREATE INDEX bonus_tusername_idx ON BONUS (targetUserName);
 
-CREATE INDEX balance_promotion_idx ON PROMOTIONBALANCE (promotionid);
+CREATE INDEX operator_name_idx ON OPERATOR (name);
 
-CREATE INDEX quota_user_idx ON QUOTA (userid);
+CREATE INDEX promotion_start_idx ON PROMOTION (startTime);
 
-CREATE INDEX quota_username_idx ON QUOTA (username);
+CREATE INDEX balance_promotion_idx ON PROMOTIONBALANCE (promotionId);
+
+CREATE INDEX quota_user_idx ON QUOTA (userId);
+
+CREATE INDEX quota_username_idx ON QUOTA (userName);
 
 CREATE INDEX user_name_idx ON USER (name); 

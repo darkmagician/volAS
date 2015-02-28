@@ -15,8 +15,8 @@
         <property name="status" column="status" />
         <property name="lastUpdateOperator" column="lastUpdateOperator" />
         <property name="bonusExpirationTime" column="bonusExpirationTime" /> 
-        <property name="tenantId" column="tenantId" index="promotion_tenant_idx"  />      
-        <property name="startTime" column="startTime" /> 
+        <property name="tenantId" column="tenantId"  />      
+        <property name="startTime" column="startTime" index="promotion_start_idx" /> 
         <property name="endTime" column="endTime" /> 
         <property name="maximum" column="maximum" /> 
         <property name="volumeType" column="volumeType" /> 

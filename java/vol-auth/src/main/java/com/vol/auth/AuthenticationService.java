@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public interface AuthenticationService {
 	
-	
+	public static final String MD5_PREFIX = "MD5:";
 	/**
 	 * Gets the credential.
 	 *

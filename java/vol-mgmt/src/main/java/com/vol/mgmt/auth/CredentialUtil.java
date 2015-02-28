@@ -22,8 +22,6 @@ public class CredentialUtil {
 	
 	private static final Logger log = LoggerFactory.getLogger(CredentialUtil.class);
 	
-	public static final String __TYPE = "MD5:";
-
 	private final static String chars = "abcdefghijklmnopqrstuvwxyz"+"ABCDEFGHIJKLMNOPQRSTUVWXYZ"+"0123456789";
 	
 	private final static Random rand = new Random();
@@ -66,7 +64,7 @@ public class CredentialUtil {
                 digest = __md.digest();
             }
 
-            return __TYPE + toString(digest, 16);
+            return com.vol.auth.AuthenticationService.MD5_PREFIX + toString(digest, 16);
         }
         catch (Exception e)
         {
