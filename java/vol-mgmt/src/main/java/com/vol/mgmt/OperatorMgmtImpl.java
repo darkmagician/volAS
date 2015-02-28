@@ -32,9 +32,8 @@ public class OperatorMgmtImpl extends AbstractService<Integer,Operator>{
 	protected void copyAttribute(Operator operator, Operator old) {
 		old.setEmail(operator.getEmail());
 		old.setPhone(operator.getPhone());
-		old.setStatus(operator.getStatus());
+		//old.setStatus(operator.getStatus());
 		old.setDescription(operator.getDescription());
-		
 	}
 	
 	/* (non-Javadoc)
@@ -137,6 +136,16 @@ public class OperatorMgmtImpl extends AbstractService<Integer,Operator>{
 			return true;
 		}
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.vol.dao.AbstractService#validate(com.vol.common.BaseEntity)
+	 */
+	@Override
+	protected void validate(Operator obj) {
+		validateNotNull(obj);
+		validateNotEmpty(obj, "name" , obj.getName());
+		validateNotEmpty(obj, "email" , obj.getEmail());
 	}
 	
 	

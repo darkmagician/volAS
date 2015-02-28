@@ -15,6 +15,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.vol.common.BaseEntity;
 import com.vol.common.DAO;
+import com.vol.common.exception.ErrorCode;
 import com.vol.common.tenant.Promotion;
 import com.vol.common.tenant.PromotionBalance;
 import com.vol.rest.result.BunosResult;
@@ -64,7 +65,7 @@ public class TestPromotionService extends BaseTest {
 		result = promotionService.giveMeBonus(promotion.getTenantId(), promotion.getId(),userName, Collections.EMPTY_MAP);
 		log.info("result {}",result);
 	//	Assert.assertEquals(0, result.getBonus().getSize());
-		Assert.assertEquals(BunosResult.UNLUCKY, result.getCode());
+		Assert.assertEquals(ErrorCode.UNLUCY.getCode(), result.getCode());
 	}
 	
 	@Test
@@ -86,7 +87,7 @@ public class TestPromotionService extends BaseTest {
 		result = promotionService.giveMeBonus(promotion.getTenantId(), promotion.getId(),userName, Collections.EMPTY_MAP);
 		log.info("result {}",result);
 		//Assert.assertEquals(0, result.getBonus().getSize());
-		Assert.assertEquals(BunosResult.UNLUCKY, result.getCode());
+		Assert.assertEquals(ErrorCode.UNLUCY.getCode(), result.getCode());
 	}
 
 	/**

@@ -22,6 +22,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
+import com.vol.common.exception.ErrorCode;
 import com.vol.common.mgmt.PagingResult;
 import com.vol.common.tenant.Tenant;
 import com.vol.mgmt.TenantMgmtImpl;
@@ -43,27 +44,37 @@ public class TenantRest extends BaseRest<Tenant>{
     @Path("/{tenantId}")
     @Produces("application/json")
 	public Tenant get(@PathParam("tenantId")Integer tenantId){
-    	checkPermission(null);
-    	return tenantMgmt.get(tenantId);
+    	try {
+			checkPermission(tenantId);
+			return tenantMgmt.get(tenantId);
+		} catch (Exception e) {
+			log.error("Operation Error",e);
+			return null;
+		}
     }
     
     @GET
     @Path("/")
     @Produces("application/json")
 	public List<Tenant> list(@Context UriInfo uriInfo){
-    	checkPermission(null);
-    	MultivaluedMap<String, String> pathPara = uriInfo.getQueryParameters();
-    	String queryName = pathPara.getFirst("query");
-    	if(queryName == null || "".equals(queryName)){
-    		return tenantMgmt.list("tenant.all", Collections.<String, Object> emptyMap());
-    	}else{
-    		Map<String,Object> map = new HashMap<String,Object>();
-    		map.put("current", System.currentTimeMillis());
-    		MapConverter.convert(pathPara, map, Collections.<String, Converter> emptyMap());
-    		log.info("parameters,{}",pathPara);
-    		return tenantMgmt.list("tenant."+queryName, map);
-    		
-    	}
+    	try {
+			checkPermission(null);
+			MultivaluedMap<String, String> pathPara = uriInfo.getQueryParameters();
+			String queryName = pathPara.getFirst("query");
+			if(queryName == null || "".equals(queryName)){
+				return tenantMgmt.list("tenant.all", Collections.<String, Object> emptyMap());
+			}else{
+				Map<String,Object> map = new HashMap<String,Object>();
+				map.put("current", System.currentTimeMillis());
+				MapConverter.convert(pathPara, map, Collections.<String, Converter> emptyMap());
+				log.info("parameters,{}",pathPara);
+				return tenantMgmt.list("tenant."+queryName, map);
+				
+			}
+		} catch (Exception e) {
+			log.error("Operation Error",e);
+			return null;
+		}
     }  
     
     @POST
@@ -71,8 +82,13 @@ public class TenantRest extends BaseRest<Tenant>{
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
 	public PagingResult<Tenant> listPage(@FormParam("page")Integer startPage,@FormParam("rows")Integer pageSize){
-    	checkPermission(null);
-    	return tenantMgmt.listByPaging("tenant.all", Collections.<String, Object> emptyMap(), startPage, pageSize);
+    	try {
+			checkPermission(null);
+			return tenantMgmt.listByPaging("tenant.all", Collections.<String, Object> emptyMap(), startPage, pageSize);
+		} catch (Exception e) {
+			log.error("Operation Error",e);
+			return null;
+		}
     }
     
     @PUT
@@ -80,34 +96,25 @@ public class TenantRest extends BaseRest<Tenant>{
     @Consumes("application/json")
     @Produces("application/json")
     public PutOperationResult create(Tenant tenant){
-    	checkPermission(null);
-    	PutOperationResult result = new PutOperationResult();
-    	try{
+        	checkPermission(null);
+        	PutOperationResult result = new PutOperationResult();
     		Integer id = tenantMgmt.add(tenant);
-    		result.setCode(PutOperationResult.SUCCESS);
+    		result.setErrorCode(ErrorCode.SUCCESS);
     		result.setId(id.intValue());
-    	}catch(Throwable e){
-    		log.error("failed to create tenant, "+tenant,e);
-    		result.setCode(PutOperationResult.INTERNAL_ERROR);
-    	}
-		return result;
+    		return result;
+
     }
     @POST
     @Path("/{id}")
     @Consumes("application/json")
     @Produces("application/json")
     public OperationResult update(Tenant tenant, @PathParam("id") Integer id){
-    	checkPermission(null);
-    	OperationResult result = new OperationResult();
-    	try{
-    		tenant.setId(id);
-    		tenantMgmt.update(id,tenant);
-    		result.setCode(PutOperationResult.SUCCESS);
-    	}catch(Throwable e){
-    		log.error("failed to update tenant, "+tenant,e);
-    		result.setCode(PutOperationResult.INTERNAL_ERROR);
-    	}
-		return result;
+			checkPermission(null);
+			OperationResult result = new OperationResult();
+			tenant.setId(id);
+			tenantMgmt.update(id,tenant);
+			result.setErrorCode(ErrorCode.SUCCESS);
+			return result;
     }
 
 	/* (non-Javadoc)
@@ -125,13 +132,8 @@ public class TenantRest extends BaseRest<Tenant>{
 	public OperationResult delete(Integer id) {
 		checkPermission(null);
 		OperationResult result = new OperationResult();
-    	try{
-    		tenantMgmt.delete(id);
-    		result.setCode(PutOperationResult.SUCCESS);
-    	}catch(Throwable e){
-    		log.error("failed to delete tenant, "+id,e);
-    		result.setCode(PutOperationResult.INTERNAL_ERROR);
-    	}
+		tenantMgmt.delete(id);
+		result.setErrorCode(ErrorCode.SUCCESS);
 		return result;
 	}
 	
@@ -140,15 +142,20 @@ public class TenantRest extends BaseRest<Tenant>{
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
 	public Map<Integer,String> listAsKeyName(){
-    	checkPermission(null);
-    	Map<Integer,String> map = new TreeMap<Integer,String>();
-    	 List<Tenant> tenants = tenantMgmt.list("tenant.all", Collections.<String, Object> emptyMap());
-    	 if(tenants != null){
-    		 for(Tenant t:tenants ){
-    			 map.put(t.getId(), t.getName());
-    		 }
-    	 }
-    	 return map;
+    	try {
+			checkPermission(null);
+			Map<Integer,String> map = new TreeMap<Integer,String>();
+			 List<Tenant> tenants = tenantMgmt.list("tenant.all", Collections.<String, Object> emptyMap());
+			 if(tenants != null){
+				 for(Tenant t:tenants ){
+					 map.put(t.getId(), t.getName());
+				 }
+			 }
+			 return map;
+		} catch (Exception e){
+			log.error("Operation Error",e);
+			return null;
+		}
     }	
     
 	

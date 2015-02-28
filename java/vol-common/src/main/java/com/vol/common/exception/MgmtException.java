@@ -5,7 +5,7 @@ package com.vol.common.exception;
 
 
 
-public class MgmtException extends Exception {
+public class MgmtException extends RuntimeException {
 
 	/**
 	 * 

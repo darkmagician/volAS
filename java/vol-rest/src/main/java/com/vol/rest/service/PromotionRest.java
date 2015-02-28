@@ -23,7 +23,10 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
 import com.vol.common.BaseEntity;
+import com.vol.common.exception.ErrorCode;
+import com.vol.common.exception.MgmtException;
 import com.vol.common.mgmt.PagingResult;
+import com.vol.common.tenant.Operator;
 import com.vol.common.tenant.Promotion;
 import com.vol.common.tenant.PromotionBalance;
 import com.vol.common.util.StringParser;
@@ -47,25 +50,37 @@ public class PromotionRest extends BaseRest<Promotion>{
     @Path("/{tenantId}/{promotionid}")
     @Produces("application/json")
 	public Promotion get(@PathParam("tenantId")Integer tenantId, @PathParam("promotionid")Integer promotionId){
-    	return promotionMgmt.get(promotionId);
+    	try {
+			checkPermission(tenantId);
+			return promotionMgmt.get(promotionId);
+		} catch (Exception e) {
+			log.error("Operation Error",e);
+			return null;
+		}
     }
     
     @GET
     @Path("/{tenantId}")
     @Produces("application/json")
 	public List<Promotion> list(@PathParam("tenantId")Integer tenantId, @Context UriInfo uriInfo){
-    	MultivaluedMap<String, String> pathPara = uriInfo.getQueryParameters();
-    	String queryName = pathPara.getFirst("query");
-    	if(queryName == null || "".equals(queryName)){
-    		return promotionMgmt.list("promotion.all", Collections.singletonMap("tenantId", (Object)tenantId));
-    	}else{
-    		Map<String,Object> map = new HashMap<String,Object>();
-    		map.put("current", System.currentTimeMillis());
-    		map.put("tenantId", tenantId);
-    		MapConverter.convert(pathPara, map, Collections.<String, Converter> emptyMap());
-    		return promotionMgmt.list("promotion."+queryName, map);
-    		
-    	}
+    	try {
+			checkPermission(tenantId);
+			MultivaluedMap<String, String> pathPara = uriInfo.getQueryParameters();
+			String queryName = pathPara.getFirst("query");
+			if(queryName == null || "".equals(queryName)){
+				return promotionMgmt.list("promotion.all", Collections.singletonMap("tenantId", (Object)tenantId));
+			}else{
+				Map<String,Object> map = new HashMap<String,Object>();
+				map.put("current", System.currentTimeMillis());
+				map.put("tenantId", tenantId);
+				MapConverter.convert(pathPara, map, Collections.<String, Converter> emptyMap());
+				return promotionMgmt.list("promotion."+queryName, map);
+				
+			}
+		} catch (Exception e) {
+			log.error("Operation Error",e);
+			return null;
+		}
     }  
     
     @PUT
@@ -86,15 +101,11 @@ public class PromotionRest extends BaseRest<Promotion>{
     }
     
     public OperationResult update(Promotion promotion,Integer id){
+    	checkPermission(promotion.getTenantId());
     	OperationResult result = new OperationResult();
-    	try{
-    		promotion.setId(id);
-    		promotionMgmt.update(id,promotion);
-    		result.setCode(PutOperationResult.SUCCESS);
-    	}catch(Throwable e){
-    		log.error("failed to update promotion, "+promotion,e);
-    		result.setCode(PutOperationResult.INTERNAL_ERROR);
-    	}
+		promotion.setId(id);
+		promotionMgmt.update(id,promotion);
+		result.setErrorCode(ErrorCode.SUCCESS);
 		return result;
     }
 
@@ -110,15 +121,23 @@ public class PromotionRest extends BaseRest<Promotion>{
     @Path("/active/{id}")
     @Produces("application/json")
 	public OperationResult active(@PathParam("id")Integer id){
-    	OperationResult result = new OperationResult();
-    	try{
-    		promotionMgmt.activate(id);
-    		result.setCode(PutOperationResult.SUCCESS);
-    	}catch(Throwable e){
-    		log.error("failed to active promotion, id="+id,e);
-    		result.setCode(PutOperationResult.INTERNAL_ERROR);
-    	}
-		return result;
+    	try {
+			OperationResult result = new OperationResult();
+			 Operator operator = getCurrentOperator();
+			promotionMgmt.activate(operator.getTenantId(),id);
+			result.setErrorCode(ErrorCode.SUCCESS);
+			return result;
+		}  catch (MgmtException me) {
+			log.error("Operation Error",me);
+			OperationResult result = new OperationResult();
+			result.setErrorCode(me.getCode());
+			return result;
+		} catch (Exception e){
+			log.error("Operation Error",e);
+			OperationResult result = new OperationResult();
+			result.setErrorCode(ErrorCode.INTERNAL_ERROR);
+			return result;
+		}
 		
 	}
     
@@ -128,7 +147,7 @@ public class PromotionRest extends BaseRest<Promotion>{
     @Path("/{tenantId}/{promotionid}")
     @Produces("application/json")
 	public void delete(@PathParam("tenantId")Integer tenantId, @PathParam("promotionid")Integer promotionId){
-    	promotionMgmt.delete(promotionId);
+    	delete(promotionId);
     }
     
     
@@ -137,12 +156,15 @@ public class PromotionRest extends BaseRest<Promotion>{
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
 	public PagingResult<Promotion> listPageByDraft(@PathParam("tenantId")Integer tenantId,@FormParam("page")Integer startPage,@FormParam("rows")Integer pageSize){
-    	if(tenantId==null|| tenantId<=0){
-    		return new PagingResult<Promotion>();
-    	}
-		Map<String,Object> map = new HashMap<String,Object>();
-		map.put("tenantId", tenantId);
-    	return promotionMgmt.listByPaging("promotion.byDraft", map, startPage, pageSize);
+		try {
+			checkPermission(tenantId);
+			Map<String,Object> map = new HashMap<String,Object>();
+			map.put("tenantId", tenantId);
+			return promotionMgmt.listByPaging("promotion.byDraft", map, startPage, pageSize);
+		} catch (Exception e) {
+			log.error("Operation Error",e);
+			return null;
+		}
     }
     
     @POST
@@ -150,15 +172,18 @@ public class PromotionRest extends BaseRest<Promotion>{
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
 	public PagingResult<Promotion> listPageByActive(@PathParam("tenantId")Integer tenantId,@FormParam("page")Integer startPage,@FormParam("rows")Integer pageSize){
-    	if(tenantId==null|| tenantId<=0){
-    		return new PagingResult<Promotion>();
-    	}
-		Map<String,Object> map = new HashMap<String,Object>();
-		map.put("tenantId", tenantId);
-		map.put("current", System.currentTimeMillis());
-		PagingResult<Promotion> result = promotionMgmt.listByPaging("promotion.byNotEnded", map, startPage, pageSize);
-		fillBalance(result);
-		return result;
+		try {
+			checkPermission(tenantId);
+			Map<String,Object> map = new HashMap<String,Object>();
+			map.put("tenantId", tenantId);
+			map.put("current", System.currentTimeMillis());
+			PagingResult<Promotion> result = promotionMgmt.listByPaging("promotion.byNotEnded", map, startPage, pageSize);
+			fillBalance(result);
+			return result;
+		} catch (Exception e) {
+			log.error("Operation Error",e);
+			return null;
+		}
     }
 
     @POST
@@ -167,19 +192,22 @@ public class PromotionRest extends BaseRest<Promotion>{
     @Produces("application/json")
 	public PagingResult<Promotion> listPageByHistory(@PathParam("tenantId")Integer tenantId,@FormParam("page")Integer startPage,@FormParam("rows")Integer pageSize,
 			@FormParam("from")String from, @FormParam("to")String to, @FormParam("name")String name){
-    	if(tenantId==null|| tenantId<=0){
-    		return new PagingResult<Promotion>();
-    	}
-		Map<String,Object> map = new HashMap<String,Object>();
-		map.put("tenantId", tenantId);
-		map.put("current", System.currentTimeMillis());
-		map.put("fromTime", StringParser.parseLong(from));
-		map.put("toTime", StringParser.parseLong( to));
-		map.put("name", name);
-		
-		PagingResult<Promotion> result = promotionMgmt.searchHistory( map, startPage, pageSize);
-		fillBalance(result);
-		return result;
+    	try {
+			checkPermission(tenantId);
+			Map<String,Object> map = new HashMap<String,Object>();
+			map.put("tenantId", tenantId);
+			map.put("current", System.currentTimeMillis());
+			map.put("fromTime", StringParser.parseLong(from));
+			map.put("toTime", StringParser.parseLong( to));
+			map.put("name", name);
+			
+			PagingResult<Promotion> result = promotionMgmt.searchHistory( map, startPage, pageSize);
+			fillBalance(result);
+			return result;
+		} catch (Exception e) {
+			log.error("Operation Error",e);
+			return null;
+		}
     }
 	/**
 	 * @param result
@@ -212,15 +240,11 @@ public class PromotionRest extends BaseRest<Promotion>{
     @Consumes("application/json")
     @Produces("application/json")
 	public PutOperationResult create(Promotion promotion) {
+		checkPermission(promotion.getTenantId());
     	PutOperationResult result = new PutOperationResult();
-    	try{
-    		Integer id = promotionMgmt.add(promotion);
-    		result.setCode(PutOperationResult.SUCCESS);
-    		result.setId(id.intValue());
-    	}catch(Throwable e){
-    		log.error("failed to create promotion, "+promotion,e);
-    		result.setCode(PutOperationResult.INTERNAL_ERROR);
-    	}
+		Integer id = promotionMgmt.add(promotion);
+		result.setErrorCode(ErrorCode.SUCCESS);
+		result.setId(id.intValue());
 		return result;
 	}
 
@@ -229,9 +253,10 @@ public class PromotionRest extends BaseRest<Promotion>{
 	 */
 	@Override
 	public OperationResult delete(Integer id) {
-		OperationResult result = new OperationResult();
-		 delete(null, id);
-		 result.setCode(PutOperationResult.SUCCESS);
+		 OperationResult result = new OperationResult();
+		 Operator operator = getCurrentOperator();
+		 delete(operator.getTenantId(), id);
+		result.setErrorCode(ErrorCode.SUCCESS);
 		 return result;
 	}
     

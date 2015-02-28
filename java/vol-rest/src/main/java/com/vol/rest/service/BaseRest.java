@@ -12,7 +12,6 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
@@ -21,6 +20,8 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vol.common.exception.ErrorCode;
+import com.vol.common.exception.MgmtException;
 import com.vol.common.tenant.Operator;
 import com.vol.common.util.StringParser;
 import com.vol.rest.result.OperationResult;
@@ -39,6 +40,8 @@ public abstract class BaseRest<T> {
 	
 	@Context
 	protected HttpServletRequest httppServletRequest;
+	
+	protected boolean securityCheck = true;
 	
 	
 	/**
@@ -65,31 +68,31 @@ public abstract class BaseRest<T> {
 	 * @return the operation result
 	 */
 
-	public abstract OperationResult update(T obj, @PathParam("id")Integer id);	
+	public abstract OperationResult update(T obj,Integer id);	
 	
 	
 	protected void checkPermission(Integer tenantId){
-		Operator operator = getCurrentOperator();
-		if(operator != null){
-			if(operator.getTenantId() == 0 || (tenantId!=null && tenantId == operator.getTenantId()) ){
-				//if(log.isTraceEnabled()){
-					log.info("Permission is allowed for operator:{} accessing tenant {}", operator.getName(),tenantId);
-			//	}
-				return;
-			}
-			
-		}else{
-			log.warn("operator is mssing0");
+		if(!securityCheck){
+			return;
 		}
-		log.warn("Permission NOT is allowed for accessing tenant {}", tenantId);
+		Operator operator = getCurrentOperator();
+		if(operator.getTenantId() == 0 || (tenantId!=null && tenantId == operator.getTenantId()) ){
+			return;
+		}
+		throw new MgmtException(ErrorCode.PERMISSION_DENIED);
 	}
 	
+	
 	protected Operator getCurrentOperator(){
+		Operator operator = null;
 		HttpSession session = httppServletRequest.getSession();
 		if(session != null){
-			return (Operator) session.getAttribute("operator");
+			operator = (Operator) session.getAttribute("operator");
 		}
-		return null;
+		if(operator == null){
+			throw new MgmtException(ErrorCode.OPERATOR_NOT_IDENTIFIED);
+		}
+		return operator;
 	}
     
 
@@ -98,24 +101,48 @@ public abstract class BaseRest<T> {
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
     public OperationResult add(MultivaluedMap<String,String> map) throws IllegalAccessException, InvocationTargetException{
-	    	T obj = createObject();
-	    	Map<String,String> formMap = new HashMap<String,String>();
-	    	MapConverter.convert(map, formMap);
-			BeanUtils.populate(obj, formMap);
-			return create(obj);
+	    	try {
+				T obj = createObject();
+				Map<String,String> formMap = new HashMap<String,String>();
+				MapConverter.convert(map, formMap);
+				BeanUtils.populate(obj, formMap);
+				return create(obj);
+			}  catch (MgmtException me) {
+				log.error("Operation Error",me);
+				OperationResult result = new OperationResult();
+				result.setErrorCode(me.getCode());
+				return result;
+			} catch (Exception e){
+				log.error("Operation Error",e);
+				OperationResult result = new OperationResult();
+				result.setErrorCode(ErrorCode.INTERNAL_ERROR);
+				return result;
+			}
     }
 	
 	@POST
     @Path("/update")
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
-    public OperationResult update(MultivaluedMap<String,String> map) throws IllegalAccessException, InvocationTargetException{
-	    	T obj = createObject();
-	    	Map<String,String> formMap = new HashMap<String,String>();
-	    	MapConverter.convert(map, formMap);
-			BeanUtils.populate(obj, formMap);
-			Integer id = getPrimaryKey(map);
-			return update(obj,id);
+    public OperationResult update(MultivaluedMap<String,String> map){
+	    	try {
+				T obj = createObject();
+				Map<String,String> formMap = new HashMap<String,String>();
+				MapConverter.convert(map, formMap);
+				BeanUtils.populate(obj, formMap);
+				Integer id = getPrimaryKey(map);
+				return update(obj,id);
+			} catch (MgmtException me) {
+				log.error("Operation Error",me);
+				OperationResult result = new OperationResult();
+				result.setErrorCode(me.getCode());
+				return result;
+			} catch (Exception e){
+				log.error("Operation Error",e);
+				OperationResult result = new OperationResult();
+				result.setErrorCode(ErrorCode.INTERNAL_ERROR);
+				return result;
+			}
     }
 	
 	@POST
@@ -123,8 +150,20 @@ public abstract class BaseRest<T> {
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
     public OperationResult delete(MultivaluedMap<String,String> map) throws IllegalAccessException, InvocationTargetException{
-			Integer id = getPrimaryKey(map);
-			return delete(id);
+			try {
+				Integer id = getPrimaryKey(map);
+				return delete(id);
+			} catch (MgmtException me) {
+				log.error("Operation Error",me);
+				OperationResult result = new OperationResult();
+				result.setErrorCode(me.getCode());
+				return result;
+			} catch (Exception e){
+				log.error("Operation Error",e);
+				OperationResult result = new OperationResult();
+				result.setErrorCode(ErrorCode.INTERNAL_ERROR);
+				return result;
+			}
     }
 
 	/**
@@ -133,12 +172,15 @@ public abstract class BaseRest<T> {
 	 */
 	private Integer getPrimaryKey(MultivaluedMap<String, String> map) {
 		Integer id = StringParser.parseInteger(map.getFirst("id"));
+		if(id == null){
+			throw new MgmtException(ErrorCode.PRIMARY_KEY_MISSING);
+		}
 		return id;
 	}
 	
 	public OperationResult delete(Integer id){
 		OperationResult result = new OperationResult();
-		result.setCode(OperationResult.UNKNOWN_ACTION);
+		result.setErrorCode(ErrorCode.UNKNOWN_OPERATION);
 		return result;
 	}
 	

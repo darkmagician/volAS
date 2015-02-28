@@ -4,6 +4,7 @@
 package com.vol.mgmt;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -15,8 +16,9 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
 import com.vol.common.BaseEntity;
 import com.vol.common.DAO;
+import com.vol.common.exception.ErrorCode;
+import com.vol.common.exception.MgmtException;
 import com.vol.common.mgmt.PagingResult;
-import com.vol.common.mgmt.VolMgmtException;
 import com.vol.common.tenant.Promotion;
 import com.vol.common.tenant.PromotionBalance;
 import com.vol.dao.AbstractService;
@@ -49,18 +51,14 @@ public class PromotionMgmtImpl extends AbstractService<Integer, Promotion> {
 	}
 	
 	
-	public void activate(final Integer id) {
+	public void activate(final Integer tenantId, final Integer id) {
 		this.transaction.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				Promotion oldPromotion = promotionDAO.get(id);
 				if (oldPromotion.getStatus() != BaseEntity.DRAFT) {
-					log.error(
-							"Promotion {} cannot be modified if it is not in draft.",
-							oldPromotion);
-					throw new VolMgmtException(
-							"The record cannot be modified if it is not in draft.");
+					throw new MgmtException(ErrorCode.MODIFICATION_NOT_ALLOW,"The promotion is not in draft. It cannot be modified. ID="+oldPromotion.getId());
 				}
 				oldPromotion.setStatus(BaseEntity.ACTIVE);
 				updateEntity(oldPromotion);
@@ -137,7 +135,7 @@ public class PromotionMgmtImpl extends AbstractService<Integer, Promotion> {
 	@Override
 	protected void validateToBeDelete(Promotion old) {
 		if(old.getStatus() != BaseEntity.DRAFT){
-			throw new IllegalStateException("the promotion is not in draft. It cannot be deleted");
+			throw new MgmtException(ErrorCode.DELETE_NOT_ALLOW,"The promotion is not in draft. It cannot be deleted. ID="+old.getId());
 		}
 	}
 	
@@ -166,6 +164,28 @@ public class PromotionMgmtImpl extends AbstractService<Integer, Promotion> {
 			public PagingResult<Promotion> doInTransaction(TransactionStatus status) {
 				return getDAO().queryByPageUsingHQL(hql, parameters, startPage, pageSize);
 			}});
+	}
+
+
+
+
+	/* (non-Javadoc)
+	 * @see com.vol.dao.AbstractService#validate(com.vol.common.BaseEntity)
+	 */
+	@Override
+	protected void validate(Promotion obj) {
+		validateNotNull(obj);
+		validateNotEmpty(obj, "name" , obj.getName());
+		validateNotEmpty(obj, "rule" , obj.getRule());
+		validateDate(obj, "startTime" , obj.getStartTime());
+		validateDate(obj, "endTime" , obj.getEndTime());
+		validateDate(obj, "bonusExpirationTime" , obj.getBonusExpirationTime());
+		if(obj.getStartTime() >= obj.getEndTime()){
+			throw new MgmtException(ErrorCode.START_LATER_THAN_END,"START "+new Date(obj.getStartTime())+" is later than END "+new Date(obj.getEndTime()));
+		}
+		if(obj.getBonusExpirationTime() < obj.getEndTime()){
+			throw new MgmtException(ErrorCode.END_LATER_THAN_EXPIRATION,"END "+new Date(obj.getStartTime())+" is later than EXPIRATION "+new Date(obj.getEndTime()));
+		}
 	}
 	
 }

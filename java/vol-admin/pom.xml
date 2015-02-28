@@ -88,7 +88,7 @@
 		</dependency>		
 	</dependencies>
 	<build>
-		<finalName>vol-admin</finalName>
+		<finalName>snae-admin</finalName>
 	</build>
 
 </project>

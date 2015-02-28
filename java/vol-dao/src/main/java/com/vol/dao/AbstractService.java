@@ -4,13 +4,15 @@
 package com.vol.dao;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
 import com.vol.common.BaseEntity;
-import com.vol.common.mgmt.VolMgmtException;
+import com.vol.common.exception.ErrorCode;
+import com.vol.common.exception.MgmtException;
 
 /**
  * @author scott
@@ -28,8 +30,7 @@ public abstract class AbstractService<K extends Serializable, V extends BaseEnti
 	protected void validateUpdateTime(final BaseEntity newEntity,
 			BaseEntity oldEntity) {
 		if(oldEntity.getUpdateTime() != newEntity.getUpdateTime()){
-			log.error("Entity {} is updated since {}",newEntity.getClass(), newEntity.getUpdateTime());
-			throw new VolMgmtException("The record is modifed since last load. Please refresh and try again");
+			throw new MgmtException(ErrorCode.CONCURRENT_MODIFICATION,"Entity "+newEntity.getClass()+" is updated since "+ new Date(newEntity.getUpdateTime()));
 		}
 	}
 
@@ -37,6 +38,7 @@ public abstract class AbstractService<K extends Serializable, V extends BaseEnti
 
 	
 	public K add(final V obj){
+		validate(obj);
 		K id = this.transaction.execute(new TransactionCallback<K>(){
 
 			@Override
@@ -50,7 +52,16 @@ public abstract class AbstractService<K extends Serializable, V extends BaseEnti
 	}
 	
 	
+	protected void validate(V obj) {
+	
+		
+	}
+
+
+
+
 	public void update(final K id, final V obj){
+		validate(obj);
 		this.transaction.execute(new TransactionCallbackWithoutResult(){
 
 			@Override
@@ -75,7 +86,7 @@ public abstract class AbstractService<K extends Serializable, V extends BaseEnti
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				V old = getDAO().get(id);
 				if(old == null){
-					throw new IllegalStateException("The object doesnt exist.");
+					throw new MgmtException(ErrorCode.ENTITY_NOT_EXIST,"To be Enity "+id+" doesnt exist. ");
 				}
 				validateToBeDelete(old);
 				getDAO().delete(old);
@@ -88,6 +99,23 @@ public abstract class AbstractService<K extends Serializable, V extends BaseEnti
 	
 
 	protected void validateToBeDelete(V old) {
-		throw new UnsupportedOperationException("DELETE is not supported");
+		throw new MgmtException(ErrorCode.OPERATION_NOT_SUPPORT,"DELETE is not supported");
+	}
+	
+	protected void validateNotEmpty(Object obj, String field, String value){
+		if(value == null || "".equals(value.trim())){
+			throw new MgmtException(ErrorCode.EMPTY_FIELD,"Field "+field+" of "+obj.getClass()+" should NOT be empty");
+		}
+	}
+	protected void validateNotNull(Object obj){
+		if(obj == null){
+			throw new MgmtException(ErrorCode.NULL_OBJECT,"obj should NOT be null");
+		}
+	}
+	
+	protected void validateDate(Object obj,String field, long value){
+		if(value <= 0){
+			throw new MgmtException(ErrorCode.EMPTY_DATE_FILED,"Field "+field+" of "+obj.getClass()+" should be a valid datetime");
+		}
 	}
 }

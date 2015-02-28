@@ -83,12 +83,14 @@
 					required="true">
 			</div>
 			<div class="fitem">
-				<label>描述:</label> <input name="description" class="easyui-textbox"
-					required="true">
+				<label>描述:</label> <input name="description" class="easyui-textbox">
 			</div>
 			<div class="fitem">
-				<label>周期:</label> <input name="cycleType" class="easyui-numberbox"
-					required="true">
+				<label>周期:</label> 
+				<select name="cycleType"
+					class="easyui-combobox" required="true">
+					<option value="0">每月</option>
+				</select>	
 			</div>
 			<input name="id" type="hidden"> <input name="creationTime"
 				type="hidden"> <input name="updateTime" type="hidden">
@@ -133,8 +135,7 @@
 					data-options="valueField:'id',textField:'text'">
 			</div>
 			<div class="fitem">
-				<label>描述:</label> <input name="description" class="easyui-textbox"
-					required="true">
+				<label>描述:</label> <input name="ription" class="easyui-textbox">
 			</div>			
 			<input name="id" type="hidden"> <input name="creationTime"
 				type="hidden"> <input name="updateTime" type="hidden">
@@ -189,8 +190,7 @@
 			</div>
 
 			<div class="fitem">
-				<label>描述:</label> <input name="description" class="easyui-textbox" id="promotionDescription"
-					required="true">
+				<label>描述:</label> <input name="description" class="easyui-textbox" id="promotionDescription">
 			</div>
 			<div class="fitem">
 				<label>活动规则:</label>
@@ -271,7 +271,7 @@
 						<tr>
 							<th field="name" width="120">名字</th>
 							<th field="description" width="180" align="right">描述</th>
-							<th field="cycleType" width="180" align="right">周期</th>
+							<th field="cycleType" width="180" align="right" formatter="formatCycle">周期</th>
 							<th field="updateTime" width="180" align="right"
 								formatter="formatDate">更新时间</th>
 							<th field="creationTime" width="180" align="right"
@@ -445,6 +445,9 @@
 					'submit',
 					{
 						onSubmit: function(param){
+							if(!$(this).form('validate')){
+								return false;
+							}
 							if(this.newpass.value === this.newpass2.value){			
 								return true;
 							}
@@ -459,7 +462,7 @@
 								
 							} else {
 								$('#passInfo').text(
-										'error code: ' + result.code);
+										'错误: ' + result.message);
 							}
 						}
 					});		
@@ -480,6 +483,14 @@
 				
 			return f(m)+'/'+f(d)+'/'+f(y)+' '+f(h)+':'+f(M)+':'+f(s);
 		};
+		
+		function formatCycle(val,row){
+			if(val==0){
+				return '每月';
+			}
+			return val;
+
+		 }
 		
 		 function formatDate(val,row){
 			 return formatDateBox(new Date(val));
@@ -629,7 +640,7 @@
 
 							} else {
 								$('#confirmInfo').text(
-										'error code: ' + result.code);
+										'错误: ' + result.message);
 							}
 						}
 					});
@@ -649,7 +660,7 @@
 								$(parentdg).datagrid('reload'); // reload the user data
 							} else {
 								$('#operatorEditorInfo').text(
-										'error code: ' + result.code);
+										'错误: ' + result.message);
 							}
 						}
 					});
@@ -721,6 +732,9 @@
 					'submit',
 					{
 						onSubmit: function(param){
+							if(!$(this).form('validate')){
+								return false;
+							}
 							 if(!(this.tenantId.value>0)){
 								 if(!currentTenantId){
 									 alert("请选择租户，再提交");
@@ -742,7 +756,7 @@
 								$(parentdg).datagrid('reload'); // reload the user data
 							} else {
 								$('#promotionEditorInfo').text(
-										'error code: ' + result.code);
+										'错误: ' + result.message);
 							}
 						}
 					});
@@ -885,7 +899,7 @@
 								loadTenant();
 							} else {
 								$('#tenantEditorInfo').text(
-										'error code: ' + result.code);
+										'错误: ' + result.message);
 							}
 						}
 					});

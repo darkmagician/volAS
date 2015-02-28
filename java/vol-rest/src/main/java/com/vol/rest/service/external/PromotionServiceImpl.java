@@ -17,6 +17,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
 import com.vol.common.DAO;
+import com.vol.common.exception.ErrorCode;
 import com.vol.common.service.PromotionPolicy;
 import com.vol.common.tenant.Promotion;
 import com.vol.common.tenant.PromotionBalance;
@@ -85,7 +86,7 @@ public class PromotionServiceImpl extends AbstractTransactionService{
 					processingMap.remove(userName);
 			}
 		}else{
-			result.setCode(BunosResult.BUSY);
+			result.setErrorCode(ErrorCode.BUSY);
 			return result;
 		}
 			
@@ -136,16 +137,16 @@ public class PromotionServiceImpl extends AbstractTransactionService{
 		
 		Promotion promotion = (Promotion) context.get(PROMOTION);
 		if(promotion==null){
-			result.setCode(BunosResult.INVALID_PROMOTION);
+			result.setErrorCode(ErrorCode.INVALID_PROMOTION);
 			return result;
 		}
 		PromotionBalance promotionBalance = (PromotionBalance) context.get(PROMOTION_BALANCE);
 		if(promotionBalance==null){
-			result.setCode(BunosResult.INVALID_PROMOTION);
+			result.setErrorCode(ErrorCode.INVALID_PROMOTION);
 			return result;
 		}
 		if(promotionBalance.getBalance()<=0){
-			result.setCode(BunosResult.PROMOTION_USEDUP);
+			result.setErrorCode(ErrorCode.PROMOTION_USEDUP);
 			return result;			
 		}
 		User user = (User) context.get(USER);
@@ -164,10 +165,10 @@ public class PromotionServiceImpl extends AbstractTransactionService{
 			Bonus bonus = grantBonus(promotion,promotionBalance,user, bonusSize);
 			if(bonus != null){
 				result.setBonus(bonus);
-				result.setCode(BunosResult.SUCCESS);
+				result.setErrorCode(ErrorCode.SUCCESS);
 			}
 		}else{
-			result.setCode(BunosResult.UNLUCKY);
+			result.setErrorCode(ErrorCode.UNLUCY);
 		}
 		return result;
 	}
