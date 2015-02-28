@@ -944,6 +944,20 @@
 					}
 				}
 			}
+		} ,'-', {
+			text : '重置密码',
+			iconCls : 'icon-remove',
+			handler : function() {
+				var row = $('#operatorMgr').datagrid('getSelected');
+				if (row) {
+					$('#confirm').dialog('open').dialog('setTitle', '重置密码。 管理员:'+row.name);
+					$('#confirmForm').form('load', row);
+					confirmurl = './rs/admin/operator/resetpass';
+					afterConfirm=function(){
+						
+					}
+				}
+			}
 		} ];		
 		var currentTenantId=0;
 	</s:if>

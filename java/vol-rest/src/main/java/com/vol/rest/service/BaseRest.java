@@ -84,6 +84,9 @@ public abstract class BaseRest<T> {
 	
 	
 	protected Operator getCurrentOperator(){
+		if(!securityCheck){
+			return new Operator();
+		}
 		Operator operator = null;
 		HttpSession session = httppServletRequest.getSession();
 		if(session != null){

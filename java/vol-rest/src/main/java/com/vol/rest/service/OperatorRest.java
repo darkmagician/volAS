@@ -166,5 +166,30 @@ public class OperatorRest extends BaseRest<Operator>{
 			return result;
 		}
     }
+  
     
+    @POST
+    @Path("/resetpass")
+    @Consumes("application/x-www-form-urlencoded")
+    @Produces("application/json")
+	public OperationResult resetPassword(@FormParam("id")Integer operatorId){
+    	
+    	try {
+    		checkPermission(null);
+    		OperationResult result = new OperationResult();
+			operatorMgmt.resetPassword(operatorId);
+			result.setErrorCode(ErrorCode.SUCCESS);
+			return result;
+		}catch (MgmtException me) {
+			log.error("Operation Error",me);
+			OperationResult result = new OperationResult();
+			result.setErrorCode(me.getCode());
+			return result;
+		} catch (Exception e){
+			log.error("Operation Error",e);
+			OperationResult result = new OperationResult();
+			result.setErrorCode(ErrorCode.INTERNAL_ERROR);
+			return result;
+		}
+    }   
 }

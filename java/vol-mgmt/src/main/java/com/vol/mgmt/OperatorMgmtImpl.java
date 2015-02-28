@@ -74,6 +74,7 @@ public class OperatorMgmtImpl extends AbstractService<Integer,Operator>{
 		String pass = CredentialUtil.generatePass();
 		Integer id = add(obj, pass);
 		if(id != null){
+			log.info("New Operator {} is created, Pass: {}",obj.getName(), pass);
 			mailService.sendMailForRegistration(obj, pass, null);
 		}
 		return id;
@@ -86,7 +87,6 @@ public class OperatorMgmtImpl extends AbstractService<Integer,Operator>{
 	 */
 	public Integer add(Operator obj, String pass) {
 		obj.setPassword(CredentialUtil.digest(pass));
-		log.info("New User name:{}, pass:{}, digest:{}", obj.getName(), pass, obj.getPassword());
 		return super.add(obj);
 	}
 	
@@ -106,7 +106,6 @@ public class OperatorMgmtImpl extends AbstractService<Integer,Operator>{
 					CredentialUtil.revoke(old.getName());
 					return true;
 				}
-				log.info("old pass {}, old degist {}, pre digest {}", oldpass, oldDigest, previousDigest);
 				return false;
 			}
 
@@ -132,6 +131,7 @@ public class OperatorMgmtImpl extends AbstractService<Integer,Operator>{
 		});
 		if(operator != null )
 		{
+			log.info("Password of Operator {} is reset, Pass: {} ",operator.getName(), pass);
 			mailService.sendMailForRegistration(operator, pass, null);
 			return true;
 		}
