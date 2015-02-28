@@ -33,9 +33,15 @@ public class Authentication implements AuthenticationService {
 	private OperatorMgmtImpl operatorMgmt;
 	
 	
-	public Authentication(){
+	
+	public void init(){
 		AuthenticationServiceHolder.getInstance().setService(this);
 	}
+	
+	public void destroy(){
+		AuthenticationServiceHolder.getInstance().unsetService(this);
+	}
+	
 
 	/* (non-Javadoc)
 	 * @see com.vol.auth.AuthenticationService#getCredential(java.lang.String, java.util.Map)

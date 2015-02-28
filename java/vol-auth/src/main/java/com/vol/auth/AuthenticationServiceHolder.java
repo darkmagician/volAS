@@ -3,7 +3,9 @@
  */
 package com.vol.auth;
 
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
@@ -18,10 +20,7 @@ public class AuthenticationServiceHolder {
 	 */
 	private final static AuthenticationServiceHolder holder = new AuthenticationServiceHolder();
 	
-	/**
-	 * The Constant listeners.
-	 */
-	private final static Set<IdentityChangeListener> listeners = new CopyOnWriteArraySet<IdentityChangeListener>();
+
 	
 	/**
 	 * Instantiates a new authentication service holder.
@@ -40,7 +39,12 @@ public class AuthenticationServiceHolder {
 	/**
 	 * The service.
 	 */
-	private AuthenticationService service;
+	private final List<AuthenticationService> services = new CopyOnWriteArrayList<AuthenticationService>();;
+	
+	/**
+	 * The Constant listeners.
+	 */
+	private final Set<IdentityChangeListener> listeners = new CopyOnWriteArraySet<IdentityChangeListener>();
 
 	/**
 	 * Gets the service.
@@ -48,7 +52,7 @@ public class AuthenticationServiceHolder {
 	 * @return the service
 	 */
 	public AuthenticationService getService() {
-		return service;
+		return services.isEmpty()? null: services.get(0);
 	}
 
 	/**
@@ -58,9 +62,19 @@ public class AuthenticationServiceHolder {
 	 *            the service to set
 	 */
 	public void setService(AuthenticationService service) {
-		this.service = service;
+		this.services.add(service);
 	}
 	
+
+	/**
+	 * Sets the service.
+	 *
+	 * @param service
+	 *            the service to set
+	 */
+	public void unsetService(AuthenticationService service) {
+		this.services.remove(service);
+	}
 	
 	/**
 	 * Register.

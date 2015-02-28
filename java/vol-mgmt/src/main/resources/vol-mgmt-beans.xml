@@ -30,7 +30,7 @@
 
 
 
-	<bean id="authentication" class="com.vol.mgmt.auth.Authentication" />
+	<bean id="authentication" class="com.vol.mgmt.auth.Authentication" init-method="init" destroy-method="destroy"/>
 
 
  	 <context:property-placeholder location="classpath:mail-config.properties"  ignore-unresolvable="true"/>
