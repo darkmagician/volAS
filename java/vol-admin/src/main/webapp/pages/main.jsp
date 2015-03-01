@@ -24,7 +24,7 @@
 		style="width: 400px; height: 200px; padding: 10px 20px" closed="true"
 		buttons="#confirmButtons">
 		<div class="ftitle">是否确定该操作？</div>
-		<label id="confirmInfo"></label>
+		<label id="confirmInfo"  style="color:red;"></label>
 		<form id="confirmForm" method="post">
 			<input name="id" type="hidden">
 		</form>
@@ -43,7 +43,7 @@
 		style="width: 400px; height: 300px; padding: 10px 20px" closed="true"
 		buttons="#passButtons">
 		<div class="ftitle">修改密码</div>
-		<label id="passInfo"></label>
+		<label id="passInfo"  style="color:red;"></label>
 		<form id="passForm" method="post">
 			<div class="fitem">
 				<label>旧密码:</label> <input name="oldpass" class="easyui-textbox" type="password"
@@ -64,7 +64,7 @@
 			iconCls="icon-ok" onclick="updatePassword()" style="width: 90px">确定</a>
 		<a href="javascript:void(0)" class="easyui-linkbutton"
 			iconCls="icon-cancel"
-			onclick="javascript:$('#confirm').dialog('close')"
+			onclick="javascript:$('#passdlg').dialog('close')"
 			style="width: 90px">取消</a>
 	</div>
 	
@@ -76,7 +76,7 @@
 		style="width: 400px; height: 280px; padding: 10px 20px" closed="true"
 		buttons="#tenantButtons">
 		<div class="ftitle">租户信息</div>
-		<label id="tenantEditorInfo"></label>
+		<label id="tenantEditorInfo"  style="color:red;"></label>
 		<form id="tenantForm" method="post">
 			<div class="fitem">
 				<label>名字:</label> <input name="name" class="easyui-textbox"
@@ -115,7 +115,7 @@
 		style="width: 400px; height: 280px; padding: 10px 20px" closed="true"
 		buttons="#operatorButtons">
 		<div class="ftitle">租户信息</div>
-		<label id="operatorEditorInfo"></label>
+		<label id="operatorEditorInfo"  style="color:red;"></label>
 		<form id="operatorForm" method="post">
 			<div class="fitem">
 				<label>名字:</label> <input id="operatorName" name="name" class="easyui-textbox"
@@ -135,7 +135,7 @@
 					data-options="valueField:'id',textField:'text'">
 			</div>
 			<div class="fitem">
-				<label>描述:</label> <input name="ription" class="easyui-textbox">
+				<label>描述:</label> <input name="description" class="easyui-textbox">
 			</div>			
 			<input name="id" type="hidden"> <input name="creationTime"
 				type="hidden"> <input name="updateTime" type="hidden">
@@ -158,7 +158,7 @@
 		style="width:700px; height: 700px; padding: 10px 20px" closed="true"
 		buttons="#promotionButtons">
 		<div class="ftitle">租户信息</div>
-		<label id="promotionEditorInfo"></label>
+		<label id="promotionEditorInfo"  style="color:red;"></label>
 		<form id="promotionForm" method="post">
 			<div class="fitem">
 				<label>名字:</label> <input name="name" id="promotionName" class="easyui-textbox"
@@ -911,7 +911,7 @@
 			iconCls : 'icon-add',
 			handler : function() {
 				$('#operatorEditor').dialog('open').dialog('setTitle', '添加');
-				$('#operatorName').textbox('enable');
+				$('#operatorName').textbox('readonly',false);
 				$('#operatorForm').form('clear');
 				url = './rs/admin/operator/add';
 				parentdg='#operatorMgr';
@@ -923,7 +923,7 @@
 				var row = $('#operatorMgr').datagrid('getSelected');
 				if (row) {
 					$('#operatorEditor').dialog('open').dialog('setTitle', '编辑');
-					$('#operatorName').textbox('disable');
+					$('#operatorName').textbox('readonly',true);
 					$('#operatorForm').form('load', row);
 					url = './rs/admin/operator/update';
 					parentdg='#operatorMgr';

@@ -12,6 +12,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 
 import com.vol.common.DAO;
+import com.vol.common.exception.ErrorCode;
+import com.vol.common.exception.MgmtException;
 import com.vol.common.tenant.Operator;
 import com.vol.dao.AbstractService;
 import com.vol.mgmt.auth.CredentialUtil;
@@ -99,6 +101,9 @@ public class OperatorMgmtImpl extends AbstractService<Integer,Operator>{
 			@Override
 			public Boolean doInTransaction(TransactionStatus status) {
 				Operator old = getDAO().get(id);
+				if(old == null){
+					throw new MgmtException(ErrorCode.OPERATOR_NOT_FOUND);
+				}
 				String previousDigest = old.getPassword();
 				if(previousDigest.equals(oldDigest)){
 					old.setPassword(newDigest);
@@ -106,7 +111,7 @@ public class OperatorMgmtImpl extends AbstractService<Integer,Operator>{
 					CredentialUtil.revoke(old.getName());
 					return true;
 				}
-				return false;
+				throw new MgmtException(ErrorCode.INVALID_PASSWORD,"Changing password failed. Operator " +old.getName());
 			}
 
 		});
@@ -123,16 +128,17 @@ public class OperatorMgmtImpl extends AbstractService<Integer,Operator>{
 				if(old != null){
 					old.setPassword(pass);
 					operatorDAO.update(old);
+					CredentialUtil.revoke(old.getName());
 					return old;
 				}
-				return null;
+				throw new MgmtException(ErrorCode.OPERATOR_NOT_FOUND);
 			}
 
 		});
 		if(operator != null )
 		{
 			log.info("Password of Operator {} is reset, Pass: {} ",operator.getName(), pass);
-			mailService.sendMailForRegistration(operator, pass, null);
+			mailService.sendMailForReset(operator, pass, null);
 			return true;
 		}
 		return false;

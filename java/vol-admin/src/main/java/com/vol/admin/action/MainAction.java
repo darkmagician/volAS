@@ -4,8 +4,6 @@
 package com.vol.admin.action;
 
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -17,9 +15,9 @@ import org.slf4j.LoggerFactory;
 
 import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionSupport;
-import com.vol.auth.AuthenticationServiceHolder;
 import com.vol.common.tenant.Operator;
 import com.vol.common.tenant.Tenant;
+import com.vol.mgmt.OperatorMgmtImpl;
 import com.vol.mgmt.TenantMgmtImpl;
 import com.vol.mgmt.auth.Authentication;
 
@@ -41,6 +39,9 @@ public class MainAction extends ActionSupport {
 	@Resource(name="tenantMgmt")
 	private TenantMgmtImpl tenantMgmt;
 	
+	@Resource(name="operatorMgmt")
+	private OperatorMgmtImpl operatorMgmt;
+	
 
 	/* (non-Javadoc)
 	 * @see com.opensymphony.xwork2.ActionSupport#execute()
@@ -54,9 +55,7 @@ public class MainAction extends ActionSupport {
 			
 			Principal principal = request.getUserPrincipal();
 			String name = principal.getName();
-			Map<String,Object> context= new HashMap<String,Object>();
-			AuthenticationServiceHolder.getInstance().getService().getCredential(name, context);
-			operator = (Operator) context.get(Authentication.KEY);
+			operator = Authentication.locateOperator(operatorMgmt, name);
 			if(operator == null){
 				log.error("Operator is not identified by name {}",name);
 				return Action.ERROR;

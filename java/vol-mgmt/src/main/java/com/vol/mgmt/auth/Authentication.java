@@ -50,21 +50,25 @@ public class Authentication implements AuthenticationService {
 	public String getCredential(String userName, Map<String, Object> context) {
 		Operator operator = (Operator) context.get(KEY);
 		if(operator == null){
-			operator = operatorMgmt.getOperatorByUserName(userName);
-			if(operator == null){
-				if(DEFAULT_ADMIN.equals(userName)){
-					operator = new Operator();
-					operator.setName(userName);
-					operator.setPassword(DEFAULT_PASS);
-				}else{
-					return null;
-				}
-				
-				
-			}
+			operator = locateOperator(operatorMgmt,userName);
 			context.put(KEY, operator);
 		}
 		return operator.getPassword();
+	}
+
+	public static Operator locateOperator(OperatorMgmtImpl operatorMgmt, String userName) {
+		Operator operator;
+		operator = operatorMgmt.getOperatorByUserName(userName);
+		if(operator == null){
+			if(DEFAULT_ADMIN.equals(userName)){
+				operator = new Operator();
+				operator.setName(userName);
+				operator.setPassword(DEFAULT_PASS);
+			}else{
+				return null;
+			}
+		}
+		return operator;
 	}
 
 	/* (non-Javadoc)

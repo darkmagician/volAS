@@ -28,6 +28,8 @@ public enum ErrorCode {
 	EMPTY_DATE_FILED(5012,"请设置时间"),
 	START_LATER_THAN_END(5013,"开始时间不能晚于结束时间"),
 	END_LATER_THAN_EXPIRATION(5014,"红包过期时间不能早于活动结束时间"),
+	INVALID_PASSWORD(5015,"密码不正确"),
+	OPERATOR_NOT_FOUND(5016,"无法识别当前管理员，可能已经删除。"),
 	
 	
 	UNKNOWN_OPERATION(6001,"未知操作"),

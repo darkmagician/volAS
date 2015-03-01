@@ -41,6 +41,7 @@ public class PromotionMgmtImpl extends AbstractService<Integer, Promotion> {
 		oldPromotion.setBonusExpirationTime(promotion.getBonusExpirationTime());
 		oldPromotion.setName(promotion.getName());
 		oldPromotion.setRule(promotion.getRule());
+		oldPromotion.setMaximum(promotion.getMaximum());
 	}
 
 	
