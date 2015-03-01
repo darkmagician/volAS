@@ -10,5 +10,9 @@
     <import resource="classpath:vol-public-rest-cxf.xml"/>  
     <import resource="classpath:vol-rest-cxf.xml"/>
     <import resource="classpath:vol-mgmt-beans.xml"/>
-    <import resource="classpath:vol-dao-beans.xml"/>        
+    <import resource="classpath:vol-dao-beans.xml"/>   
+    
+      <bean id="restSecurity" class="java.lang.Boolean">
+    	<constructor-arg value="false"/>
+    </bean>     
 </beans>

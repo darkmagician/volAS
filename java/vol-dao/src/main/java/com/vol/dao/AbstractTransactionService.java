@@ -34,7 +34,9 @@ public class AbstractTransactionService {
 		readonlyTransaction.setTransactionManager(txManager);
 		transaction.setTransactionManager(txManager);
 	}
-	
+	public void destroy(){ 
+		log.info("{} is stopping.",getClass());
+	}	
 	
 	protected short getInitState(){
 		return BaseEntity.ACTIVE;

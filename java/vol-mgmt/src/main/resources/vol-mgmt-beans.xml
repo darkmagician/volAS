@@ -9,24 +9,24 @@
 	<bean id="MVELPromotionPolicy" class="com.vol.mgmt.MVELPromotionPolicy" />
 
 	<bean id="promotionMgmt" class="com.vol.mgmt.PromotionMgmtImpl"
-		init-method="init" />
+		init-method="init" destroy-method="destroy"/>
 
 	<bean id="operatorMgmt" class="com.vol.mgmt.OperatorMgmtImpl"
-		init-method="init" />
+		init-method="init" destroy-method="destroy"/>
 
 	<bean id="tenantMgmt" class="com.vol.mgmt.TenantMgmtImpl"
-		init-method="init" />
+		init-method="init" destroy-method="destroy"/>
 
 	<bean id="cycleHandler" class="com.vol.mgmt.CycleHandler" />
 
 
 	<bean id="bonusMgmt" class="com.vol.mgmt.BonusMgmtImpl"
-		init-method="init" />
+		init-method="init" destroy-method="destroy"/>
 
 	<bean id="quotaMgmt" class="com.vol.mgmt.QuotaMgmtImpl"
-		init-method="init" />
+		init-method="init" destroy-method="destroy"/>
 
-	<bean id="userMgmt" class="com.vol.mgmt.UserMgmtImpl" init-method="init" />
+	<bean id="userMgmt" class="com.vol.mgmt.UserMgmtImpl" init-method="init" destroy-method="destroy"/>
 
 
 

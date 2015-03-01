@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
@@ -41,7 +42,8 @@ public abstract class BaseRest<T> {
 	@Context
 	protected HttpServletRequest httppServletRequest;
 	
-	protected boolean securityCheck = true;
+	@Resource(name="restSecurity")
+	protected Boolean securityCheck = true;
 	
 	
 	/**

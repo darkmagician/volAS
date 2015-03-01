@@ -13,4 +13,8 @@
     <import resource="classpath:vol-dao-beans.xml"/>   
     
     <bean id="mainAction" class="com.vol.admin.action.MainAction"/>     
+    
+    <bean id="restSecurity" class="java.lang.Boolean">
+    	<constructor-arg value="true"/>
+    </bean>
 </beans>
