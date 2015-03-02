@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.vol.as;
+package com.vol.rest;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.vol.as;
+package com.vol.rest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,21 +48,25 @@ public class RestTest {
 	private WebClient client, client2;
 	
 	//private final String server = "http://52.1.96.115:8080/vol-appserver/";
-	private final String server = "http://localhost:8080/vol-admin/rs/";
+	private final String server = "http://localhost:8080/vol-appserver/";
 
 	private void initClient(){
+		String user = null;
+		String pass = null;
+		
+		
 		JacksonJsonProvider jsonProvider = new JacksonJsonProvider();
 		FormEncodingProvider formProvider = new FormEncodingProvider(true);
 		List providers = new ArrayList();
 		providers.add(jsonProvider);
 		providers.add(formProvider);
 		
-		client = WebClient.create(server+"admin",providers);
+		client = WebClient.create(server+"admin",providers, user,pass, null);
 		WebClient.getConfig(client).getInInterceptors().add(new LoggingInInterceptor());
 		WebClient.getConfig(client).getOutInterceptors().add(new LoggingOutInterceptor()); 
 		
 		// public service 
-		client2 = WebClient.create(server+"public",providers);
+		client2 = WebClient.create(server+"public",providers, user,pass, null);
 		WebClient.getConfig(client2).getInInterceptors().add(new LoggingInInterceptor());
 		WebClient.getConfig(client2).getOutInterceptors().add(new LoggingOutInterceptor());
 	}
@@ -77,6 +81,7 @@ public class RestTest {
 		Operator operator = new Operator();
 		operator.setName("operator1");
 		operator.setPassword("passwor22d");
+		operator.setEmail("snae_admin@163.com");
 		
 		Promotion promotion = new Promotion();
 		promotion.setBonusExpirationTime(System.currentTimeMillis()+3*24*60*60*1000);
@@ -434,7 +439,7 @@ public class RestTest {
 		
 		//create promotion
 		System.out.println("creating promotion");
-		client.path("promotion");
+		client.path("promotion/"+tenantId);
 		client.type(json).accept(json);
 		
 		promotion.setTenantId(tenantId);

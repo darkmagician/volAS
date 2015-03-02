@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+<!-- this config is used for jetty -->
+<Configure id='vol-as' class="org.eclipse.jetty.webapp.WebAppContext">
+
+	<Get name="securityHandler">
+		<Set name="loginService">
+			<New class="com.vol.auth.JettyLogin">
+				<Set name="name">Promotion Admin Realm</Set>
+			</New>
+		</Set>
+	</Get>
+</Configure>
+
