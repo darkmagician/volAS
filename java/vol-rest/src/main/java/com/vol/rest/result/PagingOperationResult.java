@@ -4,17 +4,18 @@ import java.util.List;
 
 import com.vol.common.mgmt.PagingResult;
 
-public class PagingOperationResult<T> extends OperationResult{
+public class PagingOperationResult extends OperationResult{
 
 
 	private int total;
-	private List<T> rows;
+	@SuppressWarnings("rawtypes")
+	private List rows;
 	
 	public PagingOperationResult(){
 		
 	}
-	
-	public PagingOperationResult(PagingResult<T> result){
+	@SuppressWarnings("rawtypes")
+	public PagingOperationResult(PagingResult result){
 		total = result.getTotal();
 		rows = result.getRows();
 	}
@@ -27,11 +28,12 @@ public class PagingOperationResult<T> extends OperationResult{
 		this.total = total;
 	}
 
-	public List<T> getRows() {
+	@SuppressWarnings("rawtypes")
+	public List getRows() {
 		return rows;
 	}
-
-	public void setRows(List<T> rows) {
+	@SuppressWarnings("rawtypes")
+	public void setRows(List rows) {
 		this.rows = rows;
 	}
 }

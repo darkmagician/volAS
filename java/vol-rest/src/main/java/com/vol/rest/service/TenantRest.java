@@ -23,10 +23,10 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
 import com.vol.common.exception.ErrorCode;
-import com.vol.common.mgmt.PagingResult;
 import com.vol.common.tenant.Tenant;
 import com.vol.mgmt.TenantMgmtImpl;
 import com.vol.rest.result.OperationResult;
+import com.vol.rest.result.PagingOperationResult;
 import com.vol.rest.result.PutOperationResult;
 import com.vol.rest.service.MapConverter.Converter;
 
@@ -35,7 +35,7 @@ import com.vol.rest.service.MapConverter.Converter;
  *
  */
 @Path("/tenant")
-public class TenantRest extends BaseRest<Tenant>{
+public class TenantRest extends CURDRest<Tenant>{
 
 	@Resource(name="tenantMgmt")
 	private TenantMgmtImpl tenantMgmt;
@@ -44,20 +44,14 @@ public class TenantRest extends BaseRest<Tenant>{
     @Path("/{tenantId}")
     @Produces("application/json")
 	public Tenant get(@PathParam("tenantId")Integer tenantId){
-    	try {
 			checkPermission(tenantId);
 			return tenantMgmt.get(tenantId);
-		} catch (Exception e) {
-			log.error("Operation Error",e);
-			return null;
-		}
     }
     
     @GET
     @Path("/")
     @Produces("application/json")
 	public List<Tenant> list(@Context UriInfo uriInfo){
-    	try {
 			checkPermission(null);
 			MultivaluedMap<String, String> pathPara = uriInfo.getQueryParameters();
 			String queryName = pathPara.getFirst("query");
@@ -71,57 +65,56 @@ public class TenantRest extends BaseRest<Tenant>{
 				return tenantMgmt.list("tenant."+queryName, map);
 				
 			}
-		} catch (Exception e) {
-			log.error("Operation Error",e);
-			return null;
-		}
     }  
     
     @POST
     @Path("/paging")
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
-	public PagingResult<Tenant> listPage(@FormParam("page")Integer startPage,@FormParam("rows")Integer pageSize){
-    	try {
+	public PagingOperationResult listPage(@FormParam("page")Integer startPage,@FormParam("rows")Integer pageSize){
 			checkPermission(null);
-			return tenantMgmt.listByPaging("tenant.all", Collections.<String, Object> emptyMap(), startPage, pageSize);
-		} catch (Exception e) {
-			log.error("Operation Error",e);
-			return null;
-		}
+			return new PagingOperationResult(tenantMgmt.listByPaging("tenant.all", Collections.<String, Object> emptyMap(), startPage, pageSize));
     }
-    
+	@Override
+	protected PutOperationResult _create(Tenant obj) {
+    	checkPermission(null);
+    	PutOperationResult result = new PutOperationResult();
+		Integer id = tenantMgmt.add(obj);
+		result.setErrorCode(ErrorCode.SUCCESS);
+		result.setId(id.intValue());
+		return result;
+	}
+
+	@Override
+	protected OperationResult _update(Tenant obj, Integer id) {
+		checkPermission(null);
+		OperationResult result = new OperationResult();
+		obj.setId(id);
+		tenantMgmt.update(id,obj);
+		result.setErrorCode(ErrorCode.SUCCESS);
+		return result;
+	}	
+      
     @PUT
     @Path("/")
     @Consumes("application/json")
     @Produces("application/json")
     public PutOperationResult create(Tenant tenant){
-        	checkPermission(null);
-        	PutOperationResult result = new PutOperationResult();
-    		Integer id = tenantMgmt.add(tenant);
-    		result.setErrorCode(ErrorCode.SUCCESS);
-    		result.setId(id.intValue());
-    		return result;
-
+    	return _create(tenant);
     }
     @POST
     @Path("/{id}")
     @Consumes("application/json")
     @Produces("application/json")
     public OperationResult update(Tenant tenant, @PathParam("id") Integer id){
-			checkPermission(null);
-			OperationResult result = new OperationResult();
-			tenant.setId(id);
-			tenantMgmt.update(id,tenant);
-			result.setErrorCode(ErrorCode.SUCCESS);
-			return result;
+    	return _update(tenant,id);
     }
 
 	/* (non-Javadoc)
 	 * @see com.vol.rest.service.BaseRest#createObject()
 	 */
 	@Override
-	public Tenant createObject() {
+	protected Tenant createObject() {
 		return new Tenant();
 	}
 
@@ -129,7 +122,7 @@ public class TenantRest extends BaseRest<Tenant>{
 	 * @see com.vol.rest.service.BaseRest#delete(java.lang.Integer)
 	 */
 	@Override
-	public OperationResult delete(Integer id) {
+	protected OperationResult _delete(Integer id) {
 		checkPermission(null);
 		OperationResult result = new OperationResult();
 		tenantMgmt.delete(id);
@@ -142,21 +135,17 @@ public class TenantRest extends BaseRest<Tenant>{
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
 	public Map<Integer,String> listAsKeyName(){
-    	try {
-			checkPermission(null);
-			Map<Integer,String> map = new TreeMap<Integer,String>();
-			 List<Tenant> tenants = tenantMgmt.list("tenant.all", Collections.<String, Object> emptyMap());
-			 if(tenants != null){
-				 for(Tenant t:tenants ){
-					 map.put(t.getId(), t.getName());
-				 }
+		checkPermission(null);
+		Map<Integer,String> map = new TreeMap<Integer,String>();
+		 List<Tenant> tenants = tenantMgmt.list("tenant.all", Collections.<String, Object> emptyMap());
+		 if(tenants != null){
+			 for(Tenant t:tenants ){
+				 map.put(t.getId(), t.getName());
 			 }
-			 return map;
-		} catch (Exception e){
-			log.error("Operation Error",e);
-			return null;
-		}
-    }	
-    
+		 }
+		 return map;
+    }
+
+
 	
 }

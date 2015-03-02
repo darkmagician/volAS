@@ -22,11 +22,10 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
 import com.vol.common.exception.ErrorCode;
-import com.vol.common.exception.MgmtException;
-import com.vol.common.mgmt.PagingResult;
 import com.vol.common.tenant.Operator;
 import com.vol.mgmt.OperatorMgmtImpl;
 import com.vol.rest.result.OperationResult;
+import com.vol.rest.result.PagingOperationResult;
 import com.vol.rest.result.PutOperationResult;
 import com.vol.rest.service.MapConverter.Converter;
 
@@ -35,7 +34,7 @@ import com.vol.rest.service.MapConverter.Converter;
  *
  */
 @Path("/operator")
-public class OperatorRest extends BaseRest<Operator>{
+public class OperatorRest extends CURDRest<Operator>{
 	
 
 	@Resource(name="operatorMgmt")
@@ -45,29 +44,18 @@ public class OperatorRest extends BaseRest<Operator>{
     @Path("/{operatorId}")
     @Produces("application/json")
 	public Operator get(@PathParam("operatorId")Integer operatorId){
-    	try {
 			checkPermission(null);
 			Operator operator = operatorMgmt.get(operatorId);
-			operator.setPassword(null);
 			return operator;
-		} catch (Exception e) {
-			log.error("Operation Error",e);
-			return null;
-		}
     }
     
     @POST
     @Path("/paging")
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
-	public PagingResult<Operator> listPage(@FormParam("page")Integer startPage,@FormParam("rows")Integer pageSize){
-    	try {
+	public PagingOperationResult listPage(@FormParam("page")Integer startPage,@FormParam("rows")Integer pageSize){
 			checkPermission(null);
-			return operatorMgmt.listByPaging("operator.all", Collections.<String, Object> emptyMap(), startPage, pageSize);
-		} catch (Exception e) {
-			log.error("Operation Error",e);
-			return null;
-		}
+			return new PagingOperationResult(operatorMgmt.listByPaging("operator.all", Collections.<String, Object> emptyMap(), startPage, pageSize));
     }
     
     
@@ -75,7 +63,6 @@ public class OperatorRest extends BaseRest<Operator>{
     @Path("/")
     @Produces("application/json")
 	public List<Operator> list(@Context UriInfo uriInfo){
-    	try {
 			checkPermission(null);
 			MultivaluedMap<String, String> pathPara = uriInfo.getQueryParameters();
 			String queryName = pathPara.getFirst("query");
@@ -89,23 +76,35 @@ public class OperatorRest extends BaseRest<Operator>{
 				return operatorMgmt.list("operator."+queryName, map);
 				
 			}
-		} catch (Exception e) {
-			log.error("Operation Error",e);
-			return null;
-		}
     }  
     
+	@Override
+	protected PutOperationResult _create(Operator obj) {
+    	checkPermission(null);
+    	PutOperationResult result = new PutOperationResult();
+		Integer id = operatorMgmt.add(obj);
+		result.setErrorCode(ErrorCode.SUCCESS);
+		result.setId(id.intValue());
+		return result;
+	}
+
+	@Override
+	protected OperationResult _update(Operator operator, Integer id) {
+    	checkPermission(null);
+    	OperationResult result = new OperationResult();
+		operator.setId(id);
+		operatorMgmt.update(id,operator);
+		result.setErrorCode(ErrorCode.SUCCESS);
+		return result;
+	}   
+	
+	
     @PUT
     @Path("/")
     @Consumes("application/json")
     @Produces("application/json")
     public PutOperationResult create(Operator operator){
-    	checkPermission(null);
-    	PutOperationResult result = new PutOperationResult();
-		Integer id = operatorMgmt.add(operator);
-		result.setErrorCode(ErrorCode.SUCCESS);
-		result.setId(id.intValue());
-		return result;
+    	return _create(operator);
     }
     
     @POST
@@ -113,19 +112,14 @@ public class OperatorRest extends BaseRest<Operator>{
     @Consumes("application/json")
     @Produces("application/json")
     public OperationResult update(Operator operator, @PathParam("id")Integer id){
-    	checkPermission(null);
-    	OperationResult result = new OperationResult();
-		operator.setId(id);
-		operatorMgmt.update(id,operator);
-		result.setErrorCode(ErrorCode.SUCCESS);
-		return result;
+    	return _update(operator,id);
     }
 
 	/* (non-Javadoc)
 	 * @see com.vol.rest.service.BaseRest#createObject()
 	 */
 	@Override
-	public Operator createObject() {
+	protected Operator createObject() {
 		return new Operator();
 	}
 	
@@ -134,7 +128,7 @@ public class OperatorRest extends BaseRest<Operator>{
 	 * @see com.vol.rest.service.BaseRest#delete(java.lang.Integer)
 	 */
 	@Override
-	public OperationResult delete(Integer id) {
+	protected OperationResult _delete(Integer id) {
 		checkPermission(null);
 		OperationResult result = new OperationResult();
 		operatorMgmt.delete(id);
@@ -148,23 +142,11 @@ public class OperatorRest extends BaseRest<Operator>{
     @Produces("application/json")
 	public OperationResult changePassword(@FormParam("oldpass")String oldpass,@FormParam("newpass")String newpass){
     	
-    	try {
     		OperationResult result = new OperationResult();
 			Operator operator = getCurrentOperator();
 			operatorMgmt.updatePassword(operator.getId(), oldpass, newpass);
 			result.setErrorCode(ErrorCode.SUCCESS);
 			return result;
-		}catch (MgmtException me) {
-			log.error("Operation Error",me);
-			OperationResult result = new OperationResult();
-			result.setErrorCode(me.getCode());
-			return result;
-		} catch (Exception e){
-			log.error("Operation Error",e);
-			OperationResult result = new OperationResult();
-			result.setErrorCode(ErrorCode.INTERNAL_ERROR);
-			return result;
-		}
     }
   
     
@@ -173,23 +155,12 @@ public class OperatorRest extends BaseRest<Operator>{
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
 	public OperationResult resetPassword(@FormParam("id")Integer operatorId){
-    	
-    	try {
     		checkPermission(null);
     		OperationResult result = new OperationResult();
 			operatorMgmt.resetPassword(operatorId);
 			result.setErrorCode(ErrorCode.SUCCESS);
 			return result;
-		}catch (MgmtException me) {
-			log.error("Operation Error",me);
-			OperationResult result = new OperationResult();
-			result.setErrorCode(me.getCode());
-			return result;
-		} catch (Exception e){
-			log.error("Operation Error",e);
-			OperationResult result = new OperationResult();
-			result.setErrorCode(ErrorCode.INTERNAL_ERROR);
-			return result;
-		}
-    }   
+    }
+
+
 }

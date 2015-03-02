@@ -51,6 +51,9 @@ public class Authentication implements AuthenticationService {
 		Operator operator = (Operator) context.get(KEY);
 		if(operator == null){
 			operator = locateOperator(operatorMgmt,userName);
+			if(operator == null){
+				return null;
+			}
 			context.put(KEY, operator);
 		}
 		return operator.getPassword();

@@ -22,15 +22,6 @@ public aspect RestHandler {
 	}
 	
 
-	pointcut operation():
-		execution(public OperationResult * (..));
-    
-    pointcut putOperation():
-        execution(public PutOperationResult * (..));
-        
-    pointcut pagingOperation():
-        execution(public PagingOperationResult * (..));            
-	
     pointcut listOperation():
         execution(public List * (..));     
         
@@ -40,7 +31,7 @@ public aspect RestHandler {
          
 
  
- 	OperationResult around(Tracable t): this(t) && (operation()){
+ 	OperationResult around(Tracable t): this(t) && (execution(public OperationResult * (..))){
     	Logger logger =  t.logger;
 
 		try{
@@ -63,7 +54,76 @@ public aspect RestHandler {
 			result.setErrorCode(ErrorCode.INTERNAL_ERROR);
 			return result;
 		}
-
     }  
 
+
+ 	PutOperationResult around(Tracable t): this(t) && (execution(public PutOperationResult * (..))){
+    	Logger logger =  t.logger;
+
+		try{
+		    if(logger.isTraceEnabled()){
+        		logger.trace("Entering Operation: {}" , thisJoinPoint.getSignature().getName());
+       		}
+			PutOperationResult result = proceed(t);
+			if(logger.isTraceEnabled()){
+        		logger.trace("Returning Operation: {}" , thisJoinPoint.getSignature().getName());
+       		}
+       		return result;
+		}catch (MgmtException me) {
+			logger.error("Operation Error - "+thisJoinPoint.getSignature().getName(),me);
+			PutOperationResult result = new PutOperationResult();
+			result.setErrorCode(me.getCode());
+			return result;
+		} catch (Exception e){
+			logger.error("Operation Unexpected Error - "+thisJoinPoint.getSignature().getName(),e);
+			PutOperationResult result = new PutOperationResult();
+			result.setErrorCode(ErrorCode.INTERNAL_ERROR);
+			return result;
+		}
+    }  
+  	PagingOperationResult around(Tracable t): this(t) && ( execution(public PagingOperationResult * (..))){
+    	Logger logger =  t.logger;
+
+		try{
+		    if(logger.isTraceEnabled()){
+        		logger.trace("Entering Operation: {}" , thisJoinPoint.getSignature().getName());
+       		}
+			PagingOperationResult result = proceed(t);
+			if(logger.isTraceEnabled()){
+        		logger.trace("Returning Operation: {}" , thisJoinPoint.getSignature().getName());
+       		}
+       		return result;
+		}catch (MgmtException me) {
+			logger.error("Operation Error - "+thisJoinPoint.getSignature().getName(),me);
+			PagingOperationResult result = new PagingOperationResult();
+			result.setErrorCode(me.getCode());
+			return result;
+		} catch (Exception e){
+			logger.error("Operation Unexpected Error - "+thisJoinPoint.getSignature().getName(),e);
+			PagingOperationResult result = new PagingOperationResult();
+			result.setErrorCode(ErrorCode.INTERNAL_ERROR);
+			return result;
+		}
+    } 
+    
+    
+    
+     Object around(Tracable t): this(t) && (listOperation()){
+    	Logger logger =  t.logger;
+
+		try{
+		    if(logger.isTraceEnabled()){
+        		logger.trace("Entering Operation: {}" , thisJoinPoint.getSignature().getName());
+       		}
+			Object result = proceed(t);
+			if(logger.isTraceEnabled()){
+        		logger.trace("Returning Operation: {}" , thisJoinPoint.getSignature().getName());
+       		}
+       		return result;
+		} catch (Exception e){
+			logger.error("Operation Error - "+thisJoinPoint.getSignature().getName(),e);
+			
+			return null;
+		}
+    }        
 }

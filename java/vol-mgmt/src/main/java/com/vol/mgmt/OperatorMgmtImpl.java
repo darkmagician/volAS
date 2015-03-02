@@ -96,10 +96,10 @@ public class OperatorMgmtImpl extends AbstractService<Integer,Operator>{
 	public boolean updatePassword(final int id, final String oldpass, String newpass){
 		final String oldDigest = CredentialUtil.digest(oldpass);
 		final String newDigest = CredentialUtil.digest(newpass);
-		boolean rc= this.transaction.execute(new TransactionCallback<Boolean>(){
+		Operator operator = this.transaction.execute(new TransactionCallback<Operator>(){
 
 			@Override
-			public Boolean doInTransaction(TransactionStatus status) {
+			public Operator doInTransaction(TransactionStatus status) {
 				Operator old = getDAO().get(id);
 				if(old == null){
 					throw new MgmtException(ErrorCode.OPERATOR_NOT_FOUND);
@@ -108,14 +108,20 @@ public class OperatorMgmtImpl extends AbstractService<Integer,Operator>{
 				if(previousDigest.equals(oldDigest)){
 					old.setPassword(newDigest);
 					operatorDAO.update(old);
-					CredentialUtil.revoke(old.getName());
-					return true;
+					
+					return old;
 				}
 				throw new MgmtException(ErrorCode.INVALID_PASSWORD,"Changing password failed. Operator " +old.getName());
 			}
 
 		});
-		return rc;
+		
+		if(operator != null )
+		{
+			CredentialUtil.revoke(operator.getName());
+			return true;
+		}
+		return false;
 	}
 	
 	public boolean resetPassword(final int id){
@@ -128,7 +134,6 @@ public class OperatorMgmtImpl extends AbstractService<Integer,Operator>{
 				if(old != null){
 					old.setPassword(pass);
 					operatorDAO.update(old);
-					CredentialUtil.revoke(old.getName());
 					return old;
 				}
 				throw new MgmtException(ErrorCode.OPERATOR_NOT_FOUND);
@@ -137,6 +142,7 @@ public class OperatorMgmtImpl extends AbstractService<Integer,Operator>{
 		});
 		if(operator != null )
 		{
+			CredentialUtil.revoke(operator.getName());
 			log.info("Password of Operator {} is reset, Pass: {} ",operator.getName(), pass);
 			mailService.sendMailForReset(operator, pass, null);
 			return true;

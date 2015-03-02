@@ -24,7 +24,6 @@ import javax.ws.rs.core.UriInfo;
 
 import com.vol.common.BaseEntity;
 import com.vol.common.exception.ErrorCode;
-import com.vol.common.exception.MgmtException;
 import com.vol.common.mgmt.PagingResult;
 import com.vol.common.tenant.Operator;
 import com.vol.common.tenant.Promotion;
@@ -32,6 +31,7 @@ import com.vol.common.tenant.PromotionBalance;
 import com.vol.common.util.StringParser;
 import com.vol.mgmt.PromotionMgmtImpl;
 import com.vol.rest.result.OperationResult;
+import com.vol.rest.result.PagingOperationResult;
 import com.vol.rest.result.PutOperationResult;
 import com.vol.rest.service.MapConverter.Converter;
 
@@ -40,7 +40,7 @@ import com.vol.rest.service.MapConverter.Converter;
  *
  */
 @Path("/promotion")
-public class PromotionRest extends BaseRest<Promotion>{
+public class PromotionRest extends CURDRest<Promotion>{
 
 	@Resource(name="promotionMgmt")
 	protected PromotionMgmtImpl promotionMgmt;
@@ -50,20 +50,14 @@ public class PromotionRest extends BaseRest<Promotion>{
     @Path("/{tenantId}/{promotionid}")
     @Produces("application/json")
 	public Promotion get(@PathParam("tenantId")Integer tenantId, @PathParam("promotionid")Integer promotionId){
-    	try {
 			checkPermission(tenantId);
 			return promotionMgmt.get(promotionId);
-		} catch (Exception e) {
-			log.error("Operation Error",e);
-			return null;
-		}
     }
     
     @GET
     @Path("/{tenantId}")
     @Produces("application/json")
 	public List<Promotion> list(@PathParam("tenantId")Integer tenantId, @Context UriInfo uriInfo){
-    	try {
 			checkPermission(tenantId);
 			MultivaluedMap<String, String> pathPara = uriInfo.getQueryParameters();
 			String queryName = pathPara.getFirst("query");
@@ -77,10 +71,6 @@ public class PromotionRest extends BaseRest<Promotion>{
 				return promotionMgmt.list("promotion."+queryName, map);
 				
 			}
-		} catch (Exception e) {
-			log.error("Operation Error",e);
-			return null;
-		}
     }  
     
     @PUT
@@ -89,18 +79,23 @@ public class PromotionRest extends BaseRest<Promotion>{
     @Produces("application/json")
     public PutOperationResult create(Promotion promotion, @PathParam("tenantId")Integer tenantId){
     	promotion.setTenantId(tenantId);
-    	return create(promotion);
+    	return _create(promotion);
     }
+    
+
+	
+	
     @POST
     @Path("/{tenantId}/{promotionid}")
     @Consumes("application/json")
     @Produces("application/json")
     public OperationResult update(Promotion promotion,@PathParam("tenantId")Integer tenantId,@PathParam("promotionid")Integer id){
     	promotion.setTenantId(tenantId);
-    	return update(promotion, id);
+    	return _update(promotion, id);
     }
     
-    public OperationResult update(Promotion promotion,Integer id){
+    @Override
+    protected OperationResult _update(Promotion promotion,Integer id){
     	checkPermission(promotion.getTenantId());
     	OperationResult result = new OperationResult();
 		promotion.setId(id);
@@ -113,7 +108,7 @@ public class PromotionRest extends BaseRest<Promotion>{
 	 * @see com.vol.rest.service.BaseRest#createObject()
 	 */
 	@Override
-	public Promotion createObject() {
+	protected Promotion createObject() {
 		return new Promotion();
 	}
 	
@@ -121,24 +116,11 @@ public class PromotionRest extends BaseRest<Promotion>{
     @Path("/active/{id}")
     @Produces("application/json")
 	public OperationResult active(@PathParam("id")Integer id){
-    	try {
 			OperationResult result = new OperationResult();
 			 Operator operator = getCurrentOperator();
 			promotionMgmt.activate(operator.getTenantId(),id);
 			result.setErrorCode(ErrorCode.SUCCESS);
 			return result;
-		}  catch (MgmtException me) {
-			log.error("Operation Error",me);
-			OperationResult result = new OperationResult();
-			result.setErrorCode(me.getCode());
-			return result;
-		} catch (Exception e){
-			log.error("Operation Error",e);
-			OperationResult result = new OperationResult();
-			result.setErrorCode(ErrorCode.INTERNAL_ERROR);
-			return result;
-		}
-		
 	}
     
     
@@ -147,7 +129,7 @@ public class PromotionRest extends BaseRest<Promotion>{
     @Path("/{tenantId}/{promotionid}")
     @Produces("application/json")
 	public void delete(@PathParam("tenantId")Integer tenantId, @PathParam("promotionid")Integer promotionId){
-    	delete(promotionId);
+    	_delete(promotionId);
     }
     
     
@@ -155,44 +137,33 @@ public class PromotionRest extends BaseRest<Promotion>{
     @Path("/{tenantId}/draftpaging")
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
-	public PagingResult<Promotion> listPageByDraft(@PathParam("tenantId")Integer tenantId,@FormParam("page")Integer startPage,@FormParam("rows")Integer pageSize){
-		try {
+	public PagingOperationResult listPageByDraft(@PathParam("tenantId")Integer tenantId,@FormParam("page")Integer startPage,@FormParam("rows")Integer pageSize){
 			checkPermission(tenantId);
 			Map<String,Object> map = new HashMap<String,Object>();
 			map.put("tenantId", tenantId);
-			return promotionMgmt.listByPaging("promotion.byDraft", map, startPage, pageSize);
-		} catch (Exception e) {
-			log.error("Operation Error",e);
-			return null;
-		}
+			return new PagingOperationResult(promotionMgmt.listByPaging("promotion.byDraft", map, startPage, pageSize));
     }
     
     @POST
     @Path("/{tenantId}/activepaging")
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
-	public PagingResult<Promotion> listPageByActive(@PathParam("tenantId")Integer tenantId,@FormParam("page")Integer startPage,@FormParam("rows")Integer pageSize){
-		try {
+	public PagingOperationResult listPageByActive(@PathParam("tenantId")Integer tenantId,@FormParam("page")Integer startPage,@FormParam("rows")Integer pageSize){
 			checkPermission(tenantId);
 			Map<String,Object> map = new HashMap<String,Object>();
 			map.put("tenantId", tenantId);
 			map.put("current", System.currentTimeMillis());
 			PagingResult<Promotion> result = promotionMgmt.listByPaging("promotion.byNotEnded", map, startPage, pageSize);
 			fillBalance(result);
-			return result;
-		} catch (Exception e) {
-			log.error("Operation Error",e);
-			return null;
-		}
+			return new PagingOperationResult (result);
     }
 
     @POST
     @Path("/{tenantId}/historypaging")
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
-	public PagingResult<Promotion> listPageByHistory(@PathParam("tenantId")Integer tenantId,@FormParam("page")Integer startPage,@FormParam("rows")Integer pageSize,
+	public PagingOperationResult listPageByHistory(@PathParam("tenantId")Integer tenantId,@FormParam("page")Integer startPage,@FormParam("rows")Integer pageSize,
 			@FormParam("from")String from, @FormParam("to")String to, @FormParam("name")String name){
-    	try {
 			checkPermission(tenantId);
 			Map<String,Object> map = new HashMap<String,Object>();
 			map.put("tenantId", tenantId);
@@ -203,11 +174,7 @@ public class PromotionRest extends BaseRest<Promotion>{
 			
 			PagingResult<Promotion> result = promotionMgmt.searchHistory( map, startPage, pageSize);
 			fillBalance(result);
-			return result;
-		} catch (Exception e) {
-			log.error("Operation Error",e);
-			return null;
-		}
+			return new PagingOperationResult (result);
     }
 	/**
 	 * @param result
@@ -231,15 +198,8 @@ public class PromotionRest extends BaseRest<Promotion>{
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see com.vol.rest.service.BaseRest#create(java.lang.Object)
-	 */
 	@Override
-    @PUT
-    @Path("/")
-    @Consumes("application/json")
-    @Produces("application/json")
-	public PutOperationResult create(Promotion promotion) {
+	protected PutOperationResult _create(Promotion promotion) {
 		checkPermission(promotion.getTenantId());
     	PutOperationResult result = new PutOperationResult();
 		Integer id = promotionMgmt.add(promotion);
@@ -252,12 +212,12 @@ public class PromotionRest extends BaseRest<Promotion>{
 	 * @see com.vol.rest.service.BaseRest#delete(java.lang.Integer)
 	 */
 	@Override
-	public OperationResult delete(Integer id) {
+	protected OperationResult _delete(Integer id) {
 		 OperationResult result = new OperationResult();
 		 Operator operator = getCurrentOperator();
 		 delete(operator.getTenantId(), id);
 		result.setErrorCode(ErrorCode.SUCCESS);
 		 return result;
 	}
-    
+
 }

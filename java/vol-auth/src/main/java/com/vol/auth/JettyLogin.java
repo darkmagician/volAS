@@ -32,6 +32,7 @@ public class JettyLogin extends MappedLoginService implements IdentityChangeList
 		holder.register(this);
 		Map<String, Object> context = new HashMap<String, Object>();
 		String credentials = service.getCredential(username, context );
+		System.out.println("clear operator "+username+" "+credentials);
 		if(credentials == null){
 			return null;
 		}
@@ -52,6 +53,7 @@ public class JettyLogin extends MappedLoginService implements IdentityChangeList
 	 */
 	@Override
 	public void onChange(String name) {
+		System.out.println("clear operator "+name);
 		this._users.remove(name);
 	}
 
