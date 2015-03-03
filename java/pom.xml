@@ -18,6 +18,7 @@
         <module>vol-auth</module>  
         <module>vol-common</module> 
         <module>vol-mgmt</module> 
+        <module>vol-pub</module>   
         <module>vol-rest</module>
         <module>vol-dao</module>
         <module>vol-appserver</module>        
