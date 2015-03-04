@@ -105,7 +105,7 @@ public class OperatorMgmtImpl extends AbstractService<Integer,Operator>{
 					throw new MgmtException(ErrorCode.OPERATOR_NOT_FOUND);
 				}
 				String previousDigest = old.getPassword();
-				if(previousDigest.equals(oldDigest)){
+				if(previousDigest.equals(oldpass) || previousDigest.equals(oldDigest)){
 					old.setPassword(newDigest);
 					operatorDAO.update(old);
 					
@@ -126,13 +126,15 @@ public class OperatorMgmtImpl extends AbstractService<Integer,Operator>{
 	
 	public boolean resetPassword(final int id){
 		final String pass = CredentialUtil.generatePass();
+		final String newDigest = CredentialUtil.digest(pass);
+		
 		Operator operator =  this.transaction.execute(new TransactionCallback<Operator>(){
 
 			@Override
 			public Operator doInTransaction(TransactionStatus status) {
 				Operator old = getDAO().get(id);
 				if(old != null){
-					old.setPassword(pass);
+					old.setPassword(newDigest);
 					operatorDAO.update(old);
 					return old;
 				}
