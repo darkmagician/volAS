@@ -14,5 +14,9 @@
     
       <bean id="restSecurity" class="java.lang.Boolean">
     	<constructor-arg value="false"/>
-    </bean>     
+    </bean>   
+    
+     <bean id="authName" class="java.lang.String">
+    	<constructor-arg value="volume appserver realm"/>
+    </bean>       
 </beans>

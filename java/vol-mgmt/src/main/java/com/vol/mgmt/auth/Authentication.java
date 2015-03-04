@@ -32,6 +32,8 @@ public class Authentication implements AuthenticationService {
 	@Resource(name="operatorMgmt")
 	private OperatorMgmtImpl operatorMgmt;
 	
+	@Resource(name="authName")
+	private String name;
 	
 	
 	public void init(){
@@ -89,6 +91,21 @@ public class Authentication implements AuthenticationService {
 		}
 		int tenantId = operator.getId();
 		return new String[]{tenantId==0? "superAdmin":"admin"} ;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.vol.auth.AuthenticationService#getName()
+	 */
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

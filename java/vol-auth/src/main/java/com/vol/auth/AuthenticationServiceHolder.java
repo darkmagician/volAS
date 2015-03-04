@@ -3,9 +3,9 @@
  */
 package com.vol.auth;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
@@ -39,7 +39,7 @@ public class AuthenticationServiceHolder {
 	/**
 	 * The service.
 	 */
-	private final List<AuthenticationService> services = new CopyOnWriteArrayList<AuthenticationService>();;
+	private final Map<String,AuthenticationService> services = new ConcurrentHashMap<String,AuthenticationService>();;
 	
 	/**
 	 * The Constant listeners.
@@ -51,8 +51,8 @@ public class AuthenticationServiceHolder {
 	 *
 	 * @return the service
 	 */
-	public AuthenticationService getService() {
-		return services.isEmpty()? null: services.get(0);
+	public AuthenticationService getService(String name) {
+		return services.get(name);
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class AuthenticationServiceHolder {
 	 *            the service to set
 	 */
 	public void setService(AuthenticationService service) {
-		this.services.add(service);
+		services.put(service.getName(), service);
 	}
 	
 
@@ -73,7 +73,7 @@ public class AuthenticationServiceHolder {
 	 *            the service to set
 	 */
 	public void unsetService(AuthenticationService service) {
-		this.services.remove(service);
+		services.remove(service.getName());
 	}
 	
 	/**

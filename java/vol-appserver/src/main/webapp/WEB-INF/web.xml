@@ -37,7 +37,7 @@
 
 	<login-config>
 		<auth-method>BASIC</auth-method>
-		<realm-name>Promotion Admin RS Realm</realm-name>
+		<realm-name>volume appserver realm</realm-name>
 	</login-config>
 
 	<security-role>

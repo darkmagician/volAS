@@ -17,4 +17,8 @@
     <bean id="restSecurity" class="java.lang.Boolean">
     	<constructor-arg value="true"/>
     </bean>
+    
+    <bean id="authName" class="java.lang.String">
+    	<constructor-arg value="snae admin realm"/>
+    </bean>      
 </beans>

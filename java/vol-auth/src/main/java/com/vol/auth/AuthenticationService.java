@@ -35,4 +35,12 @@ public interface AuthenticationService {
 	 */
 	public String[] getRoles(String userName, Map<String, Object> context);
 	
+	
+	
+	
+	/**
+	 * @return
+	 */
+	public String getName();
+	
 }

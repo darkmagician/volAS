@@ -11,26 +11,16 @@ import java.util.Map;
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.catalina.realm.RealmBase;
 
-/**
- * @author Dai Zhi Jie
- *
- */
+
 public class TomcatLogin extends RealmBase {
 	
 	private final AuthenticationServiceHolder holder = AuthenticationServiceHolder.getInstance();
 	
 	
+	private String name;
+	
 	public TomcatLogin(){
 		setDigest("MD5");
-	}
-	
-
-	/* (non-Javadoc)
-	 * @see org.apache.catalina.realm.RealmBase#getName()
-	 */
-	@Override
-	protected String getName() {
-		return "SNAELogin";
 	}
 
 	/* (non-Javadoc)
@@ -38,7 +28,7 @@ public class TomcatLogin extends RealmBase {
 	 */
 	@Override
 	protected String getPassword(String username) {
-		AuthenticationService service = holder.getService();
+		AuthenticationService service = holder.getService(name);
 		if(service == null){
 			System.err.println("authentication service is not ready! getPassword failed.");
 			return null;
@@ -53,7 +43,7 @@ public class TomcatLogin extends RealmBase {
 	 */
 	@Override
 	protected Principal getPrincipal(String username) {
-		AuthenticationService service = holder.getService();
+		AuthenticationService service = holder.getService(name);
 		if(service == null){
 			System.err.println("authentication service is not ready! getPrincipal failed.");
 			return null;
@@ -81,6 +71,14 @@ public class TomcatLogin extends RealmBase {
 		}
      
         
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 

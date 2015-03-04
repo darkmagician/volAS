@@ -24,7 +24,7 @@ public class JettyLogin extends MappedLoginService implements IdentityChangeList
 	 */
 	@Override
 	protected UserIdentity loadUser(String username) {
-		AuthenticationService service = holder.getService();
+		AuthenticationService service = holder.getService(_name);
 		if(service == null){
 			System.err.println("authentication service is not ready! Login failed.");
 			return null;
@@ -32,7 +32,6 @@ public class JettyLogin extends MappedLoginService implements IdentityChangeList
 		holder.register(this);
 		Map<String, Object> context = new HashMap<String, Object>();
 		String credentials = service.getCredential(username, context );
-		System.out.println("clear operator "+username+" "+credentials);
 		if(credentials == null){
 			return null;
 		}

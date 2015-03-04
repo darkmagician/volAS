@@ -6,7 +6,7 @@
 	<Get name="securityHandler">
 		<Set name="loginService">
 			<New class="com.vol.auth.JettyLogin">
-				<Set name="name">Promotion Admin RS Realm</Set>
+				<Set name="name">snae admin realm</Set>
 			</New>
 		</Set>
 	</Get>
