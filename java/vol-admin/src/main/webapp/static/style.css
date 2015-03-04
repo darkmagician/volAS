@@ -50,4 +50,8 @@ h2 {
 	width: 160px;
 }
 
+.fitem select {
+	width: 160px;
+}
+
 .CodeMirror {border: 1px solid black; font-size:13px}

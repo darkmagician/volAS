@@ -445,10 +445,13 @@
 					'submit',
 					{
 						onSubmit: function(param){
+							if(submitting) return;
+							
 							if(!$(this).form('validate')){
 								return false;
 							}
-							if(this.newpass.value === this.newpass2.value){			
+							if(this.newpass.value === this.newpass2.value){	
+								submitting=true;
 								return true;
 							}
 							$('#passInfo').text("新密码不一致，请重新输入！");
@@ -456,6 +459,7 @@
 						},
 						url : './rs/admin/operator/changepass',
 						success : function(result) {
+							submitting=false;
 							var result = eval('(' + result + ')');
 							if (result.code == 2001) {
 								$('#passdlg').dialog('close'); // close the dialog
@@ -631,8 +635,14 @@
 			$('#confirmForm').form(
 					'submit',
 					{
+						onSubmit: function(param){
+							if(submitting) return;
+							 submitting=true;
+							 return true;
+						},
 						url : confirmurl,
 						success : function(result) {
+							submitting=false;
 							var result = eval('(' + result + ')');
 							if (result.code == 2001) {
 								$('#confirm').dialog('close'); // close the dialog
@@ -652,8 +662,14 @@
 			$('#operatorForm').form(
 					'submit',
 					{
+						onSubmit: function(param){
+							if(submitting) return;
+							 submitting=true;
+							 return true;
+						},
 						url : url,
 						success : function(result) {
+							submitting=false;
 							var result = eval('(' + result + ')');
 							if (result.code == 2001) {
 								$('#operatorEditor').dialog('close'); // close the dialog
@@ -727,11 +743,14 @@
 			}
 		}];
 
+		var submitting=false;
 		function savePromotion() {
 			$('#promotionForm').form(
 					'submit',
 					{
 						onSubmit: function(param){
+							if(submitting) return;
+							
 							if(!$(this).form('validate')){
 								return false;
 							}
@@ -746,10 +765,12 @@
 							 param.startTime = parseDateToLong(this.startTimeStr.value);
 							 param.bonusExpirationTime = parseDateToLong(this.bonusExpirationTimeStr.value);
 							 param.endTime = parseDateToLong(this.endTimeStr.value);
+							 submitting=true;
 							 return true;
 						},
 						url : url,
 						success : function(result) {
+							submitting=false;
 							var result = eval('(' + result + ')');
 							if (result.code == 2001) {
 								$('#promotionEditor').dialog('close'); // close the dialog
@@ -890,8 +911,14 @@
 			$('#tenantForm').form(
 					'submit',
 					{
+						onSubmit: function(param){
+							if(submitting) return;
+							 submitting=true;
+							 return true;
+						},
 						url : url,
 						success : function(result) {
+							submitting=false;
 							var result = eval('(' + result + ')');
 							if (result.code == 2001) {
 								$('#tenantEditor').dialog('close'); // close the dialog
