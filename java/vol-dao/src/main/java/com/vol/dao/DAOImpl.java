@@ -199,10 +199,12 @@ public class DAOImpl<K extends Serializable, T extends BaseEntity> implements DA
 		query.setProperties(parameters);
 		query.setFirstResult((startPage - 1) * pageSize);
 		query.setMaxResults(pageSize);
-		result.setRows( query.list());
+		@SuppressWarnings("unchecked")
+		List<T> list = query.list();
+		result.setRows( list);
 		
-		if(startPage == 1 && query.list().size() < pageSize){
-			result.setTotal(query.list().size());
+		if(startPage == 1 && list.size() < pageSize){
+			result.setTotal(list.size());
 		}else{
 			Query querytotal=session.createQuery("select count(*) "+query.getQueryString());
 			querytotal.setProperties(parameters);
