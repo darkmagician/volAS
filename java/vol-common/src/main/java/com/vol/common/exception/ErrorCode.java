@@ -30,7 +30,7 @@ public enum ErrorCode {
 	END_LATER_THAN_EXPIRATION(5014,"红包过期时间不能早于活动结束时间"),
 	INVALID_PASSWORD(5015,"密码不正确"),
 	OPERATOR_NOT_FOUND(5016,"无法识别当前管理员，可能已经删除。"),
-	
+	OPERATOR_RULE_INVALID(5017,"活动规则错误"),
 	
 	UNKNOWN_OPERATION(6001,"未知操作"),
 	OPERATOR_NOT_IDENTIFIED(6002,"无法识别当前管理员，请重新登录"),

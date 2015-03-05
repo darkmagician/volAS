@@ -19,6 +19,17 @@ public class OperationResult {
 		code = errorCode.getCode();
 		message = errorCode.getDescription();
 	}
+	
+	
+	public void setErrorCode(ErrorCode errorCode, String additional){
+		code = errorCode.getCode();
+		if(additional != null){
+			message = errorCode.getDescription()+": "+additional;
+		}else{
+			message = errorCode.getDescription();
+		}
+	}
+
 
 	/**
 	 * @return the code

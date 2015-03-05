@@ -14,28 +14,39 @@ public class MgmtException extends RuntimeException {
 	
 	
 	private final ErrorCode code;
+	
+	private final String additional;
 
 
+	public MgmtException(ErrorCode code,String message, Throwable cause, String additional) {
+		super(constructMessage(code, message), cause);
+		this.code = code;
+		this.additional = additional;
+	}
 	public MgmtException(ErrorCode code,String message, Throwable cause) {
 		super(constructMessage(code, message), cause);
 		this.code = code;
+		additional = null;
 	}
 
 	public MgmtException(ErrorCode code,String message) {
 		super(constructMessage(code, message));
 		this.code = code;
+		additional = null;
 	}
 
 
 	public MgmtException(ErrorCode code,Throwable cause) {
 		super(constructMessage(code, null),cause);
 		this.code = code;
+		additional = null;
 	}
 
 
 	public MgmtException(ErrorCode code) {
 		super();
 		this.code = code;
+		additional = null;
 	}
 
 
@@ -51,6 +62,12 @@ public class MgmtException extends RuntimeException {
 		}
 		
 		return sb.toString();
+	}
+	/**
+	 * @return the additional
+	 */
+	public String getAdditional() {
+		return additional;
 	}
 
 }

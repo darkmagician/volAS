@@ -19,6 +19,7 @@ import com.vol.common.DAO;
 import com.vol.common.exception.ErrorCode;
 import com.vol.common.exception.MgmtException;
 import com.vol.common.mgmt.PagingResult;
+import com.vol.common.service.PromotionPolicy;
 import com.vol.common.tenant.Promotion;
 import com.vol.common.tenant.PromotionBalance;
 import com.vol.dao.AbstractService;
@@ -33,6 +34,9 @@ public class PromotionMgmtImpl extends AbstractService<Integer, Promotion> {
 	protected DAO<Integer, Promotion> promotionDAO;
 	@Resource(name = "promotionBalanceDao")
 	protected DAO<Integer, PromotionBalance> promotionBalanceDAO;
+	
+	@Resource(name = "MVELPromotionPolicy")
+	protected PromotionPolicy promotionPolicy;
 
 	protected void copyAttribute(Promotion promotion, Promotion oldPromotion) {
 		oldPromotion.setDescription(promotion.getDescription());
@@ -187,6 +191,8 @@ public class PromotionMgmtImpl extends AbstractService<Integer, Promotion> {
 		if(obj.getBonusExpirationTime() < obj.getEndTime()){
 			throw new MgmtException(ErrorCode.END_LATER_THAN_EXPIRATION,"END "+new Date(obj.getStartTime())+" is later than EXPIRATION "+new Date(obj.getEndTime()));
 		}
+		
+		promotionPolicy.validate(obj);
 	}
 	
 }

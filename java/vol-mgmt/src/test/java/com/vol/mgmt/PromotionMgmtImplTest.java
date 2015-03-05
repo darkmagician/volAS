@@ -25,6 +25,10 @@ public class PromotionMgmtImplTest extends BaseTest{
 	public void testPromotion(){
 		Promotion promotion = new Promotion();
 		promotion.setName("111");
+		promotion.setRule("return granted.length>0? 0:11;");
+		promotion.setStartTime(System.currentTimeMillis());
+		promotion.setEndTime(System.currentTimeMillis()+1000);
+		promotion.setBonusExpirationTime(System.currentTimeMillis()+2000);
 		int id =promotionMgmt.add(promotion );
 		Assert.assertTrue(id>0);
 		Promotion promotion2= promotionMgmt.get(id);
@@ -41,11 +45,24 @@ public class PromotionMgmtImplTest extends BaseTest{
 		try {
 			promotionMgmt.update(id,promotion4);
 		} catch (Exception e) {
+			e.printStackTrace();
 			failed=e;
 		}
 		Assert.assertNotNull(failed);
 		Promotion promotion5= promotionMgmt.get(id);	
 		log.info("promotion5 {}",promotion5);
 		Assert.assertNotNull(promotion5);
+		promotion5.setRule("asdfac;");
+		try {
+			failed=null;
+			promotionMgmt.update(id,promotion5);
+		} catch (Exception e) {
+			e.printStackTrace();
+			failed=e;
+		}
+		Assert.assertNotNull(failed);
 	}
+	
+	
+	
 }

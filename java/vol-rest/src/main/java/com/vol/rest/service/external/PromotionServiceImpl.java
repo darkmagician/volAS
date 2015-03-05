@@ -31,36 +31,6 @@ import com.vol.rest.result.BunosResult;
  *
  */
 public class PromotionServiceImpl extends AbstractTransactionService{
-
-	/**
-	 * 
-	 */
-	private static final String PARAMETERS = "parameters";
-
-	/**
-	 * 
-	 */
-	private static final String ISNEWUSER = "isNewUser";
-
-	/**
-	 * 
-	 */
-	private static final String USER = "user";
-
-	/**
-	 * 
-	 */
-	private static final String GRANTED = "granted";
-
-	/**
-	 * 
-	 */
-	private static final String PROMOTION_BALANCE = "promotionBalance";
-
-	/**
-	 * 
-	 */
-	private static final String PROMOTION = "promotion";
 	
 	@Resource(name="promotionDao")
 	protected DAO<Integer,Promotion> promotionDAO;
@@ -111,14 +81,14 @@ public class PromotionServiceImpl extends AbstractTransactionService{
 				if(promotion == null || promotion.getTenantId() != tenantId){
 					return;
 				}
-				context.put(PROMOTION, promotion);
+				context.put(PromotionPolicy.PROMOTION, promotion);
 				Map<String,Object> parameters = new HashMap<String,Object>();
 				parameters.put("promotionId", promotionId);
 				PromotionBalance promotionBalance = promotionBalanceDAO.find("promotionBalance.byPromotion", parameters);
 				if(promotionBalance == null){
 					return;
 				}
-				context.put(PROMOTION_BALANCE, promotionBalance);
+				context.put(PromotionPolicy.PROMOTION_BALANCE, promotionBalance);
 				parameters.clear();
 				parameters.put("name", userName);
 				parameters.put("tenantId", tenantId);
@@ -126,21 +96,21 @@ public class PromotionServiceImpl extends AbstractTransactionService{
 				if(user == null){
 					return;
 				}
-				context.put(USER, user);
+				context.put(PromotionPolicy.USER, user);
 				parameters.clear();
 				parameters.put("promotionId", promotionId);
 				parameters.put("userId", user.getId());
 				List<Bonus> bonuses = bonusDAO.query("bonus.byUserPromotion", parameters);
-				context.put(GRANTED, bonuses);
+				context.put(PromotionPolicy.GRANTED, bonuses);
 			}
 		});
 		
-		Promotion promotion = (Promotion) context.get(PROMOTION);
+		Promotion promotion = (Promotion) context.get(PromotionPolicy.PROMOTION);
 		if(promotion==null){
 			result.setErrorCode(ErrorCode.INVALID_PROMOTION);
 			return result;
 		}
-		PromotionBalance promotionBalance = (PromotionBalance) context.get(PROMOTION_BALANCE);
+		PromotionBalance promotionBalance = (PromotionBalance) context.get(PromotionPolicy.PROMOTION_BALANCE);
 		if(promotionBalance==null){
 			result.setErrorCode(ErrorCode.INVALID_PROMOTION);
 			return result;
@@ -149,16 +119,18 @@ public class PromotionServiceImpl extends AbstractTransactionService{
 			result.setErrorCode(ErrorCode.PROMOTION_USEDUP);
 			return result;			
 		}
-		User user = (User) context.get(USER);
+		context.put(PromotionPolicy.BALANCE, promotionBalance.getBalance());
+		
+		User user = (User) context.get(PromotionPolicy.USER);
 		if(user == null){
 			user = createNewUser(userName,tenantId);
-			context.put(USER, user);
-			context.put(ISNEWUSER, Boolean.TRUE);
-			context.put(GRANTED, Collections.EMPTY_LIST);
+			context.put(PromotionPolicy.USER, user);
+			context.put(PromotionPolicy.ISNEWUSER, Boolean.TRUE);
+			context.put(PromotionPolicy.GRANTED, Collections.EMPTY_LIST);
 		}else{
-			context.put(ISNEWUSER, Boolean.FALSE);
+			context.put(PromotionPolicy.ISNEWUSER, Boolean.FALSE);
 		}
-		context.put(PARAMETERS, input);
+		context.put(PromotionPolicy.PARAMETERS, input);
 		Long bonusSize = promotionPolicy.evaluate(promotion, context);
 		if(bonusSize != null&& bonusSize>0){
 		

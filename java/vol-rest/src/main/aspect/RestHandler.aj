@@ -46,7 +46,7 @@ public aspect RestHandler {
 		}catch (MgmtException me) {
 			logger.error("Operation Error - "+thisJoinPoint.getSignature().getName(),me);
 			OperationResult result = new OperationResult();
-			result.setErrorCode(me.getCode());
+			result.setErrorCode(me.getCode(),me.getAdditional());
 			return result;
 		} catch (Exception e){
 			logger.error("Operation Unexpected Error - "+thisJoinPoint.getSignature().getName(),e);
@@ -72,7 +72,7 @@ public aspect RestHandler {
 		}catch (MgmtException me) {
 			logger.error("Operation Error - "+thisJoinPoint.getSignature().getName(),me);
 			PutOperationResult result = new PutOperationResult();
-			result.setErrorCode(me.getCode());
+			result.setErrorCode(me.getCode(),me.getAdditional());
 			return result;
 		} catch (Exception e){
 			logger.error("Operation Unexpected Error - "+thisJoinPoint.getSignature().getName(),e);
@@ -96,7 +96,7 @@ public aspect RestHandler {
 		}catch (MgmtException me) {
 			logger.error("Operation Error - "+thisJoinPoint.getSignature().getName(),me);
 			PagingOperationResult result = new PagingOperationResult();
-			result.setErrorCode(me.getCode());
+			result.setErrorCode(me.getCode(),me.getAdditional());
 			return result;
 		} catch (Exception e){
 			logger.error("Operation Unexpected Error - "+thisJoinPoint.getSignature().getName(),e);
@@ -108,7 +108,7 @@ public aspect RestHandler {
     
     
     
-     Object around(Tracable t): this(t) && (listOperation()){
+     Object around(Tracable t): this(t) && (listOperation() || getOperation()){
     	Logger logger =  t.logger;
 
 		try{
