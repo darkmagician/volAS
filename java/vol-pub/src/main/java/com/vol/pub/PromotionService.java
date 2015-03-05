@@ -8,21 +8,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 import javax.annotation.Resource;
 
 import com.vol.common.DAO;
 import com.vol.common.tenant.Promotion;
-import com.vol.dao.AbstractQueryService;
 
-public class PromotionService  extends AbstractQueryService<Integer,Promotion>  {
+public class PromotionService  extends AbstractCache<Integer,Promotion>  {
 	
-	private ScheduledExecutorService scheduler;
-
 	@Resource(name="promotionDao")
 	protected DAO<Integer,Promotion> promotionDAO;
 	
@@ -30,30 +24,11 @@ public class PromotionService  extends AbstractQueryService<Integer,Promotion>  
 	
 	protected final ConcurrentMap<Integer,LockableValue<List<Promotion>>> cache2 = new ConcurrentHashMap<Integer,LockableValue<List<Promotion>>>(); 
 	
-	private ScheduledFuture<?> task;
 	
 	@Override
 	protected DAO<Integer, Promotion> getDAO() {
 		return promotionDAO;
 	}
-	
-	public void init(){
-		super.init();
-		Runnable refreshJob = new Runnable(){
-			@Override
-			public void run() {
-				refresh();
-			}
-		};
-		task = scheduler.scheduleAtFixedRate(refreshJob, 300, 600,TimeUnit.SECONDS);
-	}
-	
-	public void destroy(){
-		if(task!=null){
-			task.cancel(true);
-		}
-	}
-	
 	
 	
 	@Override
@@ -68,7 +43,7 @@ public class PromotionService  extends AbstractQueryService<Integer,Promotion>  
 	}
 	
 	
-	public void refresh(){
+	public void sync(){
 		for(Entry<Integer, LockableValue<List<Promotion>>> entry: cache2.entrySet()){
 			Integer tenantId = entry.getKey();
 			LockableValue<List<Promotion>> value = entry.getValue();
@@ -122,7 +97,7 @@ public class PromotionService  extends AbstractQueryService<Integer,Promotion>  
 						prepare(promotion);
 						newList.add(promotion);
 						cache.put(tenantId, promotion);
-						//change
+						onChange(id, oldPromotion, promotion);
 					}else{
 						newList.add(oldPromotion);
 					}
@@ -130,7 +105,7 @@ public class PromotionService  extends AbstractQueryService<Integer,Promotion>  
 					prepare(promotion);
 					newList.add(promotion);
 					cache.put(tenantId, promotion);
-					//load
+					onLoad(id, promotion);
 				}
 			}
 			
@@ -144,7 +119,7 @@ public class PromotionService  extends AbstractQueryService<Integer,Promotion>  
 			Integer id = promotion.getId();
 			Promotion oldPromotion = cache.get(id);
 			if(oldPromotion == null){
-				//removed;
+				onUnload(id, promotion);
 			}
 		}
 		value.setObj(newList);
@@ -155,9 +130,6 @@ public class PromotionService  extends AbstractQueryService<Integer,Promotion>  
 		
 	}
 
-	private boolean isChanged(Promotion promotion, Promotion oldPromotion) {
-		return !promotion.equals(oldPromotion);
-	}
 
 
 }

@@ -16,12 +16,12 @@ import javax.annotation.Resource;
 import com.vol.common.DAO;
 import com.vol.common.tenant.PromotionBalance;
 import com.vol.common.user.Bonus;
-import com.vol.dao.AbstractQueryService;
 
-public class PromotionBalanceService extends AbstractQueryService<Integer,PromotionBalance>{
+public class PromotionBalanceService extends AbstractCache<Integer,PromotionBalance>{
 	private final static long startup=System.currentTimeMillis();
 	
 	private String hostId;
+	
 	@Resource(name = "promotionBalanceDao")
 	protected DAO<Integer, PromotionBalance> promotionBalanceDAO;
 	
