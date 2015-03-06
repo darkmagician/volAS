@@ -3,6 +3,7 @@
  */
 package com.vol.mgmt;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,11 +30,25 @@ public class MVELPromotionPolicy implements PromotionPolicy {
 	 */
 	@Override
 	public Long evaluate(Promotion promotion, Map<String, Object> context) {
-		String rule = promotion.getRule();
-		
-		return  MVEL.eval(rule, context, Long.class);
+		Serializable compiled = promotion.getCompiled();
+		if(compiled != null){
+			return MVEL.executeExpression(compiled, context,Long.class);
+		}else{
+			String rule = promotion.getRule();
+			return MVEL.eval(rule, context, Long.class);
+		}
 	}
 	
+	
+	@Override
+	public void precompile(Promotion promotion){
+		String rule = promotion.getRule();
+		ParserContext ctx = new ParserContext() ;
+		ctx.setInputs(imports);
+		ctx.setStrongTyping(true);
+		Serializable compiled = MVEL.compileExpression(rule, ctx);
+		promotion.setCompiled(compiled);
+	}
 	
 	@Override
 	public void validate(Promotion promotion){
@@ -54,7 +69,7 @@ public class MVELPromotionPolicy implements PromotionPolicy {
 	private Map<String, Class> initContext() {
 		Map<String, Class> imports = new HashMap<String, Class>();
 		imports.put(PromotionPolicy.PARAMETERS, Map.class);
-		imports.put(PromotionPolicy.PROMOTION_BALANCE, Long.class);
+		imports.put(PromotionPolicy.BALANCE, Long.class);
 		imports.put(PromotionPolicy.GRANTED, Bonus[].class);
 		imports.put(PromotionPolicy.PROMOTION, Promotion.class);
 		imports.put(PromotionPolicy.USER, User.class);

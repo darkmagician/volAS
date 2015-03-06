@@ -56,4 +56,7 @@ public interface PromotionPolicy {
 
 
 	public abstract Long evaluate(Promotion promotion, Map<String, Object> context);
+
+
+	public abstract void precompile(Promotion promotion);
 }

@@ -3,16 +3,25 @@
  */
 package com.vol.common.tenant;
 
+import java.io.Serializable;
+
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import com.vol.common.BaseEntity;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Promotion.
  *
  * @author scott
  */
+@JsonIgnoreProperties("compiled")
 public class Promotion extends BaseEntity {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public final static short MOBILE=0, WIFI=1, DIRECTION=2;
 
 	/**
@@ -70,6 +79,8 @@ public class Promotion extends BaseEntity {
 	private long bonusExpirationTime;
 	
 	private long balance;
+	
+	private Serializable compiled;
 
 	/**
 	 * Gets the name.
@@ -326,6 +337,20 @@ public class Promotion extends BaseEntity {
 	 */
 	public void setBalance(long balance) {
 		this.balance = balance;
+	}
+
+	/**
+	 * @return the compiled
+	 */
+	public Serializable getCompiled() {
+		return compiled;
+	}
+
+	/**
+	 * @param compiled the compiled to set
+	 */
+	public void setCompiled(Serializable compiled) {
+		this.compiled = compiled;
 	}
 	
 	
