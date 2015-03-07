@@ -6,6 +6,7 @@ package com.vol.mgmt;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
@@ -25,11 +26,15 @@ public class MVELPromotionPolicy implements PromotionPolicy {
 
 	private final Map<String, Class> imports = initContext();
 	
+	private final Random rand = new Random();
+	
+	
 	/* (non-Javadoc)
 	 * @see com.vol.common.service.PromotionPolicy#evaluate(com.vol.common.tenant.Promotion, java.util.Map)
 	 */
 	@Override
 	public Long evaluate(Promotion promotion, Map<String, Object> context) {
+		context.put(PromotionPolicy.RAND, rand);
 		Serializable compiled = promotion.getCompiled();
 		if(compiled != null){
 			return MVEL.executeExpression(compiled, context,Long.class);

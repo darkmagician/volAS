@@ -49,6 +49,10 @@ public interface PromotionPolicy {
 	 * 
 	 */
 	static final String PROMOTION = "promotion";
+
+	static final String NOW = "now";
+
+	static final String RAND = "rand";
 	
 
 

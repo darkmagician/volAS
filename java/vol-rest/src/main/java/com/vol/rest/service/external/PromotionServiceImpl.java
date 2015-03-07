@@ -4,6 +4,7 @@
 package com.vol.rest.service.external;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -131,6 +132,7 @@ public class PromotionServiceImpl extends AbstractTransactionService{
 			context.put(PromotionPolicy.ISNEWUSER, Boolean.FALSE);
 		}
 		context.put(PromotionPolicy.PARAMETERS, input);
+		context.put(PromotionPolicy.NOW, new Date());
 		Long bonusSize = promotionPolicy.evaluate(promotion, context);
 		if(bonusSize != null&& bonusSize>0){
 		
