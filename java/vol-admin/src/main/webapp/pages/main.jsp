@@ -2,6 +2,7 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <html>
 <head>
+<meta charset="UTF-8">
 <title>SMART NETWORK APPLICATION ENGINE</title>
 <link rel="stylesheet" type="text/css"
 	href="./static/themes/gray/easyui.css">
@@ -239,16 +240,19 @@
 	<div id="header" data-options="region:'north'"
 		style="height: 120px; padding: 20px; background:#D3D3D3">
 		<h2>流量管理系统</h2>
-		<p>SMART NETWORK TRAFFIC ENGINE.</p>
+		<p>SMART NETWORK APPLICATION ENGINE.</p>
 		<label>当前租户:</label>
 <s:if test="%{operator.tenantId==0}">
 		<input id="currentTenant" class="easyui-combobox"
 				data-options="valueField:'id',textField:'text', onSelect: function(rec){
 						changeCurrentPromotion(rec.id);
-					}">		
+					}">	
+					
+		<label>REST ID:</label><label id="currentTenantId"/></label>				
 </s:if>
 <s:else>
 		<s:property value="tenantName" />
+		<label>REST ID:</label><label id="currentTenantId"><s:property value="operator.tenantId" /></label>
 </s:else>
 		<div style="width: 400px; height: 50px; position: absolute; right: 10px; bottom: 10px">
 			<label>当前用户:</label>
@@ -864,6 +868,7 @@
 		
 		function changeCurrentPromotion(id){
 			currentTenantId=id;
+			$('#currentTenantId').text(currentTenantId);
 			loadPromotion();
 		}
 		
