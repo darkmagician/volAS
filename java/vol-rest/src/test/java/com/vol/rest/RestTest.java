@@ -33,7 +33,7 @@ import com.vol.rest.result.PutOperationResult;
  */
 public class RestTest {
 
-	private final String json = "application/json";
+	private final String json = "application/json;charset=UTF-8";
 	private final String form = "application/x-www-form-urlencoded";
 	
 	private int tenantId=1;
@@ -50,6 +50,10 @@ public class RestTest {
 	//private final String server = "http://52.1.96.115:8080/vol-appserver/";
 	private final String server = "http://localhost:8080/vol-appserver/";
 
+	
+	private void reset(WebClient client){
+		client.reset();
+	}
 	private void initClient(){
 		String user = "superadmin";
 		String pass = "superpass";
@@ -85,7 +89,7 @@ public class RestTest {
 		
 		Promotion promotion = new Promotion();
 		promotion.setBonusExpirationTime(System.currentTimeMillis()+3*24*60*60*1000);
-		promotion.setStartTime(System.currentTimeMillis());
+		promotion.setStartTime(System.currentTimeMillis()+9999);
 		promotion.setEndTime(System.currentTimeMillis()+2*24*60*60*1000);
 		promotion.setDescription("Promotion Test1");
 		promotion.setName("Promotion1");
@@ -186,7 +190,7 @@ public class RestTest {
 	 */
 	private void checkQuota(long userId) {
 		Response restResult;
-		client2.reset();
+		reset(client2);
 		//check quota
 		System.out.println("check quota");
 		client2.path("quota/"+tenantId+"/"+userId);
@@ -203,7 +207,7 @@ public class RestTest {
 	 */
 	private void checkQuota(String userName) {
 		Response restResult;
-		client2.reset();
+		reset(client2);
 		//check quota
 		System.out.println("check quota by userName");
 		client2.path("quota/"+tenantId);
@@ -221,7 +225,7 @@ public class RestTest {
 	 */
 	private void checkActivatedBonus(long userId, long bonusId) {
 		Response restResult;
-		client2.reset();
+		reset(client2);
 		System.out.println("check activated bonus");
 		//check bonus
 		client2.path("bonus/"+tenantId+"/"+userId+"/"+bonusId);
@@ -233,7 +237,7 @@ public class RestTest {
 	
 	private void transferBonus(long bonusId, String fromUser, String toUser) {
 		Response restResult;
-		client2.reset();
+		reset(client2);
 		
 		System.out.println("transfer bonus");
 		client2.path("sendbonus/"+tenantId);
@@ -249,7 +253,7 @@ public class RestTest {
 	 */
 	private void activeBonus(long bonusId) {
 		Response restResult;
-		client2.reset();
+		reset(client2);
 		
 		System.out.println("active bonus");
 		client2.path("activebonus/"+tenantId);
@@ -265,7 +269,7 @@ public class RestTest {
 	private void checkPromotionbalance(int promotionId) {
 		Response restResult;
 		//check promotion balance
-		client.reset();
+		reset(client);
 
 		System.out.println("check promotionbalance");
 		client.path("promotionbalance");
@@ -281,7 +285,7 @@ public class RestTest {
 	 */
 /*	private long showUserBonus(long userId) {
 		Response restResult;
-		client2.reset();
+		reset(client2);
 		
 	
 		System.out.println("check user's bonus");
@@ -302,7 +306,7 @@ public class RestTest {
 	 */
 	private long showUserBonus(String userName) {
 		Response restResult;
-		client2.reset();
+		reset(client2);
 		
 	
 		System.out.println("check user's bonus by name");
@@ -325,7 +329,7 @@ public class RestTest {
 	 */
 	private long showUser(String userName) {
 		Response restResult;
-		client2.reset();
+		reset(client2);
 		//get user info
 		System.out.println("get User info");
 		client2.path("user/"+tenantId);
@@ -343,7 +347,7 @@ public class RestTest {
 	 */
 	private void crabBonus(int promotionId,String userName) {
 		Response restResult;
-		client2.reset();
+		reset(client2);
 		
 		//grab
 		System.out.println("Grab .....");
@@ -359,7 +363,7 @@ public class RestTest {
 	 */
 	private void listPublicPromotion(WebClient client2) {
 		Response restResult;
-		client2.reset();
+		reset(client2);
 		System.out.println("list  promotion from public");
 		client2.path("promotion/"+tenantId);
 		client2.type(form).accept(json);
@@ -374,7 +378,7 @@ public class RestTest {
 	 */
 	private void activePromotion(int promotionId) {
 		Response restResult;
-		client.reset();
+		reset(client);
 		
 		System.out.println("active  promotion");
 		//active promotion
@@ -390,7 +394,7 @@ public class RestTest {
 	 */
 	private void showPromotion(int promotionId) {
 		Response restResult;
-		client.reset();
+		reset(client);
 		
 		System.out.println("get  promotion");
 
@@ -408,7 +412,7 @@ public class RestTest {
 	 */
 	private Promotion getPromotionByName(String name) {
 		Response restResult;
-		client.reset();
+		reset(client);
 		
 		System.out.println("get  promotion");
 
@@ -435,7 +439,7 @@ public class RestTest {
 	 */
 	private int createPromotion(Promotion promotion) {
 		Response restResult;
-		client.reset();
+		reset(client);
 		
 		//create promotion
 		System.out.println("creating promotion");
@@ -456,7 +460,7 @@ public class RestTest {
 	 */
 	private void showOperator(int operatorid) {
 		Response restResult;
-		client.reset();
+		reset(client);
 		System.out.println("Check Operator");
 		client.path("operator/"+operatorid);
 		client.type(json).accept(json);
@@ -468,7 +472,7 @@ public class RestTest {
 	
 	private Operator getOperatorByName(String name) {
 		Response restResult;
-		client.reset();
+		reset(client);
 		System.out.println("Check Operator");
 		client.path("operator");
 		client.query("query", "byName");
@@ -491,7 +495,7 @@ public class RestTest {
 	 */
 	private void createOperator(Operator operator) {
 		Response restResult;
-		client.reset();
+		reset(client);
 		
 		// create operator
 		System.out.println("creating Operator");
@@ -511,7 +515,7 @@ public class RestTest {
 	 */
 	private int createTenant(Tenant tanent) {
 		Response restResult;
-		client.reset();
+		reset(client);
 		// create tenant
 		System.out.println("creating Tenant");
 		client.path("tenant");
@@ -530,7 +534,7 @@ public class RestTest {
 	 */
 	private void showTenant(int tenantId) {
 		Response restResult;
-		client.reset();
+		reset(client);
 		System.out.println("check Tenant");
 
 		client.path("tenant/"+tenantId);
@@ -541,7 +545,7 @@ public class RestTest {
 	
 	private Tenant getTenantByName(String name) {
 		Response restResult;
-		client.reset();
+		reset(client);
 		System.out.println("get Tenant by name");
 
 		client.path("tenant");

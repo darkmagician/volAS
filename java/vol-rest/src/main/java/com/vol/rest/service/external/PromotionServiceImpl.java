@@ -105,11 +105,20 @@ public class PromotionServiceImpl extends AbstractTransactionService{
 				context.put(PromotionPolicy.GRANTED, bonuses);
 			}
 		});
+		long current = System.currentTimeMillis();
 		
 		Promotion promotion = (Promotion) context.get(PromotionPolicy.PROMOTION);
 		if(promotion==null){
 			result.setErrorCode(ErrorCode.INVALID_PROMOTION);
 			return result;
+		}
+		if(promotion.getStartTime() > current){
+			result.setErrorCode(ErrorCode.NOTSTARTED_PROMOTION);
+			return result;	
+		}
+		if(promotion.getEndTime() < current){
+			result.setErrorCode(ErrorCode.ENDED_PROMOTION);
+			return result;	
 		}
 		PromotionBalance promotionBalance = (PromotionBalance) context.get(PromotionPolicy.PROMOTION_BALANCE);
 		if(promotionBalance==null){
@@ -132,7 +141,7 @@ public class PromotionServiceImpl extends AbstractTransactionService{
 			context.put(PromotionPolicy.ISNEWUSER, Boolean.FALSE);
 		}
 		context.put(PromotionPolicy.PARAMETERS, input);
-		context.put(PromotionPolicy.NOW, new Date());
+		context.put(PromotionPolicy.NOW, new Date(current));
 		Long bonusSize = promotionPolicy.evaluate(promotion, context);
 		if(bonusSize != null&& bonusSize>0){
 		

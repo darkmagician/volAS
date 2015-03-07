@@ -13,8 +13,9 @@ public enum ErrorCode {
 	
 	BUSY(3001),
 	INVALID_PROMOTION(3002,"无效活动"),
-	PROMOTION_USEDUP(3002,"活动流量已经抢光"),
-	
+	PROMOTION_USEDUP(3003,"活动流量已经抢光"),
+	ENDED_PROMOTION(3004,"活动已经结束"),
+	NOTSTARTED_PROMOTION(3005,"活动尚未开始"),
 	
 	INTERNAL_ERROR(5001,"内部错误"),
 	ENTITY_NOT_EXIST(5002,"操作对象不存在"),
