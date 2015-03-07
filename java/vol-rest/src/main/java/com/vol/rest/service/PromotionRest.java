@@ -114,7 +114,7 @@ public class PromotionRest extends CURDRest<Promotion>{
 	
     @POST
     @Path("/active/{id}")
-    @Produces("application/json")
+    @Produces({PRODUCER_TYPE_FOR_SUBMIT,"application/json"})
 	public OperationResult active(@PathParam("id")Integer id){
 			OperationResult result = new OperationResult();
 			 Operator operator = getCurrentOperator();

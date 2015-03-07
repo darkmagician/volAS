@@ -139,7 +139,7 @@ public class OperatorRest extends CURDRest<Operator>{
     @POST
     @Path("/changepass")
     @Consumes("application/x-www-form-urlencoded")
-    @Produces("application/json")
+    @Produces({PRODUCER_TYPE_FOR_SUBMIT,"application/json"})
 	public OperationResult changePassword(@FormParam("oldpass")String oldpass,@FormParam("newpass")String newpass){
     	
     		OperationResult result = new OperationResult();
@@ -153,7 +153,7 @@ public class OperatorRest extends CURDRest<Operator>{
     @POST
     @Path("/resetpass")
     @Consumes("application/x-www-form-urlencoded")
-    @Produces("application/json")
+    @Produces({PRODUCER_TYPE_FOR_SUBMIT,"application/json"})
 	public OperationResult resetPassword(@FormParam("id")Integer operatorId){
     		checkPermission(null);
     		OperationResult result = new OperationResult();

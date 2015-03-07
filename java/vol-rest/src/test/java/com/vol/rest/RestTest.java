@@ -51,8 +51,8 @@ public class RestTest {
 	private final String server = "http://localhost:8080/vol-appserver/";
 
 	private void initClient(){
-		String user = null;
-		String pass = null;
+		String user = "superadmin";
+		String pass = "superpass";
 		
 		
 		JacksonJsonProvider jsonProvider = new JacksonJsonProvider();

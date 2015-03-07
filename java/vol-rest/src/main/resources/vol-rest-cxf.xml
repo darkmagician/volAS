@@ -12,7 +12,7 @@
              <ref bean="QuotaRest" />
         </jaxrs:serviceBeans>
         <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="com.vol.rest.provider.ServerJacksonJsonProvider"/>
         </jaxrs:providers>
     </jaxrs:server>
  

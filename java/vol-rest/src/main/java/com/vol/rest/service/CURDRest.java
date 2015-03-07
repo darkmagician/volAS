@@ -60,7 +60,7 @@ public abstract class CURDRest<T> extends RestContext {
 	@POST
     @Path("/add")
     @Consumes("application/x-www-form-urlencoded")
-    @Produces("application/json")
+    @Produces({PRODUCER_TYPE_FOR_SUBMIT,"application/json"})
     public OperationResult add(MultivaluedMap<String,String> map) throws IllegalAccessException, InvocationTargetException{
 				T obj = createObject();
 				Map<String,String> formMap = new HashMap<String,String>();
@@ -72,7 +72,7 @@ public abstract class CURDRest<T> extends RestContext {
 	@POST
     @Path("/update")
     @Consumes("application/x-www-form-urlencoded")
-    @Produces("application/json")
+    @Produces({PRODUCER_TYPE_FOR_SUBMIT,"application/json"})
     public OperationResult update(MultivaluedMap<String,String> map) throws IllegalAccessException, InvocationTargetException{
 				T obj = createObject();
 				Map<String,String> formMap = new HashMap<String,String>();
@@ -85,7 +85,7 @@ public abstract class CURDRest<T> extends RestContext {
 	@POST
     @Path("/delete")
     @Consumes("application/x-www-form-urlencoded")
-    @Produces("application/json")
+    @Produces({PRODUCER_TYPE_FOR_SUBMIT,"application/json"})
     public OperationResult delete(MultivaluedMap<String,String> map) throws IllegalAccessException, InvocationTargetException{
 				Integer id = getPrimaryKey(map);
 				return _delete(id);

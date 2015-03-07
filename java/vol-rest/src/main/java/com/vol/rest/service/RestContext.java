@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,8 @@ import com.vol.common.exception.MgmtException;
 import com.vol.common.tenant.Operator;
 
 public class RestContext {
+	
+	protected final static String PRODUCER_TYPE_FOR_SUBMIT = MediaType.TEXT_PLAIN;
 
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 	@Context
