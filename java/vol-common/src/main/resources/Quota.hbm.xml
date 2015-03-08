@@ -38,7 +38,7 @@
     </query> 
     <query name="quota.renew">   
         <![CDATA[  
-             update Quota set balance=:initial, maximum=:initial, updateTime=:updateTime, expirationTime=:newExpirationTime where id=:id and expirationTime=:oldExpirationTime
+             update Quota set balance=:initial, maximum=:initial, updateTime=:updateTime, expirationTime=:newExpirationTime,activationTime=:updateTime where id=:id and expirationTime=:oldExpirationTime
         ]]>   
     </query>    
     <query name="quota.byUserVolType">   

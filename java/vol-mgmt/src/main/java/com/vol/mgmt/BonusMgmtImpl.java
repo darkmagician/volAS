@@ -214,6 +214,7 @@ public class BonusMgmtImpl extends AbstractQueryService<Long,Bonus> {
 					initEntity(quota);
 					quota.setExpirationTime(calculateExpirationTime(
 							now, tenantid));
+					quota.setActivationTime(now);
 					Long quotaId = quotaDao.create(quota);
 					boolean success = quotaId != null;
 					if(success){
