@@ -22,7 +22,7 @@
 <body class="easyui-layout">
 	<!-- ************************************ Delete Window Start************************************ -->
 	<div id="confirm" class="easyui-dialog"
-		style="width: 400px; height: 200px; padding: 10px 20px" closed="true"
+		style="width: 600px; height: 200px; padding: 10px 20px" closed="true"
 		buttons="#confirmButtons">
 		<div class="ftitle">是否确定该操作？</div>
 		<label id="confirmInfo"  style="color:red;"></label>
@@ -41,7 +41,7 @@
 
 	<!-- ************************************ Password Window Start************************************ -->
 	<div id="passdlg" class="easyui-dialog"
-		style="width: 400px; height: 300px; padding: 10px 20px" closed="true"
+		style="width: 600px; height: 300px; padding: 10px 20px" closed="true"
 		buttons="#passButtons">
 		<div class="ftitle">修改密码</div>
 		<label id="passInfo"  style="color:red;"></label>
@@ -74,7 +74,7 @@
 
 	<!-- ************************************ Tenant Editor Start************************************ -->
 	<div id="tenantEditor" class="easyui-dialog"
-		style="width: 400px; height: 280px; padding: 10px 20px" closed="true"
+		style="width: 600px; height: 280px; padding: 10px 20px" closed="true"
 		buttons="#tenantButtons">
 		<div class="ftitle">租户信息</div>
 		<label id="tenantEditorInfo"  style="color:red;"></label>
@@ -113,9 +113,9 @@
 	
 	<!-- ************************************ Operator Editor Start************************************ -->
 	<div id="operatorEditor" class="easyui-dialog"
-		style="width: 400px; height: 280px; padding: 10px 20px" closed="true"
+		style="width: 600px; height: 350px; padding: 10px 20px" closed="true"
 		buttons="#operatorButtons">
-		<div class="ftitle">租户信息</div>
+		<div class="ftitle">管理员信息</div>
 		<label id="operatorEditorInfo"  style="color:red;"></label>
 		<form id="operatorForm" method="post">
 			<div class="fitem">
@@ -156,14 +156,15 @@
 	
 	<!-- ************************************ Promotion Editor Start************************************ -->
 	<div id="promotionEditor" class="easyui-dialog"
-		style="width:700px; height: 700px; padding: 10px 20px" closed="true"
+		style="width:700px; height: 800px; padding: 10px 20px" closed="true"
 		buttons="#promotionButtons">
-		<div class="ftitle">租户信息</div>
+		<div class="ftitle">活动信息</div>
 		<label id="promotionEditorInfo"  style="color:red;"></label>
 		<form id="promotionForm" method="post">
 			<div class="fitem">
 				<label>名字:</label> <input name="name" id="promotionName" class="easyui-textbox"
 					required="true">
+				<i>活动标题</i> 
 			</div>
 			<div class="fitem">
 				<label>流量类型:</label> <select name="volumeType" id="promotionVolumeType"
@@ -172,26 +173,32 @@
 					<option value="1">wifi流量</option>
 					<option value="2">定向流量</option>
 				</select>
+				<i>所抢红包的流量类型</i> 
 			</div>
 			<div class="fitem">
 				<label>总流量:</label> <input name="maximum"  id="promotionMaximum" class="easyui-numberbox"
 					required="true">
+				<i>可供抢红包的总流量(单位:字节)</i> 	
 			</div>
 			<div class="fitem">
 				<label>开始时间:</label> <input name="startTimeStr" id="promotionStartTimeStr"
 					class="easyui-datetimebox" required="true">
+				<i>活动开始时间</i>	
 			</div>
 			<div class="fitem">
 				<label>结束时间:</label> <input name="endTimeStr" id="promotionEndTimeStr"
 					class="easyui-datetimebox" required="true">
+				<i>活动结束时间</i> 	
 			</div>
 			<div class="fitem">
-				<label>红包失效时间:</label> <input name="bonusExpirationTimeStr" id="promotionBonusExpirationTimeStr"
+				<label>红包过期时间:</label> <input name="bonusExpirationTimeStr" id="promotionBonusExpirationTimeStr"
 					class="easyui-datetimebox" required="true">
+				<i>激活所抢红包的最后期限</i> 	
 			</div>
 
 			<div class="fitem">
 				<label>描述:</label> <input name="description" class="easyui-textbox" id="promotionDescription">
+				<i>活动说明</i> 
 			</div>
 			<div class="fitem">
 				<label>活动规则:</label>
@@ -441,6 +448,7 @@
 
 	<script type="text/javascript">
 		function openPassDLG(){
+				$('#passInfo').text('');
 				$('#passdlg').dialog('open').dialog('setTitle', '修改密码');
 				$('#passForm').form('clear');
 		}
@@ -449,7 +457,10 @@
 					'submit',
 					{
 						onSubmit: function(param){
-							if(submitting) return;
+							if(submitting) {
+								alert('正在提交中。。。 请不要重复提交。');
+								return false;
+							}
 							
 							if(!$(this).form('validate')){
 								return false;
@@ -511,20 +522,30 @@
 			 return formatDateBox(new Date(val));
 		 }
 		 
-		 var K=1000.0;
+		 var K=1000;
 		 var M=K*K;
 		 var G=M*K;
 		 function formatVolume(val,row){
 			 if(val>=G){
-				 return val/G+"G";
+				 return formatNumber(val/G) +"G";
 			 }
 			 if(val>=M){
-				 return val/M+"M";
+				 return formatNumber(val/M) +"M";
 			 }
 			 if(val>=K){
-				 return val/K+"K";
+				 return formatNumber(val/K)+"K";
 			 }
 			 return val+"B";
+		 }
+		 
+		 function formatNumber(val){
+			 var str = ''+val;
+			 var dot = str.indexOf('.');
+			 if(dot < 0 || dot+4 >= str.length){
+				 return str;
+			 }else{
+				 return str.substr(0, dot+4);
+			 }
 		 }
 
 		 
@@ -640,7 +661,10 @@
 					'submit',
 					{
 						onSubmit: function(param){
-							if(submitting) return;
+							if(submitting) {
+								alert('正在提交中。。。 请不要重复提交。');
+								return false;
+							}
 							 submitting=true;
 							 return true;
 						},
@@ -667,7 +691,10 @@
 					'submit',
 					{
 						onSubmit: function(param){
-							if(submitting) return;
+							if(submitting) {
+								alert('正在提交中。。。 请不要重复提交。');
+								return false;
+							}
 							 submitting=true;
 							 return true;
 						},
@@ -692,8 +719,10 @@
 			text : '添加',
 			iconCls : 'icon-add',
 			handler : function() {
+				$('#promotionEditorInfo').text('');
 				$('#promotionEditor').dialog('open').dialog('setTitle', '添加');
 				$('#promotionForm').form('clear');
+
 				enablePromotionEditor(true);
 				url = './rs/admin/promotion/add';
 				parentdg='#draftPromotionMgr';
@@ -704,8 +733,8 @@
 			handler : function() {
 				var row = $('#draftPromotionMgr').datagrid('getSelected');
 				if (row) {
+					$('#promotionEditorInfo').text('');
 					$('#promotionEditor').dialog('open').dialog('setTitle', '编辑');
-					
 					row.startTimeStr=formatDateBox(new Date(row.startTime));
 					row.endTimeStr=formatDateBox(new Date(row.endTime));
 					row.bonusExpirationTimeStr=formatDateBox(new Date(row.bonusExpirationTime));
@@ -722,6 +751,7 @@
 			handler : function() {
 				var row = $('#draftPromotionMgr').datagrid('getSelected');
 				if (row) {
+					$('#confirmInfo').text('');
 					$('#confirm').dialog('open').dialog('setTitle', '删除活动:'+row.name);
 					$('#confirmForm').form('load', row);
 					confirmurl = './rs/admin/promotion/delete';
@@ -736,6 +766,7 @@
 			handler : function() {
 				var row = $('#draftPromotionMgr').datagrid('getSelected');
 				if (row) {
+					$('#confirmInfo').text('');
 					$('#confirm').dialog('open').dialog('setTitle', '激活活动:'+row.name);
 					$('#confirmForm').form('load', row);
 					confirmurl = './rs/admin/promotion/active/'+row.id;
@@ -753,7 +784,10 @@
 					'submit',
 					{
 						onSubmit: function(param){
-							if(submitting) return;
+							if(submitting) {
+								alert('正在提交中。。。 请不要重复提交。');
+								return false;
+							}
 							
 							if(!$(this).form('validate')){
 								return false;
@@ -808,6 +842,7 @@
 			handler : function() {
 				var row = $('#activePromotionMgr').datagrid('getSelected');
 				if (row) {
+					$('#promotionEditorInfo').text('');
 					$('#promotionEditor').dialog('open').dialog('setTitle', '查看');
 					
 					row.startTimeStr=formatDateBox(new Date(row.startTime));
@@ -877,6 +912,7 @@
 			text : '添加',
 			iconCls : 'icon-add',
 			handler : function() {
+				$('#tenantEditorInfo').text('');
 				$('#tenantEditor').dialog('open').dialog('setTitle', '添加');
 				$('#tenantForm').form('clear');
 				url = './rs/admin/tenant/add';
@@ -888,6 +924,7 @@
 			handler : function() {
 				var row = $('#tenantMgr').datagrid('getSelected');
 				if (row) {
+					$('#tenantEditorInfo').text('');
 					$('#tenantEditor').dialog('open').dialog('setTitle', '编辑');
 					$('#tenantForm').form('load', row);
 					url = './rs/admin/tenant/update';
@@ -901,6 +938,7 @@
 			handler : function() {
 				var row = $('#tenantMgr').datagrid('getSelected');
 				if (row) {
+					$('#confirmInfo').text('');
 					$('#confirm').dialog('open').dialog('setTitle', '删除租户:'+row.name);
 					$('#confirmForm').form('load', row);
 					confirmurl = './rs/admin/tenant/delete';
@@ -917,7 +955,10 @@
 					'submit',
 					{
 						onSubmit: function(param){
-							if(submitting) return;
+							if(submitting) {
+								alert('正在提交中。。。 请不要重复提交。');
+								return false;
+							}
 							 submitting=true;
 							 return true;
 						},
@@ -942,6 +983,7 @@
 			text : '添加',
 			iconCls : 'icon-add',
 			handler : function() {
+				$('#operatorEditorInfo').text('');
 				$('#operatorEditor').dialog('open').dialog('setTitle', '添加');
 				$('#operatorName').textbox('readonly',false);
 				$('#operatorForm').form('clear');
@@ -954,6 +996,7 @@
 			handler : function() {
 				var row = $('#operatorMgr').datagrid('getSelected');
 				if (row) {
+					$('#operatorEditorInfo').text('');
 					$('#operatorEditor').dialog('open').dialog('setTitle', '编辑');
 					$('#operatorName').textbox('readonly',true);
 					$('#operatorForm').form('load', row);
@@ -968,6 +1011,7 @@
 			handler : function() {
 				var row = $('#operatorMgr').datagrid('getSelected');
 				if (row) {
+					$('#confirmInfo').text('');
 					$('#confirm').dialog('open').dialog('setTitle', '删除管理员:'+row.name);
 					$('#confirmForm').form('load', row);
 					confirmurl = './rs/admin/operator/delete';
@@ -982,6 +1026,7 @@
 			handler : function() {
 				var row = $('#operatorMgr').datagrid('getSelected');
 				if (row) {
+					$('#confirmInfo').text('');
 					$('#confirm').dialog('open').dialog('setTitle', '重置密码。 管理员:'+row.name);
 					$('#confirmForm').form('load', row);
 					confirmurl = './rs/admin/operator/resetpass';

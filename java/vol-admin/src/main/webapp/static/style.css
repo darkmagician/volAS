@@ -30,7 +30,7 @@ h2 {
 }
 
 .ftitle {
-	font-size: 14px;
+	font-size: 20px;
 	font-weight: bold;
 	padding: 5px 0;
 	margin-bottom: 10px;
@@ -42,16 +42,23 @@ h2 {
 }
 
 .fitem label {
+	font-size: 18px;
 	display: inline-block;
-	width: 80px;
+	width: 120px;
 }
 
 .fitem input {
-	width: 160px;
+	font-size: 18px;
+	width: 200px;
 }
 
 .fitem select {
-	width: 160px;
+	font-size: 20px;
+	width: 200px;
+}
+
+.fitem i {
+	margin-left:10px;
 }
 
 .CodeMirror {border: 1px solid black; font-size:13px}

@@ -13,21 +13,23 @@
 <script type="text/javascript" src="./static/jquery.easyui.min.js"></script>
 </head>
 <BODY>
-	<div class="easyui-panel" title="登录" style="width: 400px;padding:10px 60px 20px 60px">
-		<div class="ftitle">请输入用户名和密码</div>
-		<form action="j_security_check" method="post">
-			<div class="fitem">
-				<label>用户:</label> <input name="j_username" class="easyui-textbox"
-					required="true">
-			</div>
-			<div class="fitem">
-				<label>密码:</label> <input name="j_password" type="password" class="easyui-textbox"
-					required="true">
-			</div>
-			<div class="fitem">
- 				<label></label><input type="submit" value="登录"/>
- 			</div>
-		</form>
+	<div style="position:absolute;top:50%;left:50%;margin-top:-150px;margin-left:-250px;">
+		<div class="easyui-panel" title="登录" style="width: 500px;padding:10px 60px 20px 60px">
+			<div class="ftitle">请输入用户名和密码</div>
+			<form action="j_security_check" method="post">
+				<div class="fitem">
+					<label>用户:</label> <input name="j_username" class="easyui-textbox"
+						required="true">
+				</div>
+				<div class="fitem">
+					<label>密码:</label> <input name="j_password" type="password" class="easyui-textbox"
+						required="true">
+				</div>
+				<div class="fitem">
+	 				<label></label><input type="submit" value="登录"/>
+	 			</div>
+			</form>
+		</div>
 	</div>
 </BODY>
 </html>

@@ -20,11 +20,12 @@
     HttpSession s = request.getSession(false);
     s.invalidate();
    %>
-	<div class="easyui-panel" title="注销" style="width: 400px;padding:10px 60px 20px 60px">
+   	<div style="position:absolute;top:50%;left:50%;margin-top:-150px;margin-left:-250px;">
+	<div class="easyui-panel" title="注销" style="width: 500px;padding:10px 60px 20px 60px">
 		<div class="ftitle">您已经注销！</div>
     <a href="login.html">重新登录</a>
 	</div>   
-
+	</div>  
 </body>
 
 </html>
