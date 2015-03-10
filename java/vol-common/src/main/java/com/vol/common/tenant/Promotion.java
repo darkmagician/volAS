@@ -14,6 +14,22 @@ import com.vol.common.BaseEntity;
  *
  * @author scott
  */
+/**
+ * @author scott
+ *
+ */
+/**
+ * @author scott
+ *
+ */
+/**
+ * @author scott
+ *
+ */
+/**
+ * @author scott
+ *
+ */
 @JsonIgnoreProperties("compiled")
 public class Promotion extends BaseEntity {
 	
@@ -79,6 +95,8 @@ public class Promotion extends BaseEntity {
 	private long bonusExpirationTime;
 	
 	private long balance;
+	
+	private short ruleType;
 	
 	private Serializable compiled;
 
@@ -255,9 +273,6 @@ public class Promotion extends BaseEntity {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -283,6 +298,10 @@ public class Promotion extends BaseEntity {
 		builder.append(volumeType);
 		builder.append(", bonusExpirationTime=");
 		builder.append(bonusExpirationTime);
+		builder.append(", balance=");
+		builder.append(balance);
+		builder.append(", ruleType=");
+		builder.append(ruleType);
 		builder.append(", creationTime=");
 		builder.append(creationTime);
 		builder.append(", updateTime=");
@@ -351,6 +370,14 @@ public class Promotion extends BaseEntity {
 	 */
 	public void setCompiled(Serializable compiled) {
 		this.compiled = compiled;
+	}
+
+	public short getRuleType() {
+		return ruleType;
+	}
+
+	public void setRuleType(short ruleType) {
+		this.ruleType = ruleType;
 	}
 	
 	

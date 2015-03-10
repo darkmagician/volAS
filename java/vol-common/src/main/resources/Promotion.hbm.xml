@@ -20,6 +20,7 @@
         <property name="endTime" column="endTime" /> 
         <property name="maximum" column="maximum" /> 
         <property name="volumeType" column="volumeType" /> 
+         <property name="ruleType" column="ruleType" />
     </class> 
   
   
