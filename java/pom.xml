@@ -23,6 +23,7 @@
         <module>vol-dao</module>
         <module>vol-appserver</module>        
         <module>vol-admin</module>   
-        <module>vol-prom-rule</module>    
+        <module>vol-prom-rule</module>   
+        <module>vol-rating</module>  
     </modules>  
 </project>

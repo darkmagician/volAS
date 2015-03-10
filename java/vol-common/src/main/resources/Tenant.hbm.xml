@@ -12,6 +12,7 @@
         <property name="updateTime" column="updateTime" />
         <property name="description" column="description" />
         <property name="cycleType" column="cycleType" />
+        <property name="ratingPlan" column="ratingPlan" length="1024"/>
     </class> 
     
     <query name="tenant.all">   
