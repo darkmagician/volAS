@@ -14,6 +14,7 @@ public class ColumnDefinition {
 	private String columnName;
 	private String source;
 	private String description;
+	private String defaultVal;
 	private char type;
 	/**
 	 * @return the columnName
@@ -62,5 +63,17 @@ public class ColumnDefinition {
 	 */
 	public void setType(char type) {
 		this.type = type;
+	}
+	/**
+	 * @return the defaultVal
+	 */
+	public String getDefaultVal() {
+		return defaultVal;
+	}
+	/**
+	 * @param defaultVal the defaultVal to set
+	 */
+	public void setDefaultVal(String defaultVal) {
+		this.defaultVal = defaultVal;
 	}
 }

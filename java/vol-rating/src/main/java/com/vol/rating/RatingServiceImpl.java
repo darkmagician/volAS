@@ -3,6 +3,12 @@
  */
 package com.vol.rating;
 
+import java.io.IOException;
+
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+
 import com.vol.common.service.RatingService;
 import com.vol.common.tenant.Tenant;
 
@@ -11,7 +17,27 @@ import com.vol.common.tenant.Tenant;
  *
  */
 public class RatingServiceImpl implements RatingService {
-
+	private final ObjectMapper m = new ObjectMapper();
+	/**
+	 * @param json
+	 * @return
+	 */
+	private RatingPlan toDefinition(String json){
+		try {
+			return m.readValue(json, RatingPlan.class);
+		} catch (JsonParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see com.vol.common.service.RatingService#rate(com.vol.common.tenant.Tenant, long, long, long)
 	 */
@@ -26,7 +52,8 @@ public class RatingServiceImpl implements RatingService {
 	 */
 	@Override
 	public void validatePlan(Tenant tenant) {
-		// TODO Auto-generated method stub
+		String planContent = tenant.getRatingPlan();
+		RatingPlan plan = toDefinition(planContent);
 
 	}
 

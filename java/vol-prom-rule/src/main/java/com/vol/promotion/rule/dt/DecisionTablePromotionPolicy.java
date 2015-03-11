@@ -49,7 +49,7 @@ public class DecisionTablePromotionPolicy  extends AbstractPromotionPolicy imple
 	 */
 	@Override
 	public void validate(Promotion promotion) {
-		// TODO Auto-generated method stub
+		DecisionTableDefinition definition = toDefinition(promotion.getRule());
 
 	}
 
