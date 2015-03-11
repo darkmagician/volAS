@@ -7,17 +7,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.Resource;
 
 import com.vol.common.DAO;
+import com.vol.common.tenant.Promotion;
 import com.vol.common.tenant.PromotionBalance;
 import com.vol.common.user.Bonus;
 
-public class PromotionBalanceService extends AbstractCache<Integer,PromotionBalance>{
+public class PromotionBalanceService extends AbstractCache<Integer,PromotionBalance> implements CacheEntityListener<Integer, Promotion>{
 	private final static long startup=System.currentTimeMillis();
 	
 	private String hostId;
@@ -30,8 +30,21 @@ public class PromotionBalanceService extends AbstractCache<Integer,PromotionBala
 	@Resource(name = "bonusDao")
 	protected DAO<Long, Bonus> bonusDao;
 	
+	@Resource(name = "promotionService")
+	protected PromotionService promotionService;
+	
 	private ConcurrentMap<Integer,BalanceControl> cache = new ConcurrentHashMap<Integer,BalanceControl> ();
 
+	/* (non-Javadoc)
+	 * @see com.vol.pub.AbstractCache#init()
+	 */
+	@Override
+	public void init() {
+		promotionService.register(this);
+		super.init();
+	}
+
+	
 	@Override
 	protected DAO<Integer, PromotionBalance> getDAO() {
 		return promotionBalanceDAO;
@@ -77,7 +90,6 @@ public class PromotionBalanceService extends AbstractCache<Integer,PromotionBala
 		private int balanceId;
 		private int hostBalanceId;
 		private long balance = 0;
-		private final AtomicLong maximum = new AtomicLong();
 		private List<Bonus> pendingBonus = new LinkedList<Bonus>();
 		private final Lock lock = new ReentrantLock();
 		private boolean isFinal;
@@ -124,7 +136,6 @@ public class PromotionBalanceService extends AbstractCache<Integer,PromotionBala
 			for(Bonus bonus: pendingBonus){
 				used+=bonus.getSize();
 			}
-			maximum.addAndGet(-used);
 
 			for(Bonus bonus: pendingBonus){
 				bonusDao.create(bonus);
@@ -147,7 +158,7 @@ public class PromotionBalanceService extends AbstractCache<Integer,PromotionBala
 		
 		
 		public void reserveTask(final long expect){
-			long toReserve = expect - maximum.get();
+			long toReserve = expect - balance;
 			if(toReserve > 0){
 				Map<String,Object> parameters = new HashMap<String,Object>();
 				// update promotion balance;
@@ -174,5 +185,23 @@ public class PromotionBalanceService extends AbstractCache<Integer,PromotionBala
 			
 			}
 		}
+	}
+
+
+
+	@Override
+	public void onLoad(Integer key, Promotion value) {
+		load(key);
+	}
+
+
+	@Override
+	public void onUnload(Integer key, Promotion value) {
+		unload(key);
+	}
+
+
+	@Override
+	public void onChange(Integer key, Promotion oldvalue, Promotion newvalue) {
 	}
 }

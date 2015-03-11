@@ -75,5 +75,7 @@
     <bean id="quotaDao" class="com.vol.dao.DAOImpl">
     	<constructor-arg value="com.vol.common.user.Quota"/>
     </bean>
-                                 
+    <bean id="quotaHistoryDao" class="com.vol.dao.DAOImpl">
+    	<constructor-arg value="com.vol.common.user.QuotaHistory"/>
+    </bean>                                
 </beans>

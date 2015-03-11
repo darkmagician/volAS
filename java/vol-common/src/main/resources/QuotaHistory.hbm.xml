@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.vol.common.user">
+    <class name="QuotaHistory" table="QUOTAHISTORY">
+        <id name="id" column="id">
+            <generator class="native"/>
+        </id>
+
+        <property name="creationTime" column="creationTime" />
+        <property name="updateTime" column="updateTime" />
+        <property name="userId" column="userId" index="quotahis_user_idx"/>
+        <property name="maximum" column="maximum" />
+        <property name="balance" column="balance" />
+        <property name="activationTime" column="activationTime" />
+        <property name="expirationTime" column="expirationTime" />
+        <property name="volumeType" column="volumeType" />
+        <property name="tenantId" column="tenantId" />
+        <property name="userName" column="userName" index="quotahis_username_idx" length="32"/>
+        <property name="reserved" column="reserved" />
+    </class> 
+         
+</hibernate-mapping>

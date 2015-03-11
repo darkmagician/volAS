@@ -25,5 +25,6 @@
         <module>vol-admin</module>   
         <module>vol-prom-rule</module>   
         <module>vol-rating</module>  
+        <module>vol-cycle</module>    
     </modules>  
 </project>

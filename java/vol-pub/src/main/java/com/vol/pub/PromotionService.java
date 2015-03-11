@@ -3,6 +3,7 @@ package com.vol.pub;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -13,17 +14,36 @@ import java.util.concurrent.locks.Lock;
 import javax.annotation.Resource;
 
 import com.vol.common.DAO;
+import com.vol.common.service.PromotionPolicy;
 import com.vol.common.tenant.Promotion;
+import com.vol.common.tenant.Tenant;
 
-public class PromotionService  extends AbstractCache<Integer,Promotion>  {
+public class PromotionService  extends AbstractCache<Integer,Promotion> implements CacheEntityListener<Integer, Tenant> {
 	
 	@Resource(name="promotionDao")
 	protected DAO<Integer,Promotion> promotionDAO;
+	
+	
+	@Resource(name = "MVELPromotionPolicy")
+	protected PromotionPolicy promotionPolicy;
+	
+	@Resource(name = "tenantService")
+	protected TenantService tenantService;
 	
 	protected final ConcurrentMap<Integer,Promotion> cache = new ConcurrentHashMap<Integer,Promotion>(); 
 	
 	protected final ConcurrentMap<Integer,LockableValue<List<Promotion>>> cache2 = new ConcurrentHashMap<Integer,LockableValue<List<Promotion>>>(); 
 	
+	
+	/* (non-Javadoc)
+	 * @see com.vol.pub.AbstractCache#init()
+	 */
+	@Override
+	public void init() {
+		tenantService.register(this);
+		super.init();
+	}
+
 	
 	@Override
 	protected DAO<Integer, Promotion> getDAO() {
@@ -84,8 +104,11 @@ public class PromotionService  extends AbstractCache<Integer,Promotion>  {
 
 		Map<String,Object> parameters = new HashMap<String,Object>();
 		parameters.put("tenantId", tenantId);
-		List<Promotion> promotions = super.list("", parameters);
+		parameters.put("current", System.currentTimeMillis());
+		List<Promotion> promotions = super.list("promotion.byStarted", parameters);
 
+		List<Runnable> actions = new LinkedList<Runnable>();
+		
 		List<Promotion> newList;
 		if(promotions != null && promotions.size() > 0){
 			newList = new ArrayList<Promotion>(promotions.size());
@@ -97,7 +120,7 @@ public class PromotionService  extends AbstractCache<Integer,Promotion>  {
 						prepare(promotion);
 						newList.add(promotion);
 						cache.put(tenantId, promotion);
-						onChange(id, oldPromotion, promotion);
+						onChange(actions, id, oldPromotion, promotion);
 					}else{
 						newList.add(oldPromotion);
 					}
@@ -105,7 +128,7 @@ public class PromotionService  extends AbstractCache<Integer,Promotion>  {
 					prepare(promotion);
 					newList.add(promotion);
 					cache.put(tenantId, promotion);
-					onLoad(id, promotion);
+					onLoad(actions, id, promotion);
 				}
 			}
 			
@@ -114,21 +137,43 @@ public class PromotionService  extends AbstractCache<Integer,Promotion>  {
 		}
 		
 		List<Promotion> oldList = value.getObj();
-		
-		for(Promotion promotion:oldList){
-			Integer id = promotion.getId();
-			Promotion oldPromotion = cache.get(id);
-			if(oldPromotion == null){
-				onUnload(id, promotion);
+		if(oldList != null){
+			for(Promotion promotion:oldList){
+				Integer id = promotion.getId();
+				Promotion oldPromotion = cache.get(id);
+				if(oldPromotion == null){
+					onUnload(actions, id, promotion);
+				}
 			}
 		}
 		value.setObj(newList);
+		
+		notify(actions);
 	}
 
 	
 	private void prepare(Promotion promotion){
-		
+		promotionPolicy.precompile(promotion);
 	}
+
+
+	@Override
+	public void onLoad(Integer key, Tenant value) {
+		load(key);
+	}
+
+
+	@Override
+	public void onUnload(Integer key, Tenant value) {
+		unload(key);
+	}
+
+
+	@Override
+	public void onChange(Integer key, Tenant oldvalue, Tenant newvalue) {
+	}
+
+
 
 
 

@@ -4,11 +4,14 @@
 package com.vol.pub;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Resource;
+
+import org.springframework.scheduling.TaskScheduler;
 
 import com.vol.common.BaseEntity;
 import com.vol.dao.AbstractQueryService;
@@ -21,13 +24,12 @@ public abstract class AbstractCache<K extends Serializable, V extends BaseEntity
 
 	private final List<CacheEntityListener<K,V>> listeners = new CopyOnWriteArrayList<CacheEntityListener<K,V>>();
 	
-	private ScheduledExecutorService scheduler;
+	@Resource(name="cacheExecutor")
+	private TaskScheduler scheduler;
 	
 	private ScheduledFuture<?> task;
 	
-	private int inital = 10000;
-	
-	private int interval = 11000;
+	private int interval = 3000;
 	
 	public void init(){
 		super.init();
@@ -37,7 +39,7 @@ public abstract class AbstractCache<K extends Serializable, V extends BaseEntity
 				sync();
 			}
 		};
-		task = scheduler.scheduleAtFixedRate(refreshJob, inital, interval,TimeUnit.MILLISECONDS);
+		task = scheduler.scheduleAtFixedRate(refreshJob, new Date(), interval);
 	}
 	
 	public void destroy(){
@@ -53,22 +55,49 @@ public abstract class AbstractCache<K extends Serializable, V extends BaseEntity
 		listeners.add(listener);
 	}
 	
-	protected void onLoad(K key, V obj){
-		for(CacheEntityListener<K,V> listener: listeners){
-			listener.onLoad(key, obj);
-		}
+	protected void onLoad(List<Runnable> actions,final K key, final V obj){
+		actions.add(new Runnable(){
+
+			@Override
+			public void run() {
+				for(CacheEntityListener<K,V> listener: listeners){
+					listener.onLoad(key, obj);
+				}
+			}
+		});
 	}
 	
-	protected void onUnload(K key, V obj){
-		for(CacheEntityListener<K,V> listener: listeners){
-			listener.onUnload(key, obj);
-		}
+	protected void onUnload(List<Runnable> actions,final K key, final V obj){
+		actions.add(new Runnable(){
+
+			@Override
+			public void run() {
+				for(CacheEntityListener<K,V> listener: listeners){
+					listener.onUnload(key, obj);
+				}
+			}
+		});
+
 	}
 	
 	
-	protected void onChange(K key, V oldobj, V newobj){
-		for(CacheEntityListener<K,V> listener: listeners){
-			listener.onChange(key, oldobj, newobj);
+	protected void onChange(List<Runnable> actions,final K key, final V oldobj, final V newobj){
+
+		actions.add(new Runnable(){
+
+			@Override
+			public void run() {
+				for(CacheEntityListener<K,V> listener: listeners){
+					listener.onChange(key, oldobj, newobj);
+				}
+				
+			}
+		});
+	}
+	
+	protected void notify(List<Runnable> actions){
+		for(Runnable run: actions){
+			run.run();
 		}
 	}
 	

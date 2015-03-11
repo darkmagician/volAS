@@ -5,6 +5,7 @@ package com.vol.pub;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -40,8 +41,14 @@ public class TenantService extends AbstractCache<Integer,Tenant> {
 	}
 	
 	public synchronized void sync(){
+		if(log.isDebugEnabled()){
+			log.debug("start to sync tanent");
+		}
 		Map<String,Object> parameters = new HashMap<String,Object>();
-		List<Tenant> tenants = super.list("", parameters);
+		parameters.put("current", System.currentTimeMillis());
+		List<Tenant> tenants = super.list("tenant.all", parameters);
+		
+		List<Runnable> actions = new LinkedList<Runnable>();
 		
 		Map<Integer,Tenant> newcache = null;
 		if(tenants != null && tenants.size() > 0){
@@ -52,13 +59,13 @@ public class TenantService extends AbstractCache<Integer,Tenant> {
 				if(oldTenant != null){
 					if(isChanged(tenant, oldTenant)){
 						newcache.put(id, tenant);
-						onChange(id, oldTenant, tenant);
+						onChange(actions,id, oldTenant, tenant);
 					}else{
 						newcache.put(id, oldTenant);
 					}
 				}else{
 					newcache.put(id, tenant);
-					onLoad(id, tenant);
+					onLoad(actions,id, tenant);
 				}
 			}
 			
@@ -70,10 +77,14 @@ public class TenantService extends AbstractCache<Integer,Tenant> {
 			Integer id = entry.getKey();
 			Tenant tenant = newcache.get(id);
 			if(tenant == null){
-				onUnload(id, entry.getValue());
+				onUnload(actions,id, entry.getValue());
 			}
 		}
 		cache = newcache;
+		if(log.isDebugEnabled()){
+			log.debug("Complete syncing tanent. Current size:{}",newcache.size());
+		}
+		notify(actions);
 	}
 
 }

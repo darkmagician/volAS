@@ -15,52 +15,52 @@ public class Quota extends BaseEntity  {
 	/**
 	 * The id.
 	 */
-	private long id;
+	protected long id;
 	
 	/**
 	 * The user id.
 	 */
-	private long userId;
+	protected long userId;
 	
 	/**
 	 * The maximum.
 	 */
-	private long maximum;
+	protected long maximum;
 	
 	/**
 	 * The balance.
 	 */
-	private long balance;
+	protected long balance;
 	
 	/**
 	 * 
 	 */
-	private long reserved;
+	protected long reserved;
 	
 	/**
 	 * The activation time.
 	 */
-	private long activationTime;
+	protected long activationTime;
 	
 	/**
 	 * The expiration time.
 	 */
-	private long expirationTime;
+	protected long expirationTime;
 	
 	/**
 	 * The volume type.
 	 */
-	private short volumeType;
+	protected short volumeType;
 	
 	/**
 	 * The user name.
 	 */
-	private String userName;
+	protected String userName;
 	
 	/**
 	 * The tenant id.
 	 */
-	private int tenantId;
+	protected int tenantId;
 
 	
 	
