@@ -1,4 +1,69 @@
-	var dtheaderToolbar = [ {
+	var promotionToolbar = [ {
+			text : '添加',
+			iconCls : 'icon-add',
+			handler : function() {
+				$('#promotionEditorInfo').text('');
+				$('#promotionEditor').dialog('open').dialog('setTitle', '添加');
+				$('#promotionForm').form('clear');
+
+				enablePromotionEditor(true);
+				url = './rs/admin/promotion/add';
+				parentdg='#draftPromotionMgr';
+			}
+		}, {
+			text : '编辑',
+			iconCls : 'icon-edit',
+			handler : function() {
+				var row = $('#draftPromotionMgr').datagrid('getSelected');
+				if (row) {
+					$('#promotionEditorInfo').text('');
+					$('#promotionEditor').dialog('open').dialog('setTitle', '编辑');
+					row.startTimeStr=formatDateBox(new Date(row.startTime));
+					row.endTimeStr=formatDateBox(new Date(row.endTime));
+					row.bonusExpirationTimeStr=formatDateBox(new Date(row.bonusExpirationTime));
+					enablePromotionEditor(true);
+					$('#promotionForm').form('load', row);
+					url = './rs/admin/promotion/update';
+					parentdg='#draftPromotionMgr';
+				}
+
+			}
+		}, '-', {
+			text : '删除',
+			iconCls : 'icon-remove',
+			handler : function() {
+				var row = $('#draftPromotionMgr').datagrid('getSelected');
+				if (row) {
+					$('#confirmInfo').text('');
+					$('#confirm').dialog('open').dialog('setTitle', '删除活动:'+row.name);
+					$('#confirmForm').form('load', row);
+					confirmurl = './rs/admin/promotion/delete';
+					afterConfirm=function(){
+						$('#draftPromotionMgr').datagrid('reload'); // reload the user data
+					}
+				}
+			}
+		} , '-', {
+			text : '激活',
+			iconCls : 'icon-save',
+			handler : function() {
+				var row = $('#draftPromotionMgr').datagrid('getSelected');
+				if (row) {
+					$('#confirmInfo').text('');
+					$('#confirm').dialog('open').dialog('setTitle', '激活活动:'+row.name);
+					$('#confirmForm').form('load', row);
+					confirmurl = './rs/admin/promotion/active/'+row.id;
+					afterConfirm=function(){
+						$('#draftPromotionMgr').datagrid('reload'); // reload the user data
+						$('#activePromotionMgr').datagrid('reload'); // reload the user data
+					}
+				}
+			}
+		}];
+	
+	
+
+		var dtheaderToolbar = [ {
 			text : '添加',
 			iconCls : 'icon-add',
 			handler : function() {
@@ -54,12 +119,63 @@
 			}
 		}];
 		
-		 
-		var url;
-		var parentdg;
-				
 
-		var submitting=false;
+		var dtbodyToolbar = [ {
+			text : '添加',
+			iconCls : 'icon-add',
+			handler : function() {
+			}
+		}, {
+			text : '编辑',
+			iconCls : 'icon-edit',
+			handler : function() {
+				var row = $('#draftPromotionMgr').datagrid('getSelected');
+				if (row) {
+					$('#promotionEditorInfo').text('');
+					$('#promotionEditor').dialog('open').dialog('setTitle', '编辑');
+					row.startTimeStr=formatDateBox(new Date(row.startTime));
+					row.endTimeStr=formatDateBox(new Date(row.endTime));
+					row.bonusExpirationTimeStr=formatDateBox(new Date(row.bonusExpirationTime));
+					enablePromotionEditor(true);
+					$('#promotionForm').form('load', row);
+					url = './rs/admin/promotion/update';
+					parentdg='#draftPromotionMgr';
+				}
+
+			}
+		}, '-', {
+			text : '删除',
+			iconCls : 'icon-remove',
+			handler : function() {
+				var row = $('#draftPromotionMgr').datagrid('getSelected');
+				if (row) {
+					$('#confirmInfo').text('');
+					$('#confirm').dialog('open').dialog('setTitle', '删除活动:'+row.name);
+					$('#confirmForm').form('load', row);
+					confirmurl = './rs/admin/promotion/delete';
+					afterConfirm=function(){
+						$('#draftPromotionMgr').datagrid('reload'); // reload the user data
+					}
+				}
+			}
+		} , '-', {
+			text : '激活',
+			iconCls : 'icon-save',
+			handler : function() {
+				var row = $('#draftPromotionMgr').datagrid('getSelected');
+				if (row) {
+					$('#confirmInfo').text('');
+					$('#confirm').dialog('open').dialog('setTitle', '激活活动:'+row.name);
+					$('#confirmForm').form('load', row);
+					confirmurl = './rs/admin/promotion/active/'+row.id;
+					afterConfirm=function(){
+						$('#draftPromotionMgr').datagrid('reload'); // reload the user data
+						$('#activePromotionMgr').datagrid('reload'); // reload the user data
+					}
+				}
+			}
+		}];	 
+
 		function savePromotion() {
 			$('#promotionForm').form(
 					'submit',
@@ -115,7 +231,7 @@
 			$('#promotionOK').linkbutton(b);
 			
 		}
-		<!-- ************************************Active Promotion Editor ************************************ -->
+		
 		function viewPromotion(){
 		
 				var row = $('#activePromotionMgr').datagrid('getSelected');
@@ -156,3 +272,26 @@
 				url = './rs/admin/promotion/add';
 				parentdg='#draftPromotionMgr';
 		}
+		
+
+		/* ************************************Active Promotion Editor ************************************ */
+
+		var activePromotionToolbar = [ {
+			text : '查看',
+			iconCls : 'icon-tip',
+			handler : function() {
+				var row = $('#activePromotionMgr').datagrid('getSelected');
+				if (row) {
+					$('#promotionEditorInfo').text('');
+					$('#promotionEditor').dialog('open').dialog('setTitle', '查看');
+					
+					row.startTimeStr=formatDateBox(new Date(row.startTime));
+					row.endTimeStr=formatDateBox(new Date(row.endTime));
+					row.bonusExpirationTimeStr=formatDateBox(new Date(row.bonusExpirationTime));
+					enablePromotionEditor(false);
+					$('#promotionForm').form('load', row);
+
+				}
+
+			}
+		}];
