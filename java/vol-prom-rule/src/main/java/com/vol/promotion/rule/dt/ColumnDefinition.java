@@ -9,9 +9,12 @@ package com.vol.promotion.rule.dt;
  */
 public class ColumnDefinition {
 
+	final public static char STRING='S', NUMBER='N';
+	
 	private String columnName;
 	private String source;
 	private String description;
+	private char type;
 	/**
 	 * @return the columnName
 	 */
@@ -47,5 +50,17 @@ public class ColumnDefinition {
 	 */
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	/**
+	 * @return the type
+	 */
+	public char getType() {
+		return type;
+	}
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(char type) {
+		this.type = type;
 	}
 }
