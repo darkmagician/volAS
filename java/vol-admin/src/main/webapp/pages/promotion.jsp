@@ -49,8 +49,11 @@
 					</div>
 					<div class="fitem">
 						<label>规则描述方式:</label>
-							<label>规则表:</label> <input type="radio" name="ruleType" value="0" checked label="规则表"/>
-							<label>规则脚本:</label> <input type="radio" name="ruleType" value="1" label="规则脚本"/>
+						 <select name="ruleType" 
+							class="easyui-combobox" required="true">
+							<option value="0">规则表</option>
+							<option value="1">规则脚本</option>
+						</select>
 					</div>
 					<input name="rule" type="hidden"/>
 					<input name="tenantId" type="hidden"/> <input name="id"
@@ -64,12 +67,14 @@
 					<div title="规则表定义" style="padding: 1px;" >
 						<table id="dtheader" class="easyui-datagrid" title="规则表定义"
 							style="height: 400px;"
-							data-options="rownumbers:true,singleSelect:true,toolbar:dtheaderToolbar">
+							data-options="rownumbers:true,singleSelect:true,toolbar:dtheaderToolbar,onDblClickRow:editCol,onClickRow:singleClick">
 							<thead>
 								<tr>
-									<th field="name" width="120">名字</th>
-									<th field="source" width="120">来源</th>
-									<th field="description" width="180" align="right">描述</th>
+									<th field="title" width="120" data-options="editor:{type:'text',options:{required:true}}">名字</th>
+									<th field="src0" width="120" data-options="formatter:function(value,row){return row.src;},editor:{type:'combobox',options:{valueField:'value',textField:'value',data: dataColSrc,required:true}}">来源</th>
+									<th field="default" width="120" editor="text">默认值</th>
+									<th field="type" width="120" data-options="formatter:function(value,row){return lookup(dataColType,'value','label',value);},editor:{type:'combobox',options:{valueField:'value',textField:'label',data: dataColType,required:true}}">类型</th>
+									<th field="desc" width="180" editor="text">描述</th>
 								</tr>
 							</thead>
 						</table>

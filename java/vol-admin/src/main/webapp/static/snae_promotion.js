@@ -61,64 +61,44 @@
 			}
 		}];
 	
-	
+		var coldg = new Object();
+		coldg.id='#dtheader';
+		coldg.editing=undefined;
+		coldg.endEdit=function(){
+			 var ed = $(this.id).datagrid('getEditor', {index:this.editing,field:'src0'});
+			 var value = $(ed.target).combobox('getText');
+			 $(this.id).datagrid('getRows')[this.editing]['src'] = value;
+		}
+		coldg.beginEdit=function(){
+			 var ed = $(this.id).datagrid('getEditor', {index:this.editing,field:'src0'});
+			 var value = $(this.id).datagrid('getRows')[this.editing]['src']; 
+			 $(ed.target).combobox('setText', value);
+		}
 
 		var dtheaderToolbar = [ {
 			text : '添加',
 			iconCls : 'icon-add',
 			handler : function() {
+				insertRecord(coldg);
 			}
 		}, {
-			text : '编辑',
-			iconCls : 'icon-edit',
-			handler : function() {
-				var row = $('#draftPromotionMgr').datagrid('getSelected');
-				if (row) {
-					$('#promotionEditorInfo').text('');
-					$('#promotionEditor').dialog('open').dialog('setTitle', '编辑');
-					row.startTimeStr=formatDateBox(new Date(row.startTime));
-					row.endTimeStr=formatDateBox(new Date(row.endTime));
-					row.bonusExpirationTimeStr=formatDateBox(new Date(row.bonusExpirationTime));
-					enablePromotionEditor(true);
-					$('#promotionForm').form('load', row);
-					url = './rs/admin/promotion/update';
-					parentdg='#draftPromotionMgr';
-				}
-
-			}
-		}, '-', {
 			text : '删除',
 			iconCls : 'icon-remove',
 			handler : function() {
-				var row = $('#draftPromotionMgr').datagrid('getSelected');
-				if (row) {
-					$('#confirmInfo').text('');
-					$('#confirm').dialog('open').dialog('setTitle', '删除活动:'+row.name);
-					$('#confirmForm').form('load', row);
-					confirmurl = './rs/admin/promotion/delete';
-					afterConfirm=function(){
-						$('#draftPromotionMgr').datagrid('reload'); // reload the user data
-					}
-				}
+				removeRecord(coldg);
 			}
-		} , '-', {
-			text : '激活',
-			iconCls : 'icon-save',
-			handler : function() {
-				var row = $('#draftPromotionMgr').datagrid('getSelected');
-				if (row) {
-					$('#confirmInfo').text('');
-					$('#confirm').dialog('open').dialog('setTitle', '激活活动:'+row.name);
-					$('#confirmForm').form('load', row);
-					confirmurl = './rs/admin/promotion/active/'+row.id;
-					afterConfirm=function(){
-						$('#draftPromotionMgr').datagrid('reload'); // reload the user data
-						$('#activePromotionMgr').datagrid('reload'); // reload the user data
-					}
-				}
-			}
-		}];
+		} ,  {
+            text: '上移', iconCls: 'icon-up', handler: function () {
+                MoveUp(coldg);
+            }
+        }, {
+            text: '下移', iconCls: 'icon-down', handler: function () {
+                MoveDown(coldg);
+            }
+        }];
 		
+		
+
 
 		var dtbodyToolbar = [ {
 			text : '添加',
@@ -295,3 +275,133 @@
 
 			}
 		}];
+		
+		/* ************************************data grid function ************************************ */
+		var dataColType=[{label: '数字',value: 'N'},{label: '字符串',value: 'S'}];
+		var dataColSrc=[{value: 'username'},{value: 'bonusBalance'}];
+		
+		var colIdx=1;
+	
+		function editCol(index,row){
+			editRecord(coldg,index);
+		}
+		function singleClick(index,row){
+			if (coldg.editing != index) {
+				endEditing(coldg);
+			}
+		}
+
+		function lookup(list, keyName, valueName, key){
+			var i=0, len=list.length;
+			for(;i<len;i++){
+				if(list[i][keyName]==key){
+					return list[i][valueName];
+				}
+			}
+			return '';
+		}
+		
+		function addCol(){
+			var col = new Object();
+			col.field=colIdx++;
+			col.width=80;
+			return col;
+		}
+
+		function endEditing(dg){
+
+			if (dg.editing == undefined){return true}
+			var dgId = dg.id;
+			if ($(dgId).datagrid('validateRow', dg.editing)){
+				if(dg.endEdit){
+					dg.endEdit();
+				}
+				$(dgId).datagrid('endEdit', dg.editing);
+				dg.editing = undefined;
+				return true;
+			} else {
+				$(dgId).datagrid('selectRow', dg.editing);
+				return false;
+			}
+		}
+
+		 function insertRecord(dg){
+			if(!endEditing(dg)){
+				return;
+			}
+			var record = addCol();
+			var dgId = dg.id;
+			$(dgId).datagrid('appendRow',record);
+			var	index = $(dgId).datagrid('getRows').length-1;
+			$(dgId).datagrid('selectRow', index).datagrid('beginEdit', index);
+			dg.editing = index;
+		}
+
+		 function removeRecord(dg){
+		 	var dgId = dg.id;
+		 	var row = $(dgId).datagrid('getSelected');
+		 	if(row){
+			    var index = $(dgId).datagrid('getRowIndex', row);
+				$(dg.id).datagrid('cancelEdit', index)
+				.datagrid('deleteRow',index);
+				dg.editing = undefined;
+		 	}
+		}
+		 
+		 
+		 function editRecord(dg,index) {
+				
+			if (dg.editing != index) {
+				var dgId = dg.id;
+				if (endEditing(dg)) {
+					$(dgId).datagrid('selectRow', index).datagrid('beginEdit', index);
+					dg.editing = index;
+					if(dg.beginEdit){
+						dg.beginEdit();
+					}
+				} 
+			}
+		}
+		 
+		 
+		function MoveUp(dg) {
+			if(!endEditing(dg)){
+				return;
+			}
+			var dgId = dg.id;
+		    var row = $(dgId).datagrid('getSelected');
+		    var index = $(dgId).datagrid('getRowIndex', row);
+		   if (index != 0) {
+				var toup = $(dgId).datagrid('getData').rows[index];
+				var todown = $(dgId).datagrid('getData').rows[index - 1];
+				$(dgId).datagrid('getData').rows[index] = todown;
+				$(dgId).datagrid('getData').rows[index - 1] = toup;
+				$(dgId).datagrid('refreshRow', index);
+				$(dgId).datagrid('refreshRow', index - 1);
+				$(dgId).datagrid('selectRow', index - 1);
+			}
+		     
+		}
+
+		function MoveDown(dg) {
+			if(!endEditing(dg)){
+				return;
+			}
+			var dgId = dg.id;
+		    var row = $(dgId).datagrid('getSelected');
+		    var index = $(dgId).datagrid('getRowIndex', row);
+			if (index >= 0) {
+				var rows = $(dgId).datagrid('getRows').length;
+				if (index != rows - 1) {
+					var todown = $(dgId).datagrid('getData').rows[index];
+					var toup = $(dgId).datagrid('getData').rows[index + 1];
+					$(dgId).datagrid('getData').rows[index + 1] = todown;
+					$(dgId).datagrid('getData').rows[index] = toup;
+					$(dgId).datagrid('refreshRow', index);
+					$(dgId).datagrid('refreshRow', index + 1);
+					$(dgId).datagrid('selectRow', index + 1);
+				}
+			}
+		     
+		}
+		
