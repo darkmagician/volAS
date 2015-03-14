@@ -1,11 +1,210 @@
-	var promotionToolbar = [ {
+	
+	/* ************************************ Decision Table Editor ************************************ */
+		var coldg = new Object();
+		coldg.id='#dtheader';
+		coldg.editing=undefined;
+		coldg.endEdit=function(){
+			 var ed = $(this.id).datagrid('getEditor', {index:this.editing,field:'src0'});
+			 var value = $(ed.target).combobox('getText');
+			 $(this.id).datagrid('getRows')[this.editing]['src'] = value;
+		}
+		coldg.beginEdit=function(){
+			 var ed = $(this.id).datagrid('getEditor', {index:this.editing,field:'src0'});
+			 var value = $(this.id).datagrid('getRows')[this.editing]['src']; 
+			 $(ed.target).combobox('setText', value);
+		}
+		coldg.updated=false;
+		
+		
+		
+
+		var dtheaderToolbar = [ {
+			text : '添加',
+			iconCls : 'icon-add',
+			handler : function() {
+				insertRecord(coldg);
+			}
+		}, {
+			text : '删除',
+			iconCls : 'icon-remove',
+			handler : function() {
+				removeRecord(coldg);
+			}
+		} ,  {
+            text: '上移', iconCls: 'icon-up', handler: function () {
+                MoveUp(coldg);
+            }
+        }, {
+            text: '下移', iconCls: 'icon-down', handler: function () {
+                MoveDown(coldg);
+            }
+        }];
+		
+		
+		var bodydg = new Object();
+		bodydg.id='#dtbody';
+		bodydg.editing=undefined;
+		
+		var dtbodyToolbar = [ {
+			text : '添加',
+			iconCls : 'icon-add',
+			handler : function() {
+				insertRecord(bodydg);
+			}
+		}, {
+			text : '删除',
+			iconCls : 'icon-remove',
+			handler : function() {
+				removeRecord(bodydg);
+			}
+		} ,  {
+            text: '上移', iconCls: 'icon-up', handler: function () {
+                MoveUp(bodydg);
+            }
+        }, {
+            text: '下移', iconCls: 'icon-down', handler: function () {
+                MoveDown(bodydg);
+            }
+        }];
+		
+		function onDTTabs(title,index){
+			if(index == 1){
+				refreshDTBody();
+			}
+		}
+		
+		
+		function refreshDTBody(data){
+			if(!endEditing(coldg)){
+				alert('请检查规则表的列定义。');
+				return;
+			}
+			if(!coldg.updated && !data){
+				return;
+			}
+			
+			var inputs = $('#dtheader').datagrid('getData').rows;
+			var len = inputs.length;
+			var cols = new Array(len+1);
+			var i=0;
+			for(;i<len;i++){
+				cols[i]=inputs[i];
+			}
+			var output = new Object();
+			output.field='c0';
+			output.width=80;
+			output.title='红包流量';
+			output.editor='text';
+			cols[len]=output;
+			if(!data){
+				data = $('#dtbody').datagrid('getData').rows;
+			}
+			$('#dtbody').datagrid(
+					{
+						columns:[cols],
+						data:data
+					}		
+			)
+			
+			coldg.updated=false;
+			
+		}
+		
+		function getDTContent(){
+			if(!endEditing(coldg)){
+				alert('请检查规则表的列定义。');
+				return undefined;
+			}
+			if(!endEditing(bodydg)){
+				alert('请检查规则表的规则。');
+				return undefined;
+			}
+			var inputs = $('#dtheader').datagrid('getData').rows;
+			var clen = inputs.length;
+			var cols = new Array(clen);
+			var i,j;
+			for(i=0;i<clen;i++){
+				var col= new Object();
+				col.title = inputs[i].title;
+				col.src   = inputs[i].src;
+				col.desc  = inputs[i].desc;
+				col.defaultVal = inputs[i].defaultVal;
+				col.type  = inputs[i].type;
+				cols[i]= col;
+			}
+			var data = $('#dtbody').datagrid('getData').rows;
+			var dlen = data.length;
+			var dtcontent = new Array(dlen);
+			for(j=0;j<dlen;j++){
+				var r=new Array(clen);
+				for(i=0;i<clen;i++){
+					r[i]=data[j][inputs[i].field];
+				}
+				dtcontent[j]=r;	
+			}
+			
+			var dt = new Object();
+			dt.cols=cols;
+			dt.data=dtcontent;
+			return JSON.stringify(dt);
+			
+		}
+		
+		function editRule(row){
+			var type = row.ruleType;
+			updateRuleType(type);
+			if(type == 0){
+				var dt = JSON.parse(row.rule);
+				fillDTObject(dt);
+				$('promotionRule').val('');
+			}else if(type == 1){
+				$('promotionRule').val(row.rule);
+				var dt = new Object();
+				dt.cols= new Array();
+				dt.data= new Array();
+				fillDTObject(dt);
+			}
+			$('#promotionTabs').tabs('select', 0);
+
+		}
+		
+		function initRule(){
+			var dt = new Object();
+			dt.cols= new Array();
+			dt.data= new Array();
+			fillDTObject(dt);
+			updateRuleType(-1);
+			$('promotionRule').val('');
+			$('#promotionTabs').tabs('select', 0);
+		}
+		
+		function fillDTObject(dt){
+			
+			var clen = dt.cols.length;
+			var dlen = dt.data.length;
+			var i,j;
+			for(i=0;i<clen;i++){
+				addCol(dt.cols[i]);
+				for(j=0;j<dlen;j++){
+					dt.data[j].field=dt.cols[i].field;
+				}
+			}
+			$('#dtheader').datagrid(
+					{
+						data:dt.cols
+					}		
+			);
+			refreshDTBody(dt.data);
+		}
+		/* ************************************Draft Promotion Editor ************************************ */
+		var promotionToolbar = [ {
 			text : '添加',
 			iconCls : 'icon-add',
 			handler : function() {
 				$('#promotionEditorInfo').text('');
 				$('#promotionEditor').dialog('open').dialog('setTitle', '添加');
 				$('#promotionForm').form('clear');
-
+				initRule();
 				enablePromotionEditor(true);
 				url = './rs/admin/promotion/add';
 				parentdg='#draftPromotionMgr';
@@ -21,6 +220,7 @@
 					row.startTimeStr=formatDateBox(new Date(row.startTime));
 					row.endTimeStr=formatDateBox(new Date(row.endTime));
 					row.bonusExpirationTimeStr=formatDateBox(new Date(row.bonusExpirationTime));
+					editRule(row);
 					enablePromotionEditor(true);
 					$('#promotionForm').form('load', row);
 					url = './rs/admin/promotion/update';
@@ -60,102 +260,19 @@
 				}
 			}
 		}];
-	
-		var coldg = new Object();
-		coldg.id='#dtheader';
-		coldg.editing=undefined;
-		coldg.endEdit=function(){
-			 var ed = $(this.id).datagrid('getEditor', {index:this.editing,field:'src0'});
-			 var value = $(ed.target).combobox('getText');
-			 $(this.id).datagrid('getRows')[this.editing]['src'] = value;
-		}
-		coldg.beginEdit=function(){
-			 var ed = $(this.id).datagrid('getEditor', {index:this.editing,field:'src0'});
-			 var value = $(this.id).datagrid('getRows')[this.editing]['src']; 
-			 $(ed.target).combobox('setText', value);
-		}
-
-		var dtheaderToolbar = [ {
-			text : '添加',
-			iconCls : 'icon-add',
-			handler : function() {
-				insertRecord(coldg);
-			}
-		}, {
-			text : '删除',
-			iconCls : 'icon-remove',
-			handler : function() {
-				removeRecord(coldg);
-			}
-		} ,  {
-            text: '上移', iconCls: 'icon-up', handler: function () {
-                MoveUp(coldg);
-            }
-        }, {
-            text: '下移', iconCls: 'icon-down', handler: function () {
-                MoveDown(coldg);
-            }
-        }];
 		
-		
-
-
-		var dtbodyToolbar = [ {
-			text : '添加',
-			iconCls : 'icon-add',
-			handler : function() {
-			}
-		}, {
-			text : '编辑',
-			iconCls : 'icon-edit',
-			handler : function() {
-				var row = $('#draftPromotionMgr').datagrid('getSelected');
-				if (row) {
-					$('#promotionEditorInfo').text('');
-					$('#promotionEditor').dialog('open').dialog('setTitle', '编辑');
-					row.startTimeStr=formatDateBox(new Date(row.startTime));
-					row.endTimeStr=formatDateBox(new Date(row.endTime));
-					row.bonusExpirationTimeStr=formatDateBox(new Date(row.bonusExpirationTime));
-					enablePromotionEditor(true);
-					$('#promotionForm').form('load', row);
-					url = './rs/admin/promotion/update';
-					parentdg='#draftPromotionMgr';
-				}
-
-			}
-		}, '-', {
-			text : '删除',
-			iconCls : 'icon-remove',
-			handler : function() {
-				var row = $('#draftPromotionMgr').datagrid('getSelected');
-				if (row) {
-					$('#confirmInfo').text('');
-					$('#confirm').dialog('open').dialog('setTitle', '删除活动:'+row.name);
-					$('#confirmForm').form('load', row);
-					confirmurl = './rs/admin/promotion/delete';
-					afterConfirm=function(){
-						$('#draftPromotionMgr').datagrid('reload'); // reload the user data
-					}
-				}
-			}
-		} , '-', {
-			text : '激活',
-			iconCls : 'icon-save',
-			handler : function() {
-				var row = $('#draftPromotionMgr').datagrid('getSelected');
-				if (row) {
-					$('#confirmInfo').text('');
-					$('#confirm').dialog('open').dialog('setTitle', '激活活动:'+row.name);
-					$('#confirmForm').form('load', row);
-					confirmurl = './rs/admin/promotion/active/'+row.id;
-					afterConfirm=function(){
-						$('#draftPromotionMgr').datagrid('reload'); // reload the user data
-						$('#activePromotionMgr').datagrid('reload'); // reload the user data
-					}
-				}
-			}
-		}];	 
-
+		function updateRuleType(type){
+/*			if(type==0){
+				$('#promotionTabs').tabs('disableTab', 2);
+				$('#promotionTabs').tabs('enableTab', 1);
+			}else if(type==1){
+				$('#promotionTabs').tabs('disableTab', 1);
+				$('#promotionTabs').tabs('enableTab', 2);
+			}else{
+				$('#promotionTabs').tabs('disableTab', 1);
+				$('#promotionTabs').tabs('disableTab', 2);
+			}	*/	
+		}
 		function savePromotion() {
 			$('#promotionForm').form(
 					'submit',
@@ -180,6 +297,17 @@
 							 param.startTime = parseDateToLong(this.startTimeStr.value);
 							 param.bonusExpirationTime = parseDateToLong(this.bonusExpirationTimeStr.value);
 							 param.endTime = parseDateToLong(this.endTimeStr.value);
+							 var type = this.ruleType.value;
+							 if(type == 1){
+								 this.rule.value=$('promotionRule').val;
+							 }else if(type == 0){
+								 this.rule.value=getDTContent();
+								 if(this.rule.value == undefined){
+									 return false;
+								 }
+							 }
+							 
+							 
 							 submitting=true;
 							 return true;
 						},
@@ -282,14 +410,25 @@
 		
 		var colIdx=1;
 	
-		function editCol(index,row){
+		function doubleHeader(index,row){
 			editRecord(coldg,index);
 		}
-		function singleClick(index,row){
+		function singleHeader(index,row){
 			if (coldg.editing != index) {
 				endEditing(coldg);
 			}
 		}
+		
+		function doubleBody(index,row){
+			editRecord(bodydg,index);
+		}
+		function singleBody(index,row){
+			if (bodydg.editing != index) {
+				endEditing(bodydg);
+			}
+		}
+		
+		
 
 		function lookup(list, keyName, valueName, key){
 			var i=0, len=list.length;
@@ -301,10 +440,14 @@
 			return '';
 		}
 		
-		function addCol(){
-			var col = new Object();
-			col.field=colIdx++;
+		function addCol(col){
+			if(!col){
+				col = new Object();
+			}
+			col.field='c'+colIdx++;
 			col.width=80;
+			col.editor='text';
+			col.src0='';
 			return col;
 		}
 
@@ -318,6 +461,7 @@
 				}
 				$(dgId).datagrid('endEdit', dg.editing);
 				dg.editing = undefined;
+				dg.updated=true;
 				return true;
 			} else {
 				$(dgId).datagrid('selectRow', dg.editing);
@@ -335,6 +479,7 @@
 			var	index = $(dgId).datagrid('getRows').length-1;
 			$(dgId).datagrid('selectRow', index).datagrid('beginEdit', index);
 			dg.editing = index;
+			dg.updated=true;
 		}
 
 		 function removeRecord(dg){
@@ -345,6 +490,7 @@
 				$(dg.id).datagrid('cancelEdit', index)
 				.datagrid('deleteRow',index);
 				dg.editing = undefined;
+				dg.updated=true;
 		 	}
 		}
 		 
@@ -379,6 +525,7 @@
 				$(dgId).datagrid('refreshRow', index);
 				$(dgId).datagrid('refreshRow', index - 1);
 				$(dgId).datagrid('selectRow', index - 1);
+				dg.updated=true;
 			}
 		     
 		}
@@ -400,6 +547,7 @@
 					$(dgId).datagrid('refreshRow', index);
 					$(dgId).datagrid('refreshRow', index + 1);
 					$(dgId).datagrid('selectRow', index + 1);
+					dg.updated=true;
 				}
 			}
 		     

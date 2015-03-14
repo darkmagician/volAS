@@ -50,7 +50,7 @@
 					<div class="fitem">
 						<label>规则描述方式:</label>
 						 <select name="ruleType" 
-							class="easyui-combobox" required="true">
+							class="easyui-combobox" required="true" data-options="onSelect: function(rec){updateRuleType(rec.value);}">
 							<option value="0">规则表</option>
 							<option value="1">规则脚本</option>
 						</select>
@@ -63,33 +63,26 @@
 				</form>
 			</div>	
 			<div title="规则表" style="padding: 10px;">
-				<div id="dtTabs" class="easyui-tabs" data-options="fit:true,plain:true">
+				<div id="dtTabs" class="easyui-tabs" data-options="fit:true,plain:true,onSelect:onDTTabs">
 					<div title="规则表定义" style="padding: 1px;" >
-						<table id="dtheader" class="easyui-datagrid" title="规则表定义"
+						<table id="dtheader" class="easyui-datagrid" 
 							style="height: 400px;"
-							data-options="rownumbers:true,singleSelect:true,toolbar:dtheaderToolbar,onDblClickRow:editCol,onClickRow:singleClick">
+							data-options="rownumbers:true,singleSelect:true,toolbar:dtheaderToolbar,onDblClickRow:doubleHeader,onClickRow:singleHeader">
 							<thead>
 								<tr>
 									<th field="title" width="120" data-options="editor:{type:'text',options:{required:true}}">名字</th>
 									<th field="src0" width="120" data-options="formatter:function(value,row){return row.src;},editor:{type:'combobox',options:{valueField:'value',textField:'value',data: dataColSrc,required:true}}">来源</th>
-									<th field="default" width="120" editor="text">默认值</th>
-									<th field="type" width="120" data-options="formatter:function(value,row){return lookup(dataColType,'value','label',value);},editor:{type:'combobox',options:{valueField:'value',textField:'label',data: dataColType,required:true}}">类型</th>
+									<th field="defaultVal" width="120" editor="text">默认值</th>
+									<th field="type" width="120" data-options="formatter:function(value,row){return lookup(dataColType,'value','label',value);},editor:{type:'combobox',options:{valueField:'value',textField:'label',data: dataColType}}">类型</th>
 									<th field="desc" width="180" editor="text">描述</th>
 								</tr>
 							</thead>
 						</table>
 					</div>
 					<div title="规则表" style="padding: 1px;">
-						<table id="dtbody" class="easyui-datagrid" title="规则表定义"
+						<table id="dtbody" class="easyui-datagrid" 
 							style="height: 400px;"
-							data-options="rownumbers:true,singleSelect:true,toolbar:dtbodyToolbar">
-							<thead>
-								<tr>
-									<th field="name" width="120">名字</th>
-									<th field="source" width="120">来源</th>
-									<th field="description" width="180" align="right">描述</th>
-								</tr>
-							</thead>
+							data-options="rownumbers:true,singleSelect:true,toolbar:dtbodyToolbar,onDblClickRow:doubleBody,onClickRow:singleBody">
 						</table>
 					</div>
 				</div>	
