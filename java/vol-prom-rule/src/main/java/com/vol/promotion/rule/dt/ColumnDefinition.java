@@ -11,58 +11,46 @@ public class ColumnDefinition {
 
 	final public static char STRING='S', NUMBER='N';
 	
-	private String columnName;
-	private String source;
-	private String description;
+	private String title;
+	private String src;
+	private String desc;
 	private String defaultVal;
 	private char type;
 	/**
-	 * @return the columnName
+	 * @return the title
 	 */
-	public String getColumnName() {
-		return columnName;
+	public String getTitle() {
+		return title;
 	}
 	/**
-	 * @param columnName the columnName to set
+	 * @param title the title to set
 	 */
-	public void setColumnName(String columnName) {
-		this.columnName = columnName;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 	/**
-	 * @return the source
+	 * @return the src
 	 */
-	public String getSource() {
-		return source;
+	public String getSrc() {
+		return src;
 	}
 	/**
-	 * @param source the source to set
+	 * @param src the src to set
 	 */
-	public void setSource(String source) {
-		this.source = source;
+	public void setSrc(String src) {
+		this.src = src;
 	}
 	/**
-	 * @return the description
+	 * @return the desc
 	 */
-	public String getDescription() {
-		return description;
+	public String getDesc() {
+		return desc;
 	}
 	/**
-	 * @param description the description to set
+	 * @param desc the desc to set
 	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	/**
-	 * @return the type
-	 */
-	public char getType() {
-		return type;
-	}
-	/**
-	 * @param type the type to set
-	 */
-	public void setType(char type) {
-		this.type = type;
+	public void setDesc(String desc) {
+		this.desc = desc;
 	}
 	/**
 	 * @return the defaultVal
@@ -76,4 +64,36 @@ public class ColumnDefinition {
 	public void setDefaultVal(String defaultVal) {
 		this.defaultVal = defaultVal;
 	}
+	/**
+	 * @return the type
+	 */
+	public char getType() {
+		return type;
+	}
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(char type) {
+		this.type = type;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ColumnDefinition [title=");
+		builder.append(title);
+		builder.append(", src=");
+		builder.append(src);
+		builder.append(", desc=");
+		builder.append(desc);
+		builder.append(", defaultVal=");
+		builder.append(defaultVal);
+		builder.append(", type=");
+		builder.append(type);
+		builder.append("]");
+		return builder.toString();
+	}
+	
 }

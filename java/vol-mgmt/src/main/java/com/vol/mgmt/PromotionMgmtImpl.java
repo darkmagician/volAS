@@ -35,7 +35,7 @@ public class PromotionMgmtImpl extends AbstractService<Integer, Promotion> {
 	@Resource(name = "promotionBalanceDao")
 	protected DAO<Integer, PromotionBalance> promotionBalanceDAO;
 	
-	@Resource(name = "MVELPromotionPolicy")
+	@Resource(name = "promotionPolicyService")
 	protected PromotionPolicy promotionPolicy;
 
 	protected void copyAttribute(Promotion promotion, Promotion oldPromotion) {

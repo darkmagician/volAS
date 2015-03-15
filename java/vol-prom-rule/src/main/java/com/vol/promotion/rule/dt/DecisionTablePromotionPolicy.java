@@ -50,7 +50,7 @@ public class DecisionTablePromotionPolicy  extends AbstractPromotionPolicy imple
 	@Override
 	public void validate(Promotion promotion) {
 		DecisionTableDefinition definition = toDefinition(promotion.getRule());
-
+		log.info("Validating: {}",definition);
 	}
 
 	/* (non-Javadoc)
