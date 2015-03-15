@@ -1,6 +1,6 @@
 	
 	/* ************************************ Decision Table Editor ************************************ */
-		var coldg = new Object();
+		var coldg = {};
 		coldg.id='#dtheader';
 		coldg.editing=undefined;
 		coldg.endEdit=function(){
@@ -41,7 +41,7 @@
         }];
 		
 		
-		var bodydg = new Object();
+		var bodydg = {};
 		bodydg.id='#dtbody';
 		bodydg.editing=undefined;
 		
@@ -75,12 +75,14 @@
 		
 		
 		function refreshDTBody(data){
-			if(!endEditing(coldg)){
-				alert('请检查规则表的列定义。');
-				return;
-			}
-			if(!coldg.updated && !data){
-				return;
+			if(!data){
+				if(!endEditing(coldg)){
+					alert('请检查规则表的列定义。');
+					return;
+				}
+				if(!coldg.updated){
+					return;
+				}
 			}
 			
 			var inputs = $('#dtheader').datagrid('getData').rows;
@@ -90,7 +92,7 @@
 			for(;i<len;i++){
 				cols[i]=inputs[i];
 			}
-			var output = new Object();
+			var output = {};
 			output.field='c0';
 			output.width=80;
 			output.title='红包流量';
@@ -124,7 +126,7 @@
 			var cols = new Array(clen);
 			var i,j;
 			for(i=0;i<clen;i++){
-				var col= new Object();
+				var col= {};
 				col.title = inputs[i].title;
 				col.src   = inputs[i].src;
 				col.desc  = inputs[i].desc;
@@ -136,14 +138,15 @@
 			var dlen = data.length;
 			var dtcontent = new Array(dlen);
 			for(j=0;j<dlen;j++){
-				var r=new Array(clen);
+				var r=new Array(clen+1);
 				for(i=0;i<clen;i++){
 					r[i]=data[j][inputs[i].field];
 				}
+				r[clen]=data[j].c0;//输出红包列
 				dtcontent[j]=r;	
 			}
 			
-			var dt = new Object();
+			var dt = {};
 			dt.cols=cols;
 			dt.data=dtcontent;
 			return JSON.stringify(dt);
@@ -156,12 +159,12 @@
 			if(type == 0){
 				var dt = JSON.parse(row.rule);
 				fillDTObject(dt);
-				$('promotionRule').val('');
+				$('#promotionRule').val('');
 			}else if(type == 1){
-				$('promotionRule').val(row.rule);
-				var dt = new Object();
-				dt.cols= new Array();
-				dt.data= new Array();
+				$('#promotionRule').val(row.rule);
+				var dt = {};
+				dt.cols= [];
+				dt.data= [];
 				fillDTObject(dt);
 			}
 			$('#promotionTabs').tabs('select', 0);
@@ -169,12 +172,12 @@
 		}
 		
 		function initRule(){
-			var dt = new Object();
-			dt.cols= new Array();
-			dt.data= new Array();
+			var dt = {};
+			dt.cols= [];
+			dt.data= [];
 			fillDTObject(dt);
 			updateRuleType(-1);
-			$('promotionRule').val('');
+			$('#promotionRule').val('');
 			$('#promotionTabs').tabs('select', 0);
 		}
 		
@@ -186,14 +189,13 @@
 			for(i=0;i<clen;i++){
 				addCol(dt.cols[i]);
 				for(j=0;j<dlen;j++){
-					dt.data[j].field=dt.cols[i].field;
+					dt.data[j][dt.cols[i].field]=dt.data[j][i];
 				}
 			}
-			$('#dtheader').datagrid(
-					{
-						data:dt.cols
-					}		
-			);
+			for(j=0;j<dlen;j++){
+				dt.data[j].c0=dt.data[j][clen];//输出红包列
+			}
+			$('#dtheader').datagrid('loadData',dt.cols);
 			refreshDTBody(dt.data);
 		}
 		/* ************************************Draft Promotion Editor ************************************ */
@@ -216,7 +218,6 @@
 				var row = $('#draftPromotionMgr').datagrid('getSelected');
 				if (row) {
 					$('#promotionEditorInfo').text('');
-					$('#promotionEditor').dialog('open').dialog('setTitle', '编辑');
 					row.startTimeStr=formatDateBox(new Date(row.startTime));
 					row.endTimeStr=formatDateBox(new Date(row.endTime));
 					row.bonusExpirationTimeStr=formatDateBox(new Date(row.bonusExpirationTime));
@@ -225,6 +226,8 @@
 					$('#promotionForm').form('load', row);
 					url = './rs/admin/promotion/update';
 					parentdg='#draftPromotionMgr';
+					
+					$('#promotionEditor').dialog('open').dialog('setTitle', '编辑');
 				}
 
 			}
@@ -262,7 +265,7 @@
 		}];
 		
 		function updateRuleType(type){
-/*			if(type==0){
+			if(type==0){
 				$('#promotionTabs').tabs('disableTab', 2);
 				$('#promotionTabs').tabs('enableTab', 1);
 			}else if(type==1){
@@ -271,7 +274,7 @@
 			}else{
 				$('#promotionTabs').tabs('disableTab', 1);
 				$('#promotionTabs').tabs('disableTab', 2);
-			}	*/	
+			}		
 		}
 		function savePromotion() {
 			$('#promotionForm').form(
@@ -299,7 +302,7 @@
 							 param.endTime = parseDateToLong(this.endTimeStr.value);
 							 var type = this.ruleType.value;
 							 if(type == 1){
-								 this.rule.value=$('promotionRule').val;
+								 this.rule.value=$('#promotionRule').val();
 							 }else if(type == 0){
 								 this.rule.value=getDTContent();
 								 if(this.rule.value == undefined){
@@ -339,48 +342,7 @@
 			$('#promotionOK').linkbutton(b);
 			
 		}
-		
-		function viewPromotion(){
-		
-				var row = $('#activePromotionMgr').datagrid('getSelected');
-				if (row) {
-					$('#promotionEditorInfo').text('');
-					$('#promotionEditor').dialog('open').dialog('setTitle', '查看');
-					
-					row.startTimeStr=formatDateBox(new Date(row.startTime));
-					row.endTimeStr=formatDateBox(new Date(row.endTime));
-					row.bonusExpirationTimeStr=formatDateBox(new Date(row.bonusExpirationTime));
-					enablePromotionEditor(false);
-					$('#promotionForm').form('load', row);
 
-				}
-		}
-
-		function editPromotion(){
-				var row = $('#draftPromotionMgr').datagrid('getSelected');
-				if (row) {
-					$('#promotionEditorInfo').text('');
-					$('#promotionEditor').dialog('open').dialog('setTitle', '编辑');
-					row.startTimeStr=formatDateBox(new Date(row.startTime));
-					row.endTimeStr=formatDateBox(new Date(row.endTime));
-					row.bonusExpirationTimeStr=formatDateBox(new Date(row.bonusExpirationTime));
-					enablePromotionEditor(true);
-					$('#promotionForm').form('load', row);
-					url = './rs/admin/promotion/update';
-					parentdg='#draftPromotionMgr';
-				}
-		}
-					
-		function createPromotion(){
-				$('#promotionEditorInfo').text('');
-				$('#promotionEditor').dialog('open').dialog('setTitle', '添加');
-				$('#promotionForm').form('clear');
-
-				enablePromotionEditor(true);
-				url = './rs/admin/promotion/add';
-				parentdg='#draftPromotionMgr';
-		}
-		
 
 		/* ************************************Active Promotion Editor ************************************ */
 
@@ -442,7 +404,7 @@
 		
 		function addCol(col){
 			if(!col){
-				col = new Object();
+				col = {};
 			}
 			col.field='c'+colIdx++;
 			col.width=80;

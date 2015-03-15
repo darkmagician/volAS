@@ -11,6 +11,7 @@
     <import resource="classpath:vol-rest-cxf.xml"/>
     <import resource="classpath:vol-mgmt-beans.xml"/>
     <import resource="classpath:vol-dao-beans.xml"/>   
+    <import resource="classpath:vol-prom-rule-beans.xml"/>   
     
     <bean id="mainAction" class="com.vol.admin.action.MainAction"/>     
     
