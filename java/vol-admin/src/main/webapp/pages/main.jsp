@@ -12,12 +12,8 @@
 	type="image/x-icon" />
 <script type="text/javascript" src="./static/jquery.min.js"></script>
 <script type="text/javascript" src="./static/jquery.easyui.min.js"></script>
-<!-- code mirror -->
-<!-- <link rel="stylesheet" href="./static/codemirror/lib/codemirror.css">
-<script src="./static/codemirror/lib/codemirror.js"></script>
-<script src="./static/codemirror/addon/edit/matchbrackets.js"></script>
-<script src="./static/codemirror/mode/clike.js"></script>
-<link rel="stylesheet" href="./static/codemirror/theme/eclipse.css"> -->
+<script type="text/javascript" src="./static/ace/ace.js" charset="utf-8"></script>
+
 </head>
 <body class="easyui-layout">
 	<!-- ************************************ Delete Window Start************************************ -->

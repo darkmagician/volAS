@@ -1,5 +1,9 @@
+    var promotionRuleEditor = ace.edit("promotionRule");
+    promotionRuleEditor.setTheme("ace/theme/eclipse");
+    promotionRuleEditor.getSession().setMode("ace/mode/java");
+
 	
-	/* ************************************ Decision Table Editor ************************************ */
+/* ************************************ Decision Table Editor ************************************ */
 		var coldg = {};
 		coldg.id='#dtheader';
 		coldg.editing=undefined;
@@ -159,9 +163,9 @@
 			if(type == 0){
 				var dt = JSON.parse(row.rule);
 				fillDTObject(dt);
-				$('#promotionRule').val('');
+				promotionRuleEditor.setValue('');//$('#promotionRule').val('');
 			}else if(type == 1){
-				$('#promotionRule').val(row.rule);
+				promotionRuleEditor.setValue(row.rule);//$('#promotionRule').val(row.rule);
 				var dt = {};
 				dt.cols= [];
 				dt.data= [];
@@ -177,7 +181,7 @@
 			dt.data= [];
 			fillDTObject(dt);
 			updateRuleType(-1);
-			$('#promotionRule').val('');
+			promotionRuleEditor.setValue('');//$('#promotionRule').val('');
 			$('#promotionTabs').tabs('select', 0);
 		}
 		
@@ -302,7 +306,7 @@
 							 param.endTime = parseDateToLong(this.endTimeStr.value);
 							 var type = this.ruleType.value;
 							 if(type == 1){
-								 this.rule.value=$('#promotionRule').val();
+								 this.rule.value=promotionRuleEditor.getValue();//$('#promotionRule').val('');//$('#promotionRule').val();
 							 }else if(type == 0){
 								 this.rule.value=getDTContent();
 								 if(this.rule.value == undefined){
@@ -338,7 +342,8 @@
 			$('#promotionEndTimeStr').datetimebox(b);
 			$('#promotionBonusExpirationTimeStr').datetimebox(b);
 			$('#promotionDescription').textbox(b);
-			$('#promotionRule').attr("disabled",!enable);
+			//$('#promotionRule').attr("disabled",!enable);
+			promotionRuleEditor.setReadOnly(!enable);
 			$('#promotionOK').linkbutton(b);
 			
 		}

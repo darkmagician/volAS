@@ -61,4 +61,15 @@ h2 {
 	margin-left:10px;
 }
 
-.CodeMirror {border: 1px solid black; font-size:13px}
+element {
+}
+#promotionRule {
+    border:1px solid gray;
+    position: absolute;
+    top: 80px;
+    bottom: 0px;
+    left: 40px;
+    right: 0px;
+    height: 400px;
+    width: 600px;
+}

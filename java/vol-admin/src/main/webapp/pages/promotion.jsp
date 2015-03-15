@@ -88,7 +88,7 @@
 				</div>	
 			</div>
 			<div title="规则脚本" style="padding: 20px;">
-		 		<textarea id="promotionRule" cols="90" rows="20"></textarea>
+		 		<pre id="promotionRule"></pre>
 			</div>			
 		</div>			
 	</div>
