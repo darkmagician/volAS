@@ -38,6 +38,9 @@ public class Tenant extends BaseEntity {
 	 */
 	private String ratingPlan;
 	
+	private long cycleStart;
+	private long cycleEnd;
+	
 	/**
 	 * Gets the id.
 	 *
@@ -111,6 +114,10 @@ public class Tenant extends BaseEntity {
 		builder.append(cycleType);
 		builder.append(", ratingPlan=");
 		builder.append(ratingPlan);
+		builder.append(", cycleStart=");
+		builder.append(cycleStart);
+		builder.append(", cycleEnd=");
+		builder.append(cycleEnd);
 		builder.append(", creationTime=");
 		builder.append(creationTime);
 		builder.append(", updateTime=");
@@ -147,5 +154,33 @@ public class Tenant extends BaseEntity {
 	 */
 	public void setRatingPlan(String ratingPlan) {
 		this.ratingPlan = ratingPlan;
+	}
+
+	/**
+	 * @return the cycleStart
+	 */
+	public long getCycleStart() {
+		return cycleStart;
+	}
+
+	/**
+	 * @param cycleStart the cycleStart to set
+	 */
+	public void setCycleStart(long cycleStart) {
+		this.cycleStart = cycleStart;
+	}
+
+	/**
+	 * @return the cycleEnd
+	 */
+	public long getCycleEnd() {
+		return cycleEnd;
+	}
+
+	/**
+	 * @param cycleEnd the cycleEnd to set
+	 */
+	public void setCycleEnd(long cycleEnd) {
+		this.cycleEnd = cycleEnd;
 	}
 }
