@@ -89,11 +89,12 @@ public class RestTest {
 		
 		Promotion promotion = new Promotion();
 		promotion.setBonusExpirationTime(System.currentTimeMillis()+3*24*60*60*1000);
-		promotion.setStartTime(System.currentTimeMillis()+9999);
+		promotion.setStartTime(System.currentTimeMillis()+1);
 		promotion.setEndTime(System.currentTimeMillis()+2*24*60*60*1000);
 		promotion.setDescription("Promotion Test1");
 		promotion.setName("Promotion1");
 		promotion.setMaximum(270001);
+		promotion.setRuleType((short) 1);
 		promotion.setRule("if(parameters.vip==1) {return 2300;} else {return 200;}");
 		
 

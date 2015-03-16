@@ -6,10 +6,6 @@ package com.vol.dao;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-
 import com.vol.common.BaseEntity;
 import com.vol.common.exception.ErrorCode;
 import com.vol.common.exception.MgmtException;
@@ -39,16 +35,16 @@ public abstract class AbstractService<K extends Serializable, V extends BaseEnti
 	
 	public K add(final V obj){
 		validate(obj);
-		K id = this.transaction.execute(new TransactionCallback<K>(){
-
-			@Override
-			public K doInTransaction(TransactionStatus status) {
-				initEntity(obj);
-				return getDAO().create(obj);
-			}
-
-			});
-		return id;
+		try{
+			txBegin();
+			initEntity(obj);
+			K id = getDAO().create(obj);
+			txCommit();
+			return id;
+		}catch(Exception e){
+			txRollback(e);
+			return null;
+		}
 	}
 	
 	
@@ -62,39 +58,34 @@ public abstract class AbstractService<K extends Serializable, V extends BaseEnti
 
 	public void update(final K id, final V obj){
 		validate(obj);
-		this.transaction.execute(new TransactionCallbackWithoutResult(){
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				V old = getDAO().get(id);
-				validateUpdateTime(obj, old);
-				updateEntity(old);
-				copyAttribute(obj,old);
-				getDAO().update(old);
-				
-			}
-
-		});
+		try{
+			txBegin();
+			V old = getDAO().get(id);
+			validateUpdateTime(obj, old);
+			updateEntity(old);
+			copyAttribute(obj,old);
+			getDAO().update(old);
+			txCommit();
+		}catch(Exception e){
+			txRollback(e);
+		}
 	}
 	protected  void copyAttribute(V obj, V old){};
 	
 	
 	public void delete(final K id){
-		this.transaction.execute(new TransactionCallbackWithoutResult(){
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				V old = getDAO().get(id);
-				if(old == null){
-					throw new MgmtException(ErrorCode.ENTITY_NOT_EXIST,"To be Enity "+id+" doesnt exist. ");
-				}
-				validateToBeDelete(old);
-				getDAO().delete(old);
-				
+		try{
+			txBegin();
+			V old = getDAO().get(id);
+			if(old == null){
+				throw new MgmtException(ErrorCode.ENTITY_NOT_EXIST,"To be Enity "+id+" doesnt exist. ");
 			}
-
-
-		});
+			validateToBeDelete(old);
+			getDAO().delete(old);
+			txCommit();
+		}catch(Exception e){
+			txRollback(e);
+		}
 	}
 	
 

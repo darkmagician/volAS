@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
  * @author scott
  *
  */
-@ContextConfiguration(locations = {"classpath:vol-dao-beans.xml","classpath:vol-mgmt-test-beans.xml","classpath:vol-mgmt-beans.xml"})
+@ContextConfiguration(locations = {"classpath:vol-dao-beans.xml","classpath:vol-mgmt-test-beans.xml","classpath:vol-mgmt-beans.xml","classpath:vol-prom-rule-beans.xml"})
 public abstract class BaseTest extends AbstractTransactionalJUnit4SpringContextTests{
 	public final Logger log = LoggerFactory.getLogger(getClass());
 }

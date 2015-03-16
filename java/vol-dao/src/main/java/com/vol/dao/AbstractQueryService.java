@@ -7,9 +7,6 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-
 import com.vol.common.BaseEntity;
 import com.vol.common.DAO;
 import com.vol.common.mgmt.PagingResult;
@@ -23,22 +20,28 @@ public abstract class AbstractQueryService<K extends Serializable, V extends Bas
 	
 	
 	public V get(final K id){
-		V obj = this.readonlyTransaction.execute(new TransactionCallback<V>(){
-
-			@Override
-			public V doInTransaction(TransactionStatus status) {
-				return getDAO().get(id);
-			}});	
-		return obj;
+		try{
+			txBeginRO();
+			V obj= getDAO().get(id);
+			txCommit();
+			return obj;
+		}catch(Exception e){
+			txRollback(e);
+			return null;
+		}
 	}
 	
 	public List<V> list(final String queryName, final Map<String,Object> parameters){
-		return this.readonlyTransaction.execute(new TransactionCallback<List<V>>(){
-
-			@Override
-			public List<V> doInTransaction(TransactionStatus status) {
-				return getDAO().query(queryName, parameters);
-			}});	
+		try{
+			txBeginRO();
+			List<V> result = getDAO().query(queryName, parameters);
+			txCommit();
+			return result;
+		}catch(Exception e){
+			txRollback(e);
+			return null;
+		}
+				
 	}
 	
 	
@@ -49,16 +52,19 @@ public abstract class AbstractQueryService<K extends Serializable, V extends Bas
 	
 	
 	public PagingResult<V> listByPaging(final String queryName, final Map<String,Object> parameters, final int startPage, final int pageSize, final PostProcess<V> postProcess){
-		return this.readonlyTransaction.execute(new TransactionCallback<PagingResult<V>>(){
-
-			@Override
-			public PagingResult<V> doInTransaction(TransactionStatus status) {
-				PagingResult<V> result = getDAO().queryByPage(queryName, parameters,startPage,pageSize);
-				if(postProcess != null){
-					postProcess.process(result);
-				}
-				return result;
-			}});
+		try{
+			txBeginRO();
+			PagingResult<V> result = getDAO().queryByPage(queryName, parameters,startPage,pageSize);
+			txCommit();
+			if(postProcess != null){
+				postProcess.process(result);
+			}
+			return result;
+		}catch(Exception e){
+			txRollback(e);
+			return null;
+		}
+				
 	}
 	
 	protected abstract DAO<K,V> getDAO();

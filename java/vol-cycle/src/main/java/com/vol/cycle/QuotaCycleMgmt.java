@@ -1,4 +1,4 @@
-package com.vol.schedule;
+package com.vol.cycle;
 
 import javax.annotation.Resource;
 
