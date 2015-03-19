@@ -42,7 +42,7 @@ public class DecistionTableTest extends BaseTest {
 		DecisionTableDefinition def = new DecisionTableDefinition();
 
 		List<ColumnDefinition> cols = new ArrayList<ColumnDefinition>();
-
+		
 		List<String[]> data = new ArrayList<String[]>();
 		{
 			ColumnDefinition columnDefinition = new ColumnDefinition();
@@ -56,23 +56,24 @@ public class DecistionTableTest extends BaseTest {
 			columnDefinition.setType(ColumnDefinition.NUMBER);
 			cols.add(columnDefinition);
 		}
-		{
-			ColumnDefinition columnDefinition = new ColumnDefinition();
-			columnDefinition.setSrc("bonus");
-			columnDefinition.setType(ColumnDefinition.NUMBER);
-			cols.add(columnDefinition);
-		}
 		data.add(new String[] { "a1", "", "1000" });
 		data.add(new String[] { "a2", "", "2000" });
 		data.add(new String[] { "", "1000~2000", "3000" });
 		data.add(new String[] { "", "3000~4000", "4000" });
 		data.add(new String[] { "a5,a6", "0", "5000" });
+		data.add(new String[] { "a7", "0", "6000,7000" });
+		data.add(new String[] { "a8", "7000,8000", "8000" });
 
 		def.setCols(cols.toArray(new ColumnDefinition[cols.size()]));
 		def.setData(data.toArray(new String[data.size()][]));
 		String rule = m.writeValueAsString(def);
 		System.out.println(rule);
 		promotion.setRule(rule);
+		
+		promotionPolicySPI.validate(promotion);
+
+		promotionPolicySPI.precompile(promotion);
+		
 		HashMap<String, Object> context = new HashMap<String, Object>();
 		context.put("totalVolume", 0L);
 		{
@@ -80,6 +81,7 @@ public class DecistionTableTest extends BaseTest {
 			Assert.assertEquals(1000L,
 					promotionPolicySPI.evaluate(promotion, context).longValue());
 		}
+		
 		{
 			context.put("username", "a2");
 			Assert.assertEquals(2000L,
@@ -101,6 +103,30 @@ public class DecistionTableTest extends BaseTest {
 			context.put("username", "a5");
 			context.put("totalVolume", 0L);
 			Assert.assertEquals(5000L,
+					promotionPolicySPI.evaluate(promotion, context).longValue());
+		}
+		{
+			context.put("username", "a6");
+			context.put("totalVolume", 0L);
+			Assert.assertEquals(5000L,
+					promotionPolicySPI.evaluate(promotion, context).longValue());
+		}
+		{
+			context.put("username", "a7");
+			context.put("totalVolume", 0L);
+			for (int i = 0; i < 5; i++) {
+				long longValue = promotionPolicySPI
+						.evaluate(promotion, context).longValue();
+				Assert.assertTrue(7000L == longValue || 6000L == longValue);
+			}
+		}
+		{
+			context.put("username", "a8");
+			context.put("totalVolume", 7000L);
+			Assert.assertEquals(8000L,
+					promotionPolicySPI.evaluate(promotion, context).longValue());
+			context.put("totalVolume", 8000L);
+			Assert.assertEquals(8000L,
 					promotionPolicySPI.evaluate(promotion, context).longValue());
 		}
 	}

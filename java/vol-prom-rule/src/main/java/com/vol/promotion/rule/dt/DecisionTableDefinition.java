@@ -3,15 +3,15 @@
  */
 package com.vol.promotion.rule.dt;
 
+import java.io.Serializable;
 import java.util.Arrays;
-
 
 
 /**
  * @author scott
  *
  */
-public class DecisionTableDefinition {
+public class DecisionTableDefinition implements Serializable{
 
 	private ColumnDefinition[] cols;
 	private String[][] data;
@@ -39,6 +39,7 @@ public class DecisionTableDefinition {
 	public void setData(String[][] data) {
 		this.data = data;
 	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -53,6 +54,18 @@ public class DecisionTableDefinition {
 		return builder.toString();
 	}
 	
+	public static interface Checker<T> {
+		boolean ok(T value);
+	}
 	
+	private transient Checker[][] checkers;
+	
+	public Checker[][] getChecker() {
+		return checkers;
+	}
+	
+	public void setChecker(Checker[][] checkers) {
+		this.checkers = checkers;
+	}
 	
 }
