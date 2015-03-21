@@ -21,60 +21,22 @@
 		
 		
 		
-
-		var dtheaderToolbar = [ {
-			text : '添加',
-			iconCls : 'icon-add',
-			handler : function() {
-				insertRecord(coldg);
-			}
-		}, {
-			text : '删除',
-			iconCls : 'icon-remove',
-			handler : function() {
-				removeRecord(coldg);
-			}
-		} ,  {
-            text: '上移', iconCls: 'icon-up', handler: function () {
-                MoveUp(coldg);
-            }
-        }, {
-            text: '下移', iconCls: 'icon-down', handler: function () {
-                MoveDown(coldg);
-            }
-        }];
-		
-		
 		var bodydg = {};
 		bodydg.id='#dtbody';
 		bodydg.editing=undefined;
-		
-		var dtbodyToolbar = [ {
-			text : '添加',
-			iconCls : 'icon-add',
-			handler : function() {
-				insertRecord(bodydg);
-			}
-		}, {
-			text : '删除',
-			iconCls : 'icon-remove',
-			handler : function() {
-				removeRecord(bodydg);
-			}
-		} ,  {
-            text: '上移', iconCls: 'icon-up', handler: function () {
-                MoveUp(bodydg);
-            }
-        }, {
-            text: '下移', iconCls: 'icon-down', handler: function () {
-                MoveDown(bodydg);
-            }
-        }];
 		
 		function onDTTabs(title,index){
 			if(index == 1){
 				refreshDTBody();
 			}
+		}
+		function onPromTabs(title,index){
+			if(index == 1){
+				if(initDT){
+					fillDTObject(initDT);
+					initDT=undefined;
+				}
+			}	
 		}
 		
 		
@@ -157,12 +119,12 @@
 			
 		}
 		
+		var initDT = undefined;
 		function editRule(row){
 			var type = row.ruleType;
 			updateRuleType(type);
 			if(type == 0){
-				var dt = JSON.parse(row.rule);
-				fillDTObject(dt);
+				initDT = JSON.parse(row.rule);
 				promotionRuleEditor.setValue('');//$('#promotionRule').val('');
 			}else if(type == 1){
 				promotionRuleEditor.setValue(row.rule);//$('#promotionRule').val(row.rule);
@@ -176,10 +138,9 @@
 		}
 		
 		function initRule(){
-			var dt = {};
-			dt.cols= [];
-			dt.data= [];
-			fillDTObject(dt);
+			initDT = {};
+			initDT.cols= [];
+			initDT.data= [];
 			updateRuleType(-1);
 			promotionRuleEditor.setValue('');//$('#promotionRule').val('');
 			$('#promotionTabs').tabs('select', 0);
@@ -342,10 +303,20 @@
 			$('#promotionEndTimeStr').datetimebox(b);
 			$('#promotionBonusExpirationTimeStr').datetimebox(b);
 			$('#promotionDescription').textbox(b);
-			//$('#promotionRule').attr("disabled",!enable);
+			$('#promotionRuleType').combobox(b);
+			
+			$('#dtheadAdd').linkbutton(b);
+			$('#dtheadRemove').linkbutton(b);
+			$('#dtheadUp').linkbutton(b);
+			$('#dtheadDown').linkbutton(b);
+			$('#dtbodyAdd').linkbutton(b);
+			$('#dtbodyRemove').linkbutton(b);
+			$('#dtbodyUp').linkbutton(b);
+			$('#dtbodyDown').linkbutton(b);
+			
 			promotionRuleEditor.setReadOnly(!enable);
 			$('#promotionOK').linkbutton(b);
-			
+			promotionReadOnly = !enable;
 		}
 
 
@@ -363,6 +334,7 @@
 					row.startTimeStr=formatDateBox(new Date(row.startTime));
 					row.endTimeStr=formatDateBox(new Date(row.endTime));
 					row.bonusExpirationTimeStr=formatDateBox(new Date(row.bonusExpirationTime));
+					editRule(row);
 					enablePromotionEditor(false);
 					$('#promotionForm').form('load', row);
 
@@ -461,9 +433,11 @@
 		 	}
 		}
 		 
+		 var promotionReadOnly;
 		 
 		 function editRecord(dg,index) {
-				
+			if(promotionReadOnly) return;
+			
 			if (dg.editing != index) {
 				var dgId = dg.id;
 				if (endEditing(dg)) {

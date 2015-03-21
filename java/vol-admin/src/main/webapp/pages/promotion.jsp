@@ -5,7 +5,7 @@
 		style="width:700px; height: 600px; padding: 10px 20px" closed="true"
 		buttons="#promotionButtons">
 		<label id="promotionEditorInfo"  style="color:red;"></label>
-		<div id="promotionTabs" class="easyui-tabs" style="height: 500px;">
+		<div id="promotionTabs" class="easyui-tabs" style="height: 500px;" data-options="onSelect:onPromTabs">
 			<div title="基本信息" style="padding: 20px;">
 				<form id="promotionForm" method="post">
 					<div class="fitem">
@@ -49,7 +49,7 @@
 					</div>
 					<div class="fitem">
 						<label>规则描述方式:</label>
-						 <select name="ruleType" 
+						 <select name="ruleType" id="promotionRuleType"
 							class="easyui-combobox" required="true" data-options="onSelect: function(rec){updateRuleType(rec.value);}">
 							<option value="0">规则表</option>
 							<option value="1">规则脚本</option>
@@ -67,7 +67,7 @@
 					<div title="规则表定义" style="padding: 1px;" >
 						<table id="dtheader" class="easyui-datagrid" 
 							style="height: 400px;"
-							data-options="rownumbers:true,singleSelect:true,toolbar:dtheaderToolbar,onDblClickRow:doubleHeader,onClickRow:singleHeader">
+							data-options="rownumbers:true,singleSelect:true,toolbar:'#dtheaderToolbar',onDblClickRow:doubleHeader,onClickRow:singleHeader">
 							<thead>
 								<tr>
 									<th field="title" width="120" data-options="editor:{type:'text',options:{required:true}}">名字</th>
@@ -82,7 +82,7 @@
 					<div title="规则表" style="padding: 1px;">
 						<table id="dtbody" class="easyui-datagrid" 
 							style="height: 400px;"
-							data-options="rownumbers:true,singleSelect:true,toolbar:dtbodyToolbar,onDblClickRow:doubleBody,onClickRow:singleBody">
+							data-options="rownumbers:true,singleSelect:true,toolbar:'#dtbodyToolbar',onDblClickRow:doubleBody,onClickRow:singleBody">
 						</table>
 					</div>
 				</div>	
@@ -100,6 +100,43 @@
 			onclick="javascript:$('#promotionEditor').dialog('close')"
 			style="width: 90px">取消</a>
 	</div>
+	 <div id="dtheaderToolbar" style="padding:2px 5px;">
+		<a id="dtheadAdd" href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-add" plain="true"
+			onclick="javascript:insertRecord(coldg)"
+			style="width: 60px">添加</a>		
+		<a id="dtheadRemove" href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-remove" plain="true"
+			onclick="javascript:removeRecord(coldg)"
+			style="width: 60px">删除</a>	
+		<a id="dtheadUp" href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-add" plain="true"
+			onclick="javascript:MoveUp(coldg)"
+			style="width: 60px">上移</a>	
+		<a id="dtheadDown" href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-add" plain="true"
+			onclick="javascript:MoveDown(coldg)"
+			style="width: 60px">下移</a>										
+	</div>
+	 <div id="dtbodyToolbar" style="padding:2px 5px;">
+		<a id="dtbodyAdd" href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-add" plain="true"
+			onclick="javascript:insertRecord(bodydg)"
+			style="width: 60px">添加</a>		
+		<a id="dtbodyRemove" href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-remove" plain="true"
+			onclick="javascript:removeRecord(bodydg)"
+			style="width: 60px">删除</a>	
+		<a id="dtbodyUp" href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-add" plain="true"
+			onclick="javascript:MoveUp(bodydg)"
+			style="width: 60px">上移</a>	
+		<a id="dtbodyDown" href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-add" plain="true"
+			onclick="javascript:MoveDown(bodydg)"
+			style="width: 60px">下移</a>										
+	</div>	
+		
 	<script type="text/javascript">
 	var dataColSrc=<%=com.vol.admin.action.MainAction.getPromotionsourcevals()%>;
 	</script>
