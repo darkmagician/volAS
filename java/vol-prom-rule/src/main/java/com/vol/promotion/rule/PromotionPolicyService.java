@@ -3,6 +3,7 @@
  */
 package com.vol.promotion.rule;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,6 +17,20 @@ import com.vol.common.tenant.Promotion;
 public class PromotionPolicyService implements PromotionPolicy {
 	
 	private Map<Short,PromotionPolicySPI> spi = new ConcurrentHashMap<Short,PromotionPolicySPI>();
+	
+	private static final Map<String,Object> allSource = new LinkedHashMap<String,Object>();
+	
+	static{
+		allSource.put(PromotionPolicy.NOW, "");
+		allSource.put(PromotionPolicy.RAND, "");
+		allSource.put(PromotionPolicy.USER_NAME, "");
+		allSource.put(PromotionPolicy.BONUS_VOLUME, "");
+		allSource.put(PromotionPolicy.BONUS_NUMBER, "");
+	}
+	
+	public static String[] getSourceList(){
+		return  allSource.keySet().toArray(new String[0]);
+	}
 	
 	
 	public void register(PromotionPolicySPI impl){
@@ -39,6 +54,9 @@ public class PromotionPolicyService implements PromotionPolicy {
 	public Long evaluate(Promotion promotion, Map<String, Object> context) {
 		short type = promotion.getRuleType();
 		PromotionPolicySPI impl = spi.get(type);
+		if(promotion.getCompiled()==null){
+			impl.precompile(promotion);
+		}
 		return impl.evaluate(promotion,context);
 	}
 

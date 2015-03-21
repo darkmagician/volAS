@@ -54,7 +54,11 @@ public interface PromotionPolicy {
 
 	static final String RAND = "rand";
 	
-
+	static final String USER_NAME = "userName";
+	
+	static final String BONUS_NUMBER = "bonusNumber";
+	
+	static final String BONUS_VOLUME = "bonusVolume";
 
 	public abstract void validate(Promotion promotion);
 

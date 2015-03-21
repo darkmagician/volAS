@@ -100,5 +100,7 @@
 			onclick="javascript:$('#promotionEditor').dialog('close')"
 			style="width: 90px">取消</a>
 	</div>
-
+	<script type="text/javascript">
+	var dataColSrc=<%=com.vol.admin.action.MainAction.getPromotionsourcevals()%>;
+	</script>
 	<script type="text/javascript" src="./static/snae_promotion.js"></script>

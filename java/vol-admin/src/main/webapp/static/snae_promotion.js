@@ -373,7 +373,7 @@
 		
 		/* ************************************data grid function ************************************ */
 		var dataColType=[{label: '数字',value: 'N'},{label: '字符串',value: 'S'}];
-		var dataColSrc=[{value: 'username'},{value: 'bonusBalance'}];
+		
 		
 		var colIdx=1;
 	
