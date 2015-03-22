@@ -35,12 +35,12 @@
  
 	   <property name="idleConnectionTestPeriod" value="60"/>
 	   <property name="idleMaxAge" value="240"/>
-	   <property name="maxConnectionsPerPartition" value="30"/>
-	   <property name="minConnectionsPerPartition" value="10"/>
+	   <property name="maxConnectionsPerPartition" value="10"/>
+	   <property name="minConnectionsPerPartition" value="1"/>
 	   <property name="partitionCount" value="3"/>
 	   <property name="acquireIncrement" value="5"/>
-	   <property name="statementsCacheSize" value="100"/>
-	   <property name="releaseHelperThreads" value="3"/>     
+	   <property name="statementsCacheSize" value="20"/>
+	   <property name="releaseHelperThreads" value="1"/>     
    </bean>
  
 
