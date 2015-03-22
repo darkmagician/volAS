@@ -21,7 +21,7 @@ public class PromotionPolicyService implements PromotionPolicy {
 	private static final Map<String,Object> allSource = new LinkedHashMap<String,Object>();
 	
 	static{
-		allSource.put(PromotionPolicy.NOW, "");
+		//allSource.put(PromotionPolicy.NOW, "");
 		allSource.put(PromotionPolicy.RAND, "");
 		allSource.put(PromotionPolicy.USER_NAME, "");
 		allSource.put(PromotionPolicy.BONUS_VOLUME, "");
@@ -57,8 +57,14 @@ public class PromotionPolicyService implements PromotionPolicy {
 		if(promotion.getCompiled()==null){
 			impl.precompile(promotion);
 		}
+		prepare(context);
 		return impl.evaluate(promotion,context);
 	}
+
+	private void prepare(Map<String, Object> context) {
+		context.put(RAND, Math.random()*100);
+	}
+
 
 	/* (non-Javadoc)
 	 * @see com.vol.common.service.PromotionPolicy#precompile(com.vol.common.tenant.Promotion)

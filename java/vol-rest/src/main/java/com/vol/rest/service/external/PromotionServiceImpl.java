@@ -37,7 +37,7 @@ public class PromotionServiceImpl extends AbstractTransactionService {
 	protected DAO<Long, User> userDAO;
 	@Resource(name = "bonusDao")
 	protected DAO<Long, Bonus> bonusDAO;
-	@Resource(name = "MVELPromotionPolicy")
+	@Resource(name = "promotionPolicyService")
 	protected PromotionPolicy promotionPolicy;
 
 	private final ConcurrentMap<Object, Object> processingMap = new ConcurrentHashMap<Object, Object>();
@@ -115,6 +115,12 @@ public class PromotionServiceImpl extends AbstractTransactionService {
 				List<Bonus> bonuses = bonusDAO.query("bonus.byUserPromotion",
 						parameters);
 				context.put(PromotionPolicy.GRANTED, bonuses);
+				context.put(PromotionPolicy.BONUS_NUMBER, bonuses.size());
+				long total =0;
+				for(Bonus b: bonuses){
+					total+=b.getSize();
+				}
+				context.put(PromotionPolicy.BONUS_VOLUME,total);
 			}
 			txCommit();
 		} catch (Exception e) {
@@ -131,11 +137,14 @@ public class PromotionServiceImpl extends AbstractTransactionService {
 			context.put(PromotionPolicy.USER, user);
 			context.put(PromotionPolicy.ISNEWUSER, Boolean.TRUE);
 			context.put(PromotionPolicy.GRANTED, Collections.EMPTY_LIST);
+			context.put(PromotionPolicy.BONUS_NUMBER,0L);
+			context.put(PromotionPolicy.BONUS_VOLUME,0L);
 		} else {
 			context.put(PromotionPolicy.ISNEWUSER, Boolean.FALSE);
 		}
 		context.put(PromotionPolicy.PARAMETERS, input);
 		context.put(PromotionPolicy.NOW, new Date(current));
+		context.put(PromotionPolicy.USER_NAME, user.getName());
 		Long bonusSize = promotionPolicy.evaluate(promotion, context);
 		if (bonusSize != null && bonusSize > 0) {
 			Bonus bonus = grantBonus(promotion, promotionBalance, user,

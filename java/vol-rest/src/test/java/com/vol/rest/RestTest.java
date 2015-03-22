@@ -96,8 +96,8 @@ public class RestTest {
 		promotion.setMaximum(270001);
 		promotion.setRuleType((short) 1);
 		promotion.setRule("if(parameters.vip==1) {return 2300;} else {return 200;}");
-		
-
+	//	promotion.setRuleType((short) 0);
+		//promotion.setRule("{\"cols\":[{\"title\":\"1111\",\"src\":\"userName\",\"desc\":\"\",\"defaultVal\":\"1\",\"type\":\"S\"}],\"data\":[[\"abcd\",\"999\"]]}");
 		
 		if(getTenantByName(tanent.getName()) == null){
 			createTenant( tanent);
