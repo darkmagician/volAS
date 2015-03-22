@@ -23,6 +23,8 @@ public class OperatorMgmtTest  extends BaseTest{
 	@NotTransactional
 	public void testChangePassword(){
 		Operator operator = new Operator();
+		operator.setName("oo");
+		operator.setEmail("aa");
 		String oldpass="123";
 		int id = operatorMgmt.add(operator,oldpass);
 		String newpass = "123456";
