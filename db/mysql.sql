@@ -1,4 +1,4 @@
-CREATE TABLE BONUS
+ CREATE TABLE BONUS
   (
      id             BIGINT NOT NULL auto_increment,
      userId         BIGINT,
@@ -46,6 +46,7 @@ CREATE TABLE PROMOTION
      endTime             BIGINT,
      maximum             BIGINT,
      volumeType          SMALLINT,
+     ruleType            SMALLINT,
      PRIMARY KEY (id)
   );
 
@@ -86,6 +87,9 @@ CREATE TABLE TENANT
      updateTime   BIGINT,
      description  VARCHAR(255),
      cycleType    INTEGER,
+     ratingPlan   LONGTEXT,
+     cycleStart   BIGINT,
+     cycleEnd     BIGINT,
      PRIMARY KEY (id)
   );
 
@@ -113,4 +117,4 @@ CREATE INDEX quota_user_idx ON QUOTA (userId);
 
 CREATE INDEX quota_username_idx ON QUOTA (userName);
 
-CREATE INDEX user_name_idx ON USER (name); 
+CREATE INDEX user_name_idx ON USER (name);  
