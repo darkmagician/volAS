@@ -112,4 +112,12 @@ public interface DAO <K extends Serializable, T extends BaseEntity>{
 	 */
 	PagingResult<T> queryByPageUsingHQL(String hql,
 			Map<String, Object> parameters, int startPage, int pageSize);
+
+	/**
+	 * @param queryName
+	 * @param parameters
+	 * @param limit
+	 * @return
+	 */
+	List<T> query(String queryName, Map<String, Object> parameters, int limit);
 }

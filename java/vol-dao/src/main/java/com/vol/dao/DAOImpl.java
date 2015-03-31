@@ -37,17 +37,17 @@ public class DAOImpl<K extends Serializable, T extends BaseEntity> implements DA
 	/**
 	 * The clazz.
 	 */
-	final private Class<T> clazz;
+	final private String entity;
 
 	/**
 	 * Instantiates a new abstract dao.
 	 *
-	 * @param clazz
-	 *            the clazz
+	 * @param entity
+	 *            the entity
 	 */
-	public DAOImpl(Class<T> clazz) {
+	public DAOImpl(String entity) {
 		super();
-		this.clazz = clazz;
+		this.entity = entity;
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class DAOImpl<K extends Serializable, T extends BaseEntity> implements DA
 	public K create(T obj) {
 		Session session = getCurrentSession();
 		@SuppressWarnings("unchecked")
-		K id = (K) session.save(obj);
+		K id = (K) session.save(entity,obj);
 		return id;
 	}
 
@@ -86,7 +86,7 @@ public class DAOImpl<K extends Serializable, T extends BaseEntity> implements DA
 	@SuppressWarnings("unchecked")
 	public T get(K id) {
 		Session session = getCurrentSession();
-		return (T) session.get(clazz, id);
+		return (T) session.get(entity, id);
 	}
 
 	/**
@@ -98,14 +98,14 @@ public class DAOImpl<K extends Serializable, T extends BaseEntity> implements DA
 	@Override
 	public void update(T obj) {
 		Session session = getCurrentSession();
-		session.update(obj);
+		session.update(entity,obj);
 	}
 
 
 	@Override
 	public void delete(T obj){
 		Session session = getCurrentSession();
-		session.delete(obj);
+		session.delete(entity,obj);
 	}
 	
 	/**
@@ -123,6 +123,16 @@ public class DAOImpl<K extends Serializable, T extends BaseEntity> implements DA
 		Session session = getCurrentSession();
 		Query query=session.getNamedQuery(queryName);
 		query.setProperties(parameters);
+		return query.list();
+	}
+	
+	
+	@Override
+	public List<T> query(String queryName, Map<String, Object> parameters , int limit){
+		Session session = getCurrentSession();
+		Query query=session.getNamedQuery(queryName);
+		query.setProperties(parameters);
+		query.setMaxResults(limit);
 		return query.list();
 	}
 	
@@ -173,6 +183,9 @@ public class DAOImpl<K extends Serializable, T extends BaseEntity> implements DA
 		return queryPaging(parameters, startPage, pageSize, result, session,
 				query);
 	}
+	
+	
+
 	
 	
 	@Override

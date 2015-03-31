@@ -2,8 +2,8 @@
 <!DOCTYPE hibernate-mapping PUBLIC
         "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping package="com.vol.common.user">
-    <class name="Quota" table="QUOTA">
+<hibernate-mapping package="com.vol.common.user" >
+    <class name="Quota" table="QUOTA"  entity-name="Quota">
         <id name="id" column="id">
             <generator class="native"/>
         </id>
@@ -34,6 +34,11 @@
         <![CDATA[  
         
              update Quota set balance=balance+:delta,maximum=maximum+:delta,updateTime=:updateTime where id=:id and expirationTime=:expirationTime
+        ]]>   
+    </query> 
+    <query name="quota.expired">   
+        <![CDATA[  
+            from Quota as quota where quota.expirationTime<=:current and tenantId=:tenantId
         ]]>   
     </query> 
     <query name="quota.renew">   

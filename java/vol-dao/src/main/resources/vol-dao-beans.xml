@@ -55,27 +55,27 @@
     
     
     <bean id="promotionDao" class="com.vol.dao.DAOImpl">
-    	<constructor-arg value="com.vol.common.tenant.Promotion"/>
+    	<constructor-arg value="Promotion"/>
     </bean>
     <bean id="operatorDao" class="com.vol.dao.DAOImpl">
-    	<constructor-arg value="com.vol.common.tenant.Operator"/>
+    	<constructor-arg value="Operator"/>
     </bean>
      <bean id="tenantDao" class="com.vol.dao.DAOImpl">
-    	<constructor-arg value="com.vol.common.tenant.Tenant"/>
+    	<constructor-arg value="Tenant"/>
     </bean> 
      <bean id="promotionBalanceDao" class="com.vol.dao.DAOImpl">
-    	<constructor-arg value="com.vol.common.tenant.PromotionBalance"/>
+    	<constructor-arg value="PromotionBalance"/>
     </bean>          
     <bean id="userDao" class="com.vol.dao.DAOImpl">
-    	<constructor-arg value="com.vol.common.user.User"/>
+    	<constructor-arg value="User"/>
     </bean>
     <bean id="bonusDao" class="com.vol.dao.DAOImpl">
-    	<constructor-arg value="com.vol.common.user.Bonus"/>
+    	<constructor-arg value="Bonus"/>
     </bean>
     <bean id="quotaDao" class="com.vol.dao.DAOImpl">
-    	<constructor-arg value="com.vol.common.user.Quota"/>
+    	<constructor-arg value="Quota"/>
     </bean>
     <bean id="quotaHistoryDao" class="com.vol.dao.DAOImpl">
-    	<constructor-arg value="com.vol.common.user.QuotaHistory"/>
+    	<constructor-arg value="QuotaHistory"/>
     </bean>                                
 </beans>

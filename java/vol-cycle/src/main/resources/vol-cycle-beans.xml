@@ -8,4 +8,5 @@
       http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
 	<bean id="tenantCycleMgmt" class="com.vol.cycle.TenantCycleMgmt"/>
+	<bean id="quotaCycleMgmt" class="com.vol.cycle.QuotaCycleMgmt"/>
 </beans>

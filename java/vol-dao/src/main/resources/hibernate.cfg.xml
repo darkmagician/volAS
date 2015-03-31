@@ -11,5 +11,6 @@
     <mapping resource="User.hbm.xml"/>
     <mapping resource="Bonus.hbm.xml"/>
     <mapping resource="Quota.hbm.xml"/>
+    <mapping resource="QuotaHistory.hbm.xml"/>
   </session-factory>
 </hibernate-configuration>
