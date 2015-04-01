@@ -120,4 +120,11 @@ public interface DAO <K extends Serializable, T extends BaseEntity>{
 	 * @return
 	 */
 	List<T> query(String queryName, Map<String, Object> parameters, int limit);
+
+	/**
+	 * @param queryName
+	 * @param parameters
+	 * @return
+	 */
+	Long queryAggregate(String queryName, Map<String, Object> parameters);
 }

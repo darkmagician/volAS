@@ -2,17 +2,28 @@ package com.vol.cycle;
 
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
 import com.vol.common.DAO;
 import com.vol.common.tenant.Tenant;
+import com.vol.common.tenant.TenantUsage;
+import com.vol.common.user.QuotaHistory;
 import com.vol.dao.AbstractService;
 
 public class TenantCycleMgmt extends AbstractService<Integer,Tenant> {
 	@Resource(name="tenantDao")
 	protected DAO<Integer,Tenant> tenantDAO;
+	
+	@Resource(name="tenantUsageDao")
+	protected DAO<Integer,TenantUsage> tenantUsageDAO;
+	
+	
+	@Resource(name="quotaHistoryDao")
+	protected DAO<Long,QuotaHistory> quotaHisDao;
+	
 	@Override
 	protected DAO<Integer, Tenant> getDAO() {
 		return tenantDAO;
@@ -44,7 +55,45 @@ public class TenantCycleMgmt extends AbstractService<Integer,Tenant> {
 		return rc==1;
 	}
 	
-	
+	public boolean summaryUsage(Integer id,Short volumeType){
+		
+		try {
+			txBegin();
+			Tenant tenant = tenantDAO.get(id);
+			Map<String,Object> map = new HashMap<String,Object>();
+			map.put("tenantId", id);
+			map.put("volumeType", volumeType);
+			List<TenantUsage> last = tenantUsageDAO.query("tenantUsage.last", map, 1);
+			long start=0;
+			if(last!=null && !last.isEmpty()){
+				start = last.get(0).getEnd();
+			}
+			long end = tenant.getCycleStart();
+			if(start>=end){
+				txRollback();
+				return false;
+			}
+			Map<String, Object> parameters=  new HashMap<String,Object>();
+			parameters.put("tenantId", id);
+			parameters.put("start", start);
+			parameters.put("end", end);
+			parameters.put("volumeType", volumeType);
+			Long sum = quotaHisDao.queryAggregate("quotaHis.sum", parameters);
+			TenantUsage usage = new TenantUsage();
+			usage.setTenantId(id);
+			usage.setEnd(end);
+			usage.setStart(start);
+			usage.setUsage(sum);
+			usage.setVolumeType(volumeType);
+			initEntity(usage);
+			tenantUsageDAO.create(usage);
+			txCommit();
+			return true;
+		} catch (Exception e) {
+			txRollback(e);
+			return false;
+		}
+	}
 	
 	
 	

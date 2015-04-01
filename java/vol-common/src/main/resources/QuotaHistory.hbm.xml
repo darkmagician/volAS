@@ -20,5 +20,9 @@
         <property name="userName" column="userName" index="quotahis_username_idx" length="32"/>
         <property name="reserved" column="reserved" />
     </class> 
-         
+      <query name="quotahis.sum">   
+        <![CDATA[  
+           select sum(maximum-balance) from QuotaHistory where tenantId=:tenantId and expirationTime>:start and expirationTime<=:end and volumeType=:volumeType
+        ]]>   
+    </query>        
 </hibernate-mapping>

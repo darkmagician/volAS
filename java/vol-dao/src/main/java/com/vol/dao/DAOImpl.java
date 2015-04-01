@@ -136,6 +136,15 @@ public class DAOImpl<K extends Serializable, T extends BaseEntity> implements DA
 		return query.list();
 	}
 	
+	
+	@Override
+	public Long queryAggregate(String queryName, Map<String, Object> parameters){
+		Session session = getCurrentSession();
+		Query query=session.getNamedQuery(queryName);
+		query.setProperties(parameters);
+		return (Long) query.uniqueResult();
+	}
+	
 	/**
 	 * Batch update.
 	 *
