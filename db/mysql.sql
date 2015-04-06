@@ -1,3 +1,5 @@
+ CREATE DATABASE IF NOT EXISTS snae DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
+ 
  CREATE TABLE BONUS
   (
      id             BIGINT NOT NULL auto_increment,
